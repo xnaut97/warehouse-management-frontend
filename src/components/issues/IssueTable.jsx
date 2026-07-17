@@ -9,9 +9,9 @@ function IssueTable({ issues }) {
 
     return (
 
-        <div className="overflow-hidden rounded-xl border border-pink-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-pink-100 bg-white shadow-sm">
 
-            <table className="w-full">
+            <table className="min-w-[920px] w-full">
 
                 <thead className="border-b border-pink-100">
 

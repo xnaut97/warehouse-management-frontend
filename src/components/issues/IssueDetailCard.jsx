@@ -4,9 +4,9 @@ function IssueDetailCard({ issue }) {
 
     return (
 
-        <div className="rounded-xl border border-pink-100 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:p-6">
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid gap-6 sm:grid-cols-2">
 
                 <div>
 

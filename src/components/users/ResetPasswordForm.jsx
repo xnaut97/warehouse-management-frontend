@@ -49,7 +49,7 @@ function ResetPasswordForm({ user, onSuccess }) {
 
 
             <button
-                className="w-full bg-primary text-white py-2 rounded"
+                className="w-full bg-primary text-white py-2.5 rounded"
             >
                 Đặt lại mật khẩu
             </button>

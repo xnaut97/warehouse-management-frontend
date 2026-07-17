@@ -6,8 +6,8 @@ function TableToolbar({
                           children,
                       }) {
     return (
-        <div className="mb-6 flex items-center justify-between gap-4">
-            <div className="w-96">
+        <div className="mb-6 flex flex-col items-stretch justify-between gap-4 md:flex-row md:items-center">
+            <div className="w-full md:w-96">
                 <SearchInput
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -15,7 +15,11 @@ function TableToolbar({
                 />
             </div>
 
-            {children}
+            {children && (
+                <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap md:w-auto md:justify-end">
+                    {children}
+                </div>
+            )}
         </div>
     );
 }

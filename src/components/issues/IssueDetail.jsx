@@ -86,11 +86,11 @@ function IssueDetail() {
 
     return (
 
-        <div className="space-y-6 pt-10 pb-10 pl-12 pr-12">
+        <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-12 lg:py-10">
 
             <button
                 onClick={() => navigate("/issues")}
-                className="group flex items-center gap-2 text-lg font-medium text-slate-600 transition hover:text-blue-600"
+                className="group flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-blue-600 sm:text-lg"
             >
 
                 <ArrowLeft
@@ -103,15 +103,15 @@ function IssueDetail() {
             </button>
 
 
-            <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
 
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 
                     <div className="space-y-2">
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-                            <h1 className="text-3xl font-bold text-slate-800">
+                            <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
                                 Phiếu xuất {issue.issueNo}
                             </h1>
 
@@ -135,10 +135,10 @@ function IssueDetail() {
                     {
                         issue.status === "DRAFT" && (
 
-                            <div className="flex gap-3">
+                            <div className="flex flex-col gap-3 sm:flex-row">
 
                                 <button
-                                    className="flex items-center gap-2 rounded-lg border border-blue-600 px-5 py-3 font-medium text-blue-600 transition hover:bg-blue-50"
+                                    className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-5 py-3 font-medium text-blue-600 transition hover:bg-blue-50"
                                 >
 
                                     <Plus size={18}/>
@@ -150,7 +150,7 @@ function IssueDetail() {
 
                                 <button
                                     onClick={() => setShowConfirm(true)}
-                                    className="flex items-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+                                    className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
                                 >
 
                                     <Check size={18}/>
@@ -170,7 +170,7 @@ function IssueDetail() {
             </div>
 
 
-            <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
 
                 <h2 className="mb-5 text-lg font-semibold text-slate-800">
                     Thông tin phiếu xuất
@@ -181,7 +181,7 @@ function IssueDetail() {
             </div>
 
 
-            <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
 
                 <h2 className="mb-5 text-lg font-semibold text-slate-800">
                     Danh sách hàng hóa

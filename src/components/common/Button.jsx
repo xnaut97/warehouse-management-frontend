@@ -33,9 +33,9 @@ function Button({
                 },
 
                 {
-                    "h-10 px-4 text-sm": size === "sm",
-                    "h-11 px-5": size === "md",
-                    "h-12 px-6 text-lg": size === "lg",
+                    "min-h-10 px-4 text-sm": size === "sm",
+                    "min-h-11 px-5": size === "md",
+                    "min-h-12 px-6 text-lg": size === "lg",
                 },
 
                 className

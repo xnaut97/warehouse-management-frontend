@@ -8,21 +8,24 @@ function PageHeader({
                         onAction,
                     }) {
     return (
-        <div className="mb-8 flex items-start justify-between">
-            <div>
-                <h1 className="text-3xl font-bold text-(--color-text)">
+        <div className="mb-6 flex flex-col items-stretch justify-between gap-4 sm:mb-8 sm:flex-row sm:items-start">
+            <div className="min-w-0">
+                <h1 className="text-2xl font-bold text-(--color-text) sm:text-3xl">
                     {title}
                 </h1>
 
                 {description && (
-                    <p className="mt-2 text-[15px] text-(--color-text-secondary)">
+                    <p className="mt-2 text-sm text-(--color-text-secondary) sm:text-[15px]">
                         {description}
                     </p>
                 )}
             </div>
 
             {actionLabel && (
-                <Button onClick={onAction}>
+                <Button
+                    onClick={onAction}
+                    className="w-full sm:w-auto"
+                >
                     {actionIcon}
                     {actionLabel}
                 </Button>

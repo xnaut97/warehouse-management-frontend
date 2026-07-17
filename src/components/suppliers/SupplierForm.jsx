@@ -150,7 +150,7 @@ function SupplierForm({
 
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
 
                 <div>
 
@@ -224,7 +224,7 @@ function SupplierForm({
 
             </div>
 
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
 
                 <button
                     type="button"

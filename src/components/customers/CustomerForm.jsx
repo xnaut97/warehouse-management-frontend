@@ -5,7 +5,7 @@ import customerApi from "../../api/customerApi.js";
 
 function CustomerForm({
                           customer,
-                          onClose,
+                          onCancel,
                           onSuccess
                       }) {
 
@@ -64,12 +64,9 @@ function CustomerForm({
 
     return (
 
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40">
-
-
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
+                className="w-full space-y-4"
             >
 
 
@@ -95,7 +92,7 @@ function CustomerForm({
                         ["address","Địa chỉ"]
                     ].map(([name,label]) => (
 
-                        <div key={name} className="mb-4">
+                        <div key={name}>
 
                             <label className="mb-1 block text-sm text-slate-600">
                                 {label}
@@ -115,13 +112,13 @@ function CustomerForm({
 
 
 
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
 
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="rounded-lg border px-5 py-2 text-slate-600"
+                        onClick={onCancel}
+                        className="rounded-lg border px-5 py-2.5 text-slate-600"
                     >
                         Hủy
                     </button>
@@ -129,7 +126,7 @@ function CustomerForm({
 
 
                     <button
-                        className="rounded-lg bg-[var(--color-primary)] px-5 py-2 text-white"
+                        className="rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-white"
                     >
                         Lưu
                     </button>
@@ -139,9 +136,6 @@ function CustomerForm({
 
 
             </form>
-
-
-        </div>
 
     );
 

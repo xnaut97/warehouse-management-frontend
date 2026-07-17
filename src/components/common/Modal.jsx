@@ -10,10 +10,12 @@ function Modal({
         <div className="
             fixed
             inset-0
+            z-50
             bg-black/40
             flex
             items-center
             justify-center
+            p-4
         ">
 
 
@@ -21,8 +23,12 @@ function Modal({
                 bg-white
                 rounded-xl
                 shadow-lg
-                w-[500px]
-                p-6
+                w-full
+                max-w-[500px]
+                max-h-[calc(100vh-2rem)]
+                overflow-y-auto
+                p-4
+                sm:p-6
             ">
 
 
@@ -36,6 +42,7 @@ function Modal({
                     <h2 className="
                         text-xl
                         font-bold
+                        pr-4
                     ">
                         {title}
                     </h2>

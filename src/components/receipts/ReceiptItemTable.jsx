@@ -14,9 +14,9 @@ function ReceiptItemTable({
 
     return (
 
-        <div className="overflow-hidden rounded-xl shadow border border-pink-100">
+        <div className="overflow-x-auto rounded-xl shadow border border-pink-100">
 
-            <table className="min-w-full">
+            <table className="min-w-[860px] w-full">
 
                 <thead className="bg-white">
 

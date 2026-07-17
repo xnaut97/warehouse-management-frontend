@@ -224,14 +224,16 @@ function MaterialForm({
 
             <div className="
                 flex
-                justify-end
+                flex-col-reverse
+                sm:flex-row
+                sm:justify-end
                 gap-3
             ">
 
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-xl border px-5 py-2"
+                    className="rounded-xl border px-5 py-2.5"
                 >
 
                     Hủy
@@ -244,7 +246,7 @@ function MaterialForm({
                         rounded-xl
                         bg-pink-500
                         px-5
-                        py-2
+                        py-2.5
                         text-white
                         hover:bg-pink-600
                     "

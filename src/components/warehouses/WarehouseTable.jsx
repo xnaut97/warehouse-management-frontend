@@ -15,7 +15,7 @@ function WarehouseTable({
     return (
 
         <div className="
-            overflow-hidden
+            overflow-x-auto
             rounded-2xl
             border
             border-(--color-border)
@@ -23,7 +23,7 @@ function WarehouseTable({
             shadow-sm
         ">
 
-            <table className="w-full">
+            <table className="min-w-[920px] w-full">
 
                 <thead className="border-b border-pink-100">
 

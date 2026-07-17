@@ -73,7 +73,7 @@ function InventoryDetail() {
 
     return (
 
-        <div className="space-y-6 p-10">
+        <div className="space-y-6 px-4 py-6 sm:px-6 lg:p-10">
 
             <button
                 onClick={() => navigate("/inventories")}
@@ -88,7 +88,7 @@ function InventoryDetail() {
 
             <div>
 
-                <h1 className="text-3xl font-bold text-slate-800">
+                <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
 
                     Chi tiết tồn kho
 

@@ -53,21 +53,24 @@ function LoginPage(){
     return (
 
         <div className="
-            h-screen
+            min-h-screen
             flex
             items-center
             justify-center
             bg-[#FFF0F3]
+            px-4
         ">
 
             <form
                 onSubmit={handleSubmit}
                 className="
                     bg-white
-                    p-8
+                    p-6
+                    sm:p-8
                     rounded-xl
                     shadow-md
-                    w-96
+                    w-full
+                    max-w-96
                 "
             >
 

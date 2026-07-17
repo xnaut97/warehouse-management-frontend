@@ -11,9 +11,9 @@ function ReceiptTable({
 
     return (
 
-        <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
 
-            <table className="w-full">
+            <table className="min-w-[860px] w-full">
 
                 <thead className="border-b border-pink-100">
 

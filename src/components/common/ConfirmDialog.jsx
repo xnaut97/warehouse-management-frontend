@@ -10,9 +10,9 @@ function ConfirmDialog({
                            danger = false,
                        }) {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
 
-            <div className="w-full max-w-md rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-xl">
+            <div className="max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-xl sm:p-6">
 
                 <h2 className="text-xl font-semibold text-[var(--color-text)]">
                     {title}
@@ -24,7 +24,7 @@ function ConfirmDialog({
                 </p>
 
 
-                <div className="mt-8 flex justify-end gap-3">
+                <div className="mt-8 flex flex-col-reverse justify-end gap-3 sm:flex-row">
 
                     <Button
                         variant="secondary"

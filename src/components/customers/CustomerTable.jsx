@@ -11,10 +11,10 @@ function CustomerTable({
 
     return (
 
-        <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
 
 
-            <table className="w-full text-left">
+            <table className="min-w-[920px] w-full text-left">
 
 
                 <thead className="border-b border-pink-100 text-md text-slate-600">

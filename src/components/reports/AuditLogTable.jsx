@@ -23,8 +23,8 @@ function actionColor(action) {
 
 function AuditLogTable({ logs = [] }) {
     return (
-        <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-white shadow-sm">
-            <table className="w-full">
+        <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
+            <table className="min-w-[980px] w-full">
                 <thead className="border-b border-pink-100">
                 <tr>
                     <th className="px-6 py-4 text-left">Thời gian</th>

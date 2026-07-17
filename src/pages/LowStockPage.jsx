@@ -35,7 +35,7 @@ function LowStockPage() {
 
     return (
 
-        <div className="p-12">
+        <div className="px-4 py-6 sm:px-6 lg:p-12">
 
             <PageHeader
                 title="Cảnh báo tồn kho"

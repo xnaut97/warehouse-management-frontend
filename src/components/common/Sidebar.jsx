@@ -1,9 +1,9 @@
 import {NavLink, useNavigate} from "react-router-dom";
 import {sidebarItems} from "../../utils/sidebarItems.js";
 import authStore from "../../store/authStore.js";
-import {LogOut} from "lucide-react";
+import {LogOut, X} from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ isOpen = false, onClose }) {
 
     const user = authStore((state) => state.user);
     const logout = authStore((state) => state.logout);
@@ -14,13 +14,42 @@ function Sidebar() {
 
     const handleLogout = () => {
         logout();
+        onClose?.();
         navigate("/login", {replace: true});
     };
 
     return (
-        <aside className="flex h-screen w-72 flex-col border-r border-(--color-border) bg-white">
+        <>
+            <div
+                onClick={onClose}
+                className={`fixed inset-0 z-40 bg-black/40 transition-opacity lg:hidden ${
+                    isOpen
+                        ? "opacity-100"
+                        : "pointer-events-none opacity-0"
+                }`}
+                aria-hidden="true"
+            />
+
+            <aside
+                className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 max-w-[85vw] flex-col border-r border-(--color-border) bg-white transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 ${
+                    isOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full"
+                }`}
+            >
 
             <div className="border-b border-(--color-border) p-5">
+                <div className="mb-4 flex justify-end lg:hidden">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition hover:bg-pink-50 hover:text-(--color-primary)"
+                        aria-label="Đóng menu"
+                    >
+                        <X size={22} />
+                    </button>
+                </div>
+
                 <div className="flex items-center gap-3 rounded-2xl bg-pink-50 p-3">
 
                     <div
@@ -59,6 +88,7 @@ function Sidebar() {
                                         key={item.path}
                                         to={item.path}
                                         end={item.path === "/reports"}
+                                        onClick={onClose}
                                         className={({isActive}) =>
                                             `flex items-center gap-3 rounded-xl px-4 py-3 
                                             text-sm font-medium transition-all duration-200
@@ -94,6 +124,7 @@ function Sidebar() {
                 </button>
             </div>
         </aside>
+        </>
     );
 }
 
