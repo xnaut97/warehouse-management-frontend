@@ -17,31 +17,31 @@ function IssueTable({ issues }) {
 
                 <tr>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Mã phiếu
                     </th>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Kho
                     </th>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Khách hàng
                     </th>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Ngày xuất
                     </th>
 
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Trạng thái
                     </th>
 
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Tổng tiền
                     </th>
 
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-center">
                         Thao tác
                     </th>
 
@@ -90,13 +90,13 @@ function IssueTable({ issues }) {
                                     {issue.issueDate}
                                 </td>
 
-                                <td className="px-6 py-4 text-center">
+                                <td className="px-6 py-4">
                                     <IssueStatusBadge
                                         status={issue.status}
                                     />
                                 </td>
 
-                                <td className="px-6 py-4 text-center">
+                                <td className="px-6 py-4">
                                     {issue.totalAmount}
                                 </td>
 

@@ -35,7 +35,7 @@ function InventoryAnalysis({ analysis, trend }) {
                 />
 
                 <StatCard
-                    title="Tồn kho thành phẩm"
+                    title="Tồn kho sản phẩm"
                     value={formatNumber(analysis?.finishedProductInventory)}
                     icon={<Package size={24} className="text-sky-600" />}
                     onClick={() => navigate("/products")}

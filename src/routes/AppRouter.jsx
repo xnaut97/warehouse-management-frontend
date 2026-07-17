@@ -20,6 +20,12 @@ import InventoryPage from "../pages/InventoryPage.jsx";
 import InventoryDetail from "../components/inventory/InventoryDetail.jsx";
 import GuestRoute from "./GuestRoute.jsx";
 import ProductPage from "../pages/ProductPage.jsx";
+import ReportsPage from "../pages/reports/ReportsPage.jsx";
+import ReceiptReport from "../pages/reports/ReceiptReport.jsx";
+import IssueReport from "../pages/reports/IssueReport.jsx";
+import InventoryReport from "../pages/reports/InventoryReport.jsx";
+import StocktakingReport from "../pages/reports/StocktakingReport.jsx";
+import AuditLog from "../pages/reports/AuditLog.jsx";
 
 function AppRouter() {
 
@@ -216,6 +222,72 @@ function AppRouter() {
                                 </AppLayout>
                             </ProtectedRoute>
                         }
+                />
+
+                <Route
+                    path="/reports"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ReportsPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/receipts"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ReceiptReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/issues"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <IssueReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/inventory"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <InventoryReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/stocktaking"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <StocktakingReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/audit-logs"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <AuditLog/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
                 />
 
             </Routes>

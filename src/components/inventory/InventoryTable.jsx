@@ -15,23 +15,23 @@ function InventoryTable({ inventories }) {
 
                 <tr>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Kho
                     </th>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                        Mã NVL
+                    <th className="px-6 py-4 text-left">
+                        Mã
                     </th>
 
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                        Tên nguyên vật liệu
+                    <th className="px-6 py-4 text-left">
+                        Tên
                     </th>
 
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-left">
                         Tồn kho
                     </th>
 
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                    <th className="px-6 py-4 text-center">
                         Thao tác
                     </th>
 
@@ -68,7 +68,7 @@ function InventoryTable({ inventories }) {
                                     {inventory.warehouse}
                                 </td>
 
-                                <td className="px-6 py-4 font-medium">
+                                <td className="px-6 py-4">
                                     {inventory.materialCode}
                                 </td>
 
@@ -76,7 +76,7 @@ function InventoryTable({ inventories }) {
                                     {inventory.materialName}
                                 </td>
 
-                                <td className="px-6 py-4 text-right font-semibold">
+                                <td className="px-6 py-4">
                                     {inventory.quantity}
                                 </td>
 

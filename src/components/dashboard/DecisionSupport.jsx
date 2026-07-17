@@ -25,7 +25,7 @@ function DecisionSupport({ data }) {
 
             <div className="mb-6 grid gap-6 xl:grid-cols-2">
                 <SlowMovingCard
-                    title="Thành phẩm bán chậm"
+                    title="Sản phẩm bán chậm"
                     description="Mặt hàng không phát sinh xuất kho trong 90 ngày"
                     items={data?.slowMovingMaterials ?? []}
                 />

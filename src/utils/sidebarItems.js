@@ -7,8 +7,12 @@ import {
     ArrowDownToLine,
     ArrowUpFromLine,
     Boxes,
+    Archive,
     ChartColumn,
-    Settings, User, Box,
+    ClipboardCheck,
+    FileClock,
+    User,
+    Box,
 } from "lucide-react";
 
 export const sidebarItems = [
@@ -53,7 +57,7 @@ export const sidebarItems = [
             },
             {
                 icon: Package,
-                label: "Thành phẩm",
+                label: "Sản phẩm",
                 path: "/products",
             },
         ],
@@ -85,19 +89,33 @@ export const sidebarItems = [
         items: [
             {
                 icon: ChartColumn,
-                label: "Báo cáo",
+                label: "Tổng quan báo cáo",
                 path: "/reports",
             },
-        ],
-    },
-
-    {
-        title: "CÀI ĐẶT",
-        items: [
             {
-                icon: Settings,
-                label: "Cài đặt",
-                path: "/settings",
+                icon: ArrowDownToLine,
+                label: "Báo cáo nhập kho",
+                path: "/reports/receipts",
+            },
+            {
+                icon: ArrowUpFromLine,
+                label: "Báo cáo xuất kho",
+                path: "/reports/issues",
+            },
+            {
+                icon: Archive,
+                label: "Báo cáo tồn kho",
+                path: "/reports/inventory",
+            },
+            {
+                icon: ClipboardCheck,
+                label: "Báo cáo kiểm kê",
+                path: "/reports/stocktaking",
+            },
+            {
+                icon: FileClock,
+                label: "Nhật ký hệ thống",
+                path: "/reports/audit-logs",
             },
         ],
     },

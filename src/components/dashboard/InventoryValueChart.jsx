@@ -51,7 +51,7 @@ function InventoryValueChart({ data }) {
                 <div>
                     <div className="mb-2 flex items-center justify-between text-sm">
                         <span className="font-medium text-gray-700">
-                            Thành phẩm
+                            Sản phẩm
                         </span>
                         <span className="text-gray-500">
                             {formatNumber(finishedProducts)}

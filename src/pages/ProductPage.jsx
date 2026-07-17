@@ -71,11 +71,11 @@ function ProductPage() {
 
             <PageHeader
 
-                title="Thành phẩm"
+                title="Sản phẩm"
 
-                description="Quản lý thành phẩm."
+                description="Quản lý sản phẩm."
 
-                actionLabel="Thêm thành phẩm"
+                actionLabel="Thêm sản phẩm"
 
                 actionIcon={<Plus size={18}/>}
 
@@ -123,9 +123,9 @@ function ProductPage() {
 
                         selectedProducts
 
-                            ? "Chỉnh sửa thành phẩm"
+                            ? "Chỉnh sửa sản phẩm"
 
-                            : "Thêm thành phẩm"
+                            : "Thêm sản phẩm"
 
                     }
 

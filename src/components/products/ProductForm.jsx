@@ -111,7 +111,7 @@ function ProductForm({
 
 
                 toast.success(
-                    "Đã cập nhật thành phẩm thành công"
+                    "Đã cập nhật sản phẩm thành công"
                 );
 
 
@@ -133,7 +133,7 @@ function ProductForm({
 
 
                 toast.success(
-                    "Đã thêm thành phẩm thành công"
+                    "Đã thêm sản phẩm thành công"
                 );
 
             }
@@ -171,7 +171,7 @@ function ProductForm({
 
                     <label className="mb-2 block font-medium">
 
-                        Mã thành phẩm
+                        Mã sản phẩm
 
                     </label>
 
@@ -199,7 +199,7 @@ function ProductForm({
 
                 <label className="mb-2 block font-medium">
 
-                    Tên thành phẩm
+                    Tên sản phẩm
 
                 </label>
 
@@ -321,7 +321,7 @@ function ProductForm({
 
                     <span>
 
-                        Thành phẩm đang hoạt động
+                        Sản phẩm đang hoạt động
 
                     </span>
 
@@ -359,9 +359,9 @@ function ProductForm({
                     {
                         product
 
-                            ? "Cập nhật thành phẩm"
+                            ? "Cập nhật sản phẩm"
 
-                            : "Thêm thành phẩm"
+                            : "Thêm sản phẩm"
                     }
 
                 </button>

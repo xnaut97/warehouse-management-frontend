@@ -39,7 +39,7 @@ function ReceiptTable({
                     </th>
 
 
-                    <th className="px-6 py-4 text-left">
+                    <th className="px-6 py-4 text-center">
                         Trạng thái
                     </th>
 
@@ -83,7 +83,7 @@ function ReceiptTable({
                             </td>
 
 
-                            <td className="px-6 py-4">
+                            <td className="px-6 py-4 text-center">
                                 <ReceiptStatusBadge
                                     status={receipt.status}
                                 />

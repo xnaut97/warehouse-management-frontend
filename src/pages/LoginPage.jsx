@@ -31,21 +31,12 @@ function LoginPage(){
                 });
 
 
-            const token =
-                response.data.data.token;
+            const token = response.data.data.token;
+            const user = response.data.data.user;
 
-
-            login(
-                {
-                    username
-                },
-                token
-            );
-
+            login(user, token);
 
             navigate("/");
-
-
         }
         catch(error){
 

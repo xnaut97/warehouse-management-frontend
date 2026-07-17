@@ -21,7 +21,7 @@ function ProductActions({
     const handleDelete = async () => {
 
         const confirmed = window.confirm(
-            `Xóa thành phẩm "${product.name}"?`
+            `Xóa sản phẩm "${product.name}"?`
         );
 
         if (!confirmed) {
@@ -37,7 +37,7 @@ function ProductActions({
             );
 
             toast.success(
-                "Đã xóa thành phẩm thành công"
+                "Đã xóa sản phẩm thành công"
             );
 
             onRefresh();

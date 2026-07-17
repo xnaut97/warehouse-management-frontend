@@ -23,7 +23,7 @@ function OverviewCards({ data }) {
             path: "/materials"
         },
         {
-            title: "Tổng thành phẩm",
+            title: "Tổng sản phẩm",
             value: formatNumber(data?.totalFinishedProducts),
             icon: <Package size={24} className="text-sky-600" />,
             path: "/products",
