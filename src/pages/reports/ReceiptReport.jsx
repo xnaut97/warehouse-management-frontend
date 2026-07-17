@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowDownToLine, CircleDollarSign, PackageCheck } from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Pagination from "../../components/common/Pagination.jsx";
 import StatCard from "../../components/common/StatCard.jsx";
 import ReportFilters, { FilterField, FilterInput } from "../../components/reports/ReportFilters.jsx";
 import ReceiptReportTable from "../../components/reports/ReceiptReportTable.jsx";
-import { firstDayOfMonth, formatCurrency, formatNumber, pageContent, sumBy, today, unwrap } from "../../components/reports/reportUtils.js";
+import { firstDayOfMonth, formatCurrency, formatNumber, sumBy, today, unwrap } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
 import receiptApi from "../../api/receiptApi.js";
 
@@ -19,6 +20,9 @@ function ReceiptReport() {
     const [daily, setDaily] = useState({});
     const [monthly, setMonthly] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [totalPages, setTotalPages] = useState(0);
 
     const loadReport = async () => {
         const year = new Date(filters.fromDate || today()).getFullYear();
@@ -29,7 +33,10 @@ function ReceiptReport() {
             monthlyResponse,
             suppliersResponse
         ] = await Promise.all([
-            receiptApi.getAll({ page: 0, size: 200 }),
+            receiptApi.getAll({
+                page,
+                size: pageSize,
+            }),
             reportApi.getReceiptDaily({ date: filters.toDate || today() }),
             reportApi.getReceiptMonthly({ year }),
             reportApi.getReceiptSuppliers({
@@ -38,7 +45,10 @@ function ReceiptReport() {
             })
         ]);
 
-        setReceipts(pageContent(receiptsResponse));
+        const data = receiptsResponse.data.data;
+
+        setReceipts(data.content);
+        setTotalPages(data.totalPages);
         setDaily(unwrap(dailyResponse, {}));
         setMonthly(unwrap(monthlyResponse, []));
         setSuppliers(unwrap(suppliersResponse, []));
@@ -46,7 +56,7 @@ function ReceiptReport() {
 
     useEffect(() => {
         loadReport().catch(console.log);
-    }, [filters.fromDate, filters.toDate]);
+    }, [filters.fromDate, filters.toDate, page, pageSize]);
 
     const filteredReceipts = useMemo(() => {
         const supplier = filters.supplier.toLowerCase();
@@ -129,6 +139,12 @@ function ReceiptReport() {
             </div>
 
             <ReceiptReportTable receipts={filteredReceipts} />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+            />
         </div>
     );
 }

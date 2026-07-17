@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {ArrowLeft, Check, Plus} from "lucide-react";
+
 import receiptApi from "../../api/receiptApi.js";
-import { Check } from "lucide-react";
 
-import ReceiptDetailCard from "../../components/receipts/ReceiptDetailCard";
+import ReceiptDetailCard from "../../components/receipts/ReceiptDetailCard.jsx";
 import ReceiptItemTable from "./ReceiptItemTable.jsx";
-
+import ConfirmDialog from "../common/ConfirmDialog.jsx";
 
 function ReceiptDetail() {
 
-    const { id } = useParams();
+    const {id} = useParams();
 
     const navigate = useNavigate();
 
     const [receipt, setReceipt] = useState(null);
 
-    const handleConfirm = async () => {
+    const [showConfirm, setShowConfirm] = useState(false);
 
-        const confirm = window.confirm(
-            "Bạn có chắc muốn xác nhận phiếu nhập kho này?"
-        );
-
-
-        if (!confirm) return;
-
+    const loadReceipt = async () => {
 
         try {
 
-            await receiptApi.confirm(id);
+            const response = await receiptApi.getDetail(id);
 
-            await loadReceipt();
+            setReceipt(response.data.data);
 
         } catch (error) {
 
@@ -46,13 +41,13 @@ function ReceiptDetail() {
     }, [id]);
 
 
-    const loadReceipt = async () => {
+    const handleConfirm = async () => {
 
         try {
 
-            const res = await receiptApi.getDetail(id);
+            await receiptApi.confirm(id);
 
-            setReceipt(res.data.data);
+            await loadReceipt();
 
         } catch (error) {
 
@@ -66,41 +61,109 @@ function ReceiptDetail() {
     if (!receipt) {
 
         return (
-            <div className="p-6">
-                Đang tải...
+            <div className="flex min-h-[400px] items-center justify-center">
+                <div className="text-slate-500">
+                    Đang tải dữ liệu...
+                </div>
             </div>
         );
 
     }
 
 
+    const statusStyle = {
+        DRAFT: "bg-yellow-100 text-yellow-700",
+        CONFIRMED: "bg-green-100 text-green-700",
+        CANCELLED: "bg-red-100 text-red-700",
+    };
+
+
+    const statusText = {
+        DRAFT: "Nháp",
+        CONFIRMED: "Đã xác nhận",
+        CANCELLED: "Đã hủy",
+    };
+
+
     return (
 
-        <div className="p-6">
+        <div className="space-y-6 pt-10 pb-10 pl-12 pr-12">
 
-            <div className="mb-5 flex items-center justify-between">
+            <button
+                onClick={() => navigate("/receipts")}
+                className="group flex items-center gap-2 text-lg font-medium text-slate-600 transition hover:text-(--color-primary-hover)"
+            >
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="rounded bg-gray-100 px-4 py-2"
-                >
-                    Quay lại
-                </button>
+                <ArrowLeft
+                    size={18}
+                    className="transition group-hover:-translate-x-1"
+                />
+
+                Quay lại danh sách phiếu nhập
+
+            </button>
 
 
-                {
-                    receipt.status === "DRAFT" && (
+            <div className="rounded-xl bg-white p-6 shadow-sm">
 
-                        <button
-                            onClick={handleConfirm}
-                            className="flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                        >
-                            <Check size={18}/>
-                            Xác nhận phiếu nhập
-                        </button>
+                <div className="flex items-start justify-between">
 
-                    )
-                }
+                    <div className="space-y-2">
+
+                        <div className="flex items-center gap-3">
+
+                            <h1 className="text-3xl font-bold text-slate-800">
+                                Phiếu nhập {receipt.receiptNo}
+                            </h1>
+
+                            <span
+                                className={`rounded-full px-3 py-1 text-sm font-medium ${statusStyle[receipt.status]}`}
+                            >
+                                {statusText[receipt.status]}
+                            </span>
+
+                        </div>
+
+                        <p className="text-sm text-slate-500">
+                            Chi tiết thông tin phiếu nhập kho
+                        </p>
+
+                    </div>
+
+
+                    {
+                        receipt.status === "DRAFT" && (
+
+                            <div className="flex gap-3">
+
+                                <button
+                                    className="flex items-center gap-2 rounded-lg border border-blue-600 px-5 py-3 font-medium text-blue-600 transition hover:bg-blue-50"
+                                >
+
+                                    <Plus size={18}/>
+
+                                    Thêm mặt hàng
+
+                                </button>
+
+
+                                <button
+                                    onClick={() => setShowConfirm(true)}
+                                    className="flex items-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+                                >
+
+                                    <Check size={18}/>
+
+                                    Xác nhận phiếu
+
+                                </button>
+
+                            </div>
+
+                        )
+                    }
+
+                </div>
 
             </div>
 
@@ -110,45 +173,37 @@ function ReceiptDetail() {
             />
 
 
-            <div className="mt-6 mb-3 flex justify-between">
-
-                <h2 className="text-xl font-semibold">
-                    Mặt hàng nhập kho
-                </h2>
-
-
-                {
-                    receipt.status === "DRAFT" && (
-
-                        <button
-                            className="rounded bg-blue-600 px-4 py-2 text-white"
-                        >
-                            + Thêm mặt hàng
-                        </button>
-
-                    )
-                }
-
-            </div>
-
-
             <ReceiptItemTable
-
                 items={receipt.items}
-
                 status={receipt.status}
-
                 onUpdate={(item) => console.log("update", item)}
-
                 onDelete={(item) => console.log("delete", item)}
-
             />
 
+
+            {
+                showConfirm && (
+
+                    <ConfirmDialog
+                        title="Xác nhận phiếu nhập"
+                        message="Bạn có chắc chắn muốn xác nhận phiếu nhập kho?"
+                        onConfirm={async () => {
+
+                            await handleConfirm();
+
+                            setShowConfirm(false);
+
+                        }}
+                        onCancel={() => setShowConfirm(false)}
+                    />
+
+                )
+            }
 
         </div>
 
     );
-}
 
+}
 
 export default ReceiptDetail;

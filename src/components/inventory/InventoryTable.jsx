@@ -11,7 +11,7 @@ function InventoryTable({ inventories }) {
 
             <table className="w-full">
 
-                <thead className="border-b border-pink-100 bg-pink-50">
+                <thead className="border-b border-pink-100">
 
                 <tr>
 
@@ -31,9 +31,9 @@ function InventoryTable({ inventories }) {
                         Tồn kho
                     </th>
 
-                    <th className="px-6 py-4 text-center">
-                        Thao tác
-                    </th>
+                    {/*<th className="px-6 py-4 text-center">*/}
+                    {/*    Thao tác*/}
+                    {/*</th>*/}
 
                 </tr>
 
@@ -80,23 +80,23 @@ function InventoryTable({ inventories }) {
                                     {inventory.quantity}
                                 </td>
 
-                                <td className="px-6 py-4">
+                                {/*<td className="px-6 py-4">*/}
 
-                                    <div className="flex justify-center">
+                                {/*    <div className="flex justify-center">*/}
 
-                                        <button
-                                            onClick={() => navigate(`/inventories/${inventory.id}`)}
-                                            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"
-                                            title="Xem chi tiết"
-                                        >
+                                {/*        <button*/}
+                                {/*            onClick={() => navigate(`/inventories/${inventory.id}`)}*/}
+                                {/*            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"*/}
+                                {/*            title="Xem chi tiết"*/}
+                                {/*        >*/}
 
-                                            <Eye size={18} />
+                                {/*            <Eye size={18} />*/}
 
-                                        </button>
+                                {/*        </button>*/}
 
-                                    </div>
+                                {/*    </div>*/}
 
-                                </td>
+                                {/*</td>*/}
 
                             </tr>
 

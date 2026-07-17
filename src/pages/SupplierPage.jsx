@@ -5,6 +5,7 @@ import supplierApi from "../api/supplierApi.js";
 
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import SupplierTable from "../components/suppliers/SupplierTable.jsx";
 
@@ -21,16 +22,26 @@ function SupplierPage() {
 
     const [search, setSearch] = useState("");
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadSuppliers = async () => {
 
         try {
 
-            const response = await supplierApi.getAllSuppliers();
+            const response = await supplierApi.getAllSuppliers({
+                page,
+                size: pageSize,
+            });
 
-            console.log("Response:", response);
-            console.log("Response.data:", response.data);
+            const data = response.data.data;
 
-            setSuppliers(response.data.data.content);
+            setSuppliers(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -44,7 +55,7 @@ function SupplierPage() {
 
         loadSuppliers();
 
-    }, []);
+    }, [page, pageSize]);
 
     const filteredSuppliers = suppliers.filter((supplier) => {
 
@@ -99,6 +110,12 @@ function SupplierPage() {
 
                 onRefresh={loadSuppliers}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
             {

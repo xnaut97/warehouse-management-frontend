@@ -6,6 +6,7 @@ import userApi from "../api/userApi.js";
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import UserForm from "../components/users/UserForm.jsx";
 import ResetPasswordForm from "../components/users/ResetPasswordForm.jsx";
@@ -31,6 +32,12 @@ function UserPage() {
 
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadUsers = async () => {
 
         try {
@@ -38,9 +45,16 @@ function UserPage() {
             setLoading(true);
 
             const response =
-                await userApi.getAllUsers();
+                await userApi.getAllUsers({
+                    page,
+                    size: pageSize,
+                });
 
-            setUsers(response.data.data);
+            const data = response.data.data;
+
+            setUsers(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -58,7 +72,7 @@ function UserPage() {
 
         loadUsers();
 
-    }, []);
+    }, [page, pageSize]);
 
 
     const handleToggleStatus = (user) => {
@@ -150,6 +164,12 @@ function UserPage() {
                     setResetUser(user);
 
                 }}
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
 

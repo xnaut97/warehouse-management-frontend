@@ -8,6 +8,7 @@ import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
 import ConfirmDialog from "../components/common/ConfirmDialog.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import CustomerForm from "../components/customers/CustomerForm.jsx";
 import CustomerTable from "../components/customers/CustomerTable.jsx";
@@ -27,6 +28,12 @@ function CustomerPage() {
 
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
 
 
     const loadCustomers = async () => {
@@ -35,9 +42,16 @@ function CustomerPage() {
 
             setLoading(true);
 
-            const response = await customerApi.getAllCustomers();
+            const response = await customerApi.getAllCustomers({
+                page,
+                size: pageSize,
+            });
 
-            setCustomers(response.data.data.content);
+            const data = response.data.data;
+
+            setCustomers(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -57,7 +71,7 @@ function CustomerPage() {
 
         loadCustomers();
 
-    }, []);
+    }, [page, pageSize]);
 
 
 
@@ -204,6 +218,12 @@ function CustomerPage() {
 
                 onDelete={handleDelete}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
 

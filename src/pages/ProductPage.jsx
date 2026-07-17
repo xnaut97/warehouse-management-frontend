@@ -6,6 +6,7 @@ import productApi from "../api/productApi.js";
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import ProductForm from "../components/products/ProductForm.jsx";
 import ProductTable from "../components/products/ProductTable.jsx";
@@ -20,14 +21,27 @@ function ProductPage() {
 
     const [selectedProducts, setSelectedProducts] = useState(null);
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadProducts = async () => {
 
         try {
 
             const response =
-                await productApi.getProducts();
+                await productApi.getProducts({
+                    page,
+                    size: pageSize,
+                });
 
-            setProducts(response.data.data.content);
+            const data = response.data.data;
+
+            setProducts(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -41,7 +55,7 @@ function ProductPage() {
 
         loadProducts();
 
-    }, []);
+    }, [page, pageSize]);
 
     const filteredProducts = products.filter((products) => {
 
@@ -111,6 +125,12 @@ function ProductPage() {
 
                 onRefresh={loadProducts}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
             {

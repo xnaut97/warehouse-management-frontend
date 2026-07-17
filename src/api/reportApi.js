@@ -20,17 +20,17 @@ const reportApi = {
     getIssueMaterials: (params) =>
         api.get("/reports/issues/materials", { params }),
 
-    getInventoryRawMaterials: () =>
-        api.get("/reports/inventory/raw-materials"),
+    getInventoryRawMaterials: (params) =>
+        api.get("/reports/inventory/raw-materials", { params }),
 
     getInventoryHistory: (params) =>
         api.get("/reports/inventory/history", { params }),
 
-    getStocktaking: () =>
-        api.get("/reports/stocktaking"),
+    getStocktaking: (params) =>
+        api.get("/reports/stocktaking", { params }),
 
-    getStocktakingVariances: () =>
-        api.get("/reports/stocktaking/variances"),
+    getStocktakingVariances: (params) =>
+        api.get("/reports/stocktaking/variances", { params }),
 
     getStocktakingSummary: () =>
         api.get("/reports/stocktaking/summary"),

@@ -2,8 +2,13 @@ import api from "./axiosClient";
 
 const supplierApi = {
 
-    getAllSuppliers() {
-        return api.get("/suppliers");
+    getAllSuppliers(params) {
+        return api.get(
+            "/suppliers",
+            {
+                params
+            }
+        );
     },
 
     getSupplier(id) {

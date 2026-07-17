@@ -6,6 +6,7 @@ import materialApi from "../api/materialApi.js";
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import MaterialTable from "../components/materials/MaterialTable.jsx";
 import MaterialForm from "../components/materials/MaterialForm.jsx";
@@ -22,20 +23,33 @@ function MaterialPage() {
 
     const [selectedMaterial, setSelectedMaterial] = useState(null);
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadMaterials = async () => {
 
         try {
 
             const response =
-                await materialApi.getAllMaterials();
+                await materialApi.getAllMaterials({
+                    page,
+                    size: pageSize,
+                });
+
+            const data = response.data.data;
 
             setPageData(
-                response.data.data
+                data
             );
 
             setMaterials(
-                response.data.data.content
+                data.content
             );
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -49,7 +63,7 @@ function MaterialPage() {
 
         loadMaterials();
 
-    }, []);
+    }, [page, pageSize]);
 
     const filteredMaterials = materials.filter((material) => {
 
@@ -117,6 +131,12 @@ function MaterialPage() {
 
                 onRefresh={loadMaterials}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
             {

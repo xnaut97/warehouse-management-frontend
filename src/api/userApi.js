@@ -4,9 +4,14 @@ import api from "./axiosClient";
 const userApi = {
 
 
-    getAllUsers: () => {
+    getAllUsers: (params) => {
 
-        return api.get("/users");
+        return api.get(
+            "/users",
+            {
+                params
+            }
+        );
 
     },
 

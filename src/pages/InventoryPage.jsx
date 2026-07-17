@@ -4,6 +4,7 @@ import inventoryApi from "../api/inventoryApi.js";
 
 import PageHeader from "../components/common/PageHeader";
 import TableToolbar from "../components/common/TableToolbar";
+import Pagination from "../components/common/Pagination.jsx";
 
 import InventoryTable from "../components/inventory/InventoryTable";
 import InventoryStats from "../components/inventory/InventoryStats.jsx";
@@ -14,17 +15,26 @@ function InventoryPage() {
 
     const [search, setSearch] = useState("");
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadInventories = async () => {
 
         try {
 
             const response = await inventoryApi.getAll({
-                page: 0,
-                size: 20,
-                keyword: search
+                page,
+                size: pageSize,
             });
 
-            setInventories(response.data.data.content);
+            const data = response.data.data;
+
+            setInventories(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -38,19 +48,23 @@ function InventoryPage() {
 
         loadInventories();
 
-    }, []);
+    }, [page, pageSize]);
 
-    useEffect(() => {
+    const filteredInventories = inventories.filter((inventory) => {
 
-        const timeout = setTimeout(() => {
+        const keyword = search.toLowerCase();
 
-            loadInventories();
+        return (
 
-        }, 300);
+            inventory.materialCode.toLowerCase().includes(keyword) ||
 
-        return () => clearTimeout(timeout);
+            inventory.materialName.toLowerCase().includes(keyword) ||
 
-    }, [search]);
+            inventory.warehouse.toLowerCase().includes(keyword)
+
+        );
+
+    });
 
     return (
 
@@ -62,7 +76,7 @@ function InventoryPage() {
             />
 
             <InventoryStats
-                inventories={inventories}
+                inventories={filteredInventories}
             />
 
             <TableToolbar
@@ -71,7 +85,13 @@ function InventoryPage() {
             />
 
             <InventoryTable
-                inventories={inventories}
+                inventories={filteredInventories}
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
         </div>

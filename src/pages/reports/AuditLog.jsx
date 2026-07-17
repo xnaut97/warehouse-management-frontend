@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { FileClock, Pencil, Plus, Trash2 } from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Pagination from "../../components/common/Pagination.jsx";
 import StatCard from "../../components/common/StatCard.jsx";
 import ReportFilters, { FilterField, FilterInput, FilterSelect } from "../../components/reports/ReportFilters.jsx";
 import AuditLogTable from "../../components/reports/AuditLogTable.jsx";
-import { firstDayOfMonth, formatNumber, today, unwrap } from "../../components/reports/reportUtils.js";
+import { firstDayOfMonth, formatNumber, today } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
 
 function AuditLog() {
@@ -16,6 +17,9 @@ function AuditLog() {
         toDate: today()
     });
     const [logs, setLogs] = useState([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const loadLogs = async () => {
@@ -23,14 +27,19 @@ function AuditLog() {
                 username: filters.username || undefined,
                 action: filters.action || undefined,
                 fromDate: filters.fromDate,
-                toDate: filters.toDate
+                toDate: filters.toDate,
+                page,
+                size: pageSize,
             });
 
-            setLogs(unwrap(response, []));
+            const data = response.data.data;
+
+            setLogs(data.content);
+            setTotalPages(data.totalPages);
         };
 
         loadLogs().catch(console.log);
-    }, [filters]);
+    }, [filters, page, pageSize]);
 
     const counts = useMemo(() => ({
         create: logs.filter((item) => item.action === "CREATE").length,
@@ -89,6 +98,12 @@ function AuditLog() {
             </div>
 
             <AuditLogTable logs={logs} />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+            />
         </div>
     );
 }

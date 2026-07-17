@@ -1,48 +1,50 @@
 import { Pencil, Trash2 } from "lucide-react";
 
-
 function ReceiptItemTable({
                               items,
                               status,
                               onUpdate,
-                              onDelete
+                              onDelete,
                           }) {
 
     const editable = status === "DRAFT";
 
+    const formatCurrency = (value) =>
+        Number(value ?? 0).toLocaleString("vi-VN");
 
     return (
-        <div className="overflow-x-auto rounded-xl bg-white shadow">
 
-            <table className="w-full">
+        <div className="overflow-hidden rounded-xl shadow border border-pink-100">
 
-                <thead className="border-b bg-gray-50">
+            <table className="min-w-full">
 
-                <tr>
+                <thead className="bg-white">
 
-                    <th className="p-3 text-left">
+                <tr className="border-b border-pink-100">
+
+                    <th className="px-6 py-4 text-left text-md font-semibold text-slate-700">
                         Mã nguyên vật liệu
                     </th>
 
-                    <th className="p-3 text-left">
+                    <th className="px-6 py-4 text-left text-md font-semibold text-slate-700">
                         Tên nguyên vật liệu
                     </th>
 
-                    <th className="p-3">
+                    <th className="px-6 py-4 text-center text-md font-semibold text-slate-700">
                         Số lượng
                     </th>
 
-                    <th className="p-3">
+                    <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
                         Đơn giá
                     </th>
 
-                    <th className="p-3">
+                    <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
                         Thành tiền
                     </th>
 
                     {
                         editable && (
-                            <th className="p-3">
+                            <th className="w-32 px-6 py-4 text-center text-sm font-semibold text-slate-700">
                                 Thao tác
                             </th>
                         )
@@ -52,8 +54,7 @@ function ReceiptItemTable({
 
                 </thead>
 
-
-                <tbody>
+                <tbody className="divide-y divide-slate-100 bg-white">
 
                 {
                     items.length === 0 ? (
@@ -61,68 +62,64 @@ function ReceiptItemTable({
                         <tr>
 
                             <td
-                                colSpan={6}
-                                className="p-5 text-center text-gray-500"
+                                colSpan={editable ? 6 : 5}
+                                className="py-16 text-center text-slate-500"
                             >
-                                Không có mặt hàng nào
+                                Không có mặt hàng nào.
                             </td>
 
                         </tr>
 
                     ) : (
 
-                        items.map(item => (
+                        items.map((item) => (
 
                             <tr
                                 key={item.id}
-                                className="border-b hover:bg-gray-50"
+                                className="transition hover:bg-pink-50"
                             >
 
-                                <td className="p-3">
+                                <td className="px-6 py-4 text-slate-800">
                                     {item.materialCode}
                                 </td>
 
-
-                                <td>
+                                <td className="px-6 py-4 text-slate-700">
                                     {item.materialName}
                                 </td>
 
-
-                                <td className="text-center">
+                                <td className="px-6 py-4 text-center text-slate-700">
                                     {item.quantity}
                                 </td>
 
-
-                                <td className="text-center">
-                                    {item.unitPrice}
+                                <td className="px-6 py-4 text-right text-slate-700">
+                                    {formatCurrency(item.unitPrice)}
                                 </td>
 
-
-                                <td className="text-center">
-                                    {item.amount}
+                                <td className="px-6 py-4 text-right text-slate-800">
+                                    {formatCurrency(item.amount)}
                                 </td>
-
 
                                 {
                                     editable && (
 
-                                        <td className="text-center">
+                                        <td className="px-6 py-4">
 
-                                            <div className="flex justify-center gap-3">
+                                            <div className="flex justify-center gap-2">
 
                                                 <button
                                                     onClick={() => onUpdate(item)}
-                                                    className="text-blue-600 hover:text-blue-800"
+                                                    className="rounded-lg p-2 text-blue-600 transition hover:bg-blue-50 hover:text-blue-700"
+                                                    title="Chỉnh sửa"
                                                 >
-                                                    <Pencil size={17}/>
+                                                    <Pencil size={18} />
                                                 </button>
-
 
                                                 <button
                                                     onClick={() => onDelete(item)}
-                                                    className="text-red-600 hover:text-red-800"
+                                                    className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
+                                                    title="Xóa"
                                                 >
-                                                    <Trash2 size={17}/>
+                                                    <Trash2 size={18} />
                                                 </button>
 
                                             </div>
@@ -144,8 +141,9 @@ function ReceiptItemTable({
             </table>
 
         </div>
-    );
-}
 
+    );
+
+}
 
 export default ReceiptItemTable;

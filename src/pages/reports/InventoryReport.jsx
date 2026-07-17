@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Archive, CircleDollarSign, Warehouse } from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Pagination from "../../components/common/Pagination.jsx";
 import StatCard from "../../components/common/StatCard.jsx";
 import ReportFilters, { FilterField, FilterInput } from "../../components/reports/ReportFilters.jsx";
 import InventoryReportTable from "../../components/reports/InventoryReportTable.jsx";
-import { firstDayOfMonth, formatCurrency, formatNumber, sumBy, today, unwrap } from "../../components/reports/reportUtils.js";
+import { firstDayOfMonth, formatCurrency, formatNumber, sumBy, today } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
 
 function InventoryReport() {
@@ -18,23 +19,37 @@ function InventoryReport() {
     });
     const [inventories, setInventories] = useState([]);
     const [history, setHistory] = useState([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [totalPages, setTotalPages] = useState(0);
 
     const loadReport = async () => {
         const [inventoryResponse, historyResponse] = await Promise.all([
-            reportApi.getInventoryRawMaterials(),
+            reportApi.getInventoryRawMaterials({
+                page,
+                size: pageSize,
+            }),
             reportApi.getInventoryHistory({
                 fromDate: filters.fromDate,
-                toDate: filters.toDate
+                toDate: filters.toDate,
+                page,
+                size: pageSize,
             })
         ]);
 
-        setInventories(unwrap(inventoryResponse, []));
-        setHistory(unwrap(historyResponse, []));
+        const inventoryData = inventoryResponse.data.data;
+        const historyData = historyResponse.data.data;
+
+        setInventories(inventoryData.content);
+        setHistory(historyData.content);
+        setTotalPages(mode === "inventory"
+            ? inventoryData.totalPages
+            : historyData.totalPages);
     };
 
     useEffect(() => {
         loadReport().catch(console.log);
-    }, [filters.fromDate, filters.toDate]);
+    }, [filters.fromDate, filters.toDate, page, pageSize, mode]);
 
     const filteredInventories = useMemo(() => {
         const warehouse = filters.warehouse.toLowerCase();
@@ -76,14 +91,20 @@ function InventoryReport() {
             <div className="mb-6 flex gap-3">
                 <button
                     type="button"
-                    onClick={() => setMode("inventory")}
+                    onClick={() => {
+                        setMode("inventory");
+                        setPage(0);
+                    }}
                     className={`rounded-xl px-4 py-2 text-sm font-medium ${mode === "inventory" ? "bg-(--color-primary) text-white" : "bg-white text-gray-600"}`}
                 >
                     Tồn hiện tại
                 </button>
                 <button
                     type="button"
-                    onClick={() => setMode("history")}
+                    onClick={() => {
+                        setMode("history");
+                        setPage(0);
+                    }}
                     className={`rounded-xl px-4 py-2 text-sm font-medium ${mode === "history" ? "bg-(--color-primary) text-white" : "bg-white text-gray-600"}`}
                 >
                     Lịch sử tồn kho
@@ -131,6 +152,12 @@ function InventoryReport() {
                 mode={mode}
                 inventories={filteredInventories}
                 history={filteredHistory}
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
         </div>
     );

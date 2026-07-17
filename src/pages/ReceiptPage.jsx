@@ -7,6 +7,8 @@ import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 
 import ReceiptTable from "../components/receipts/ReceiptTable.jsx";
+import {useNavigate} from "react-router-dom";
+import Pagination from "../components/common/Pagination.jsx";
 
 
 function ReceiptPage() {
@@ -15,17 +17,28 @@ function ReceiptPage() {
 
     const [search, setSearch] = useState("");
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
+    const navigate = useNavigate();
 
     const loadReceipts = async () => {
 
         try {
 
             const response = await receiptApi.getAll({
-                page: 0,
-                size: 10
+                page,
+                size: pageSize,
             });
 
-            setReceipts(response.data.data.content);
+            const data = response.data.data;
+
+            setReceipts(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -40,7 +53,7 @@ function ReceiptPage() {
 
         loadReceipts();
 
-    }, []);
+    }, [page, pageSize]);
 
 
     const filteredReceipts = receipts.filter((receipt) => {
@@ -97,11 +110,15 @@ function ReceiptPage() {
                 onRefresh={loadReceipts}
 
                 onView={(id) => {
-
-                    console.log("View receipt:", id);
-
+                    navigate(`/receipts/${id}`);
                 }}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
         </div>

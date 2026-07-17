@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowUpFromLine, CircleDollarSign, PackageCheck } from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Pagination from "../../components/common/Pagination.jsx";
 import StatCard from "../../components/common/StatCard.jsx";
 import ReportFilters, { FilterField, FilterInput } from "../../components/reports/ReportFilters.jsx";
 import IssueReportTable from "../../components/reports/IssueReportTable.jsx";
-import { firstDayOfMonth, formatCurrency, formatNumber, pageContent, today, unwrap } from "../../components/reports/reportUtils.js";
+import { firstDayOfMonth, formatCurrency, formatNumber, today, unwrap } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
 import issueApi from "../../api/issueApi.js";
 
@@ -20,6 +21,9 @@ function IssueReport() {
     const [daily, setDaily] = useState({});
     const [customers, setCustomers] = useState([]);
     const [materials, setMaterials] = useState([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [totalPages, setTotalPages] = useState(0);
 
     const loadReport = async () => {
         const [
@@ -28,7 +32,10 @@ function IssueReport() {
             customersResponse,
             materialsResponse
         ] = await Promise.all([
-            issueApi.getAll({ page: 0, size: 200 }),
+            issueApi.getAll({
+                page,
+                size: pageSize,
+            }),
             reportApi.getIssueDaily({ date: filters.toDate || today() }),
             reportApi.getIssueCustomers({
                 fromDate: filters.fromDate,
@@ -40,7 +47,10 @@ function IssueReport() {
             })
         ]);
 
-        setIssues(pageContent(issuesResponse));
+        const data = issuesResponse.data.data;
+
+        setIssues(data.content);
+        setTotalPages(data.totalPages);
         setDaily(unwrap(dailyResponse, {}));
         setCustomers(unwrap(customersResponse, []));
         setMaterials(unwrap(materialsResponse, []));
@@ -48,7 +58,7 @@ function IssueReport() {
 
     useEffect(() => {
         loadReport().catch(console.log);
-    }, [filters.fromDate, filters.toDate]);
+    }, [filters.fromDate, filters.toDate, page, pageSize]);
 
     const filteredIssues = useMemo(() => {
         const customer = filters.customer.toLowerCase();
@@ -144,6 +154,12 @@ function IssueReport() {
             </div>
 
             <IssueReportTable issues={filteredIssues} />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+            />
         </div>
     );
 }

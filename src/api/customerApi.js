@@ -1,8 +1,13 @@
 import axios from './axiosClient.js';
 
 const customerApi = {
-    getAllCustomers: () => {
-        return axios.get('/customers');
+    getAllCustomers: (params) => {
+        return axios.get(
+            '/customers',
+            {
+                params
+            }
+        );
     },
 
     getCustomer: (id) => {

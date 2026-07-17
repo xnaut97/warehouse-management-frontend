@@ -6,7 +6,7 @@ function ReceiptDetailCard({
                            }) {
 
     return (
-        <div className="rounded-xl bg-white p-6 shadow">
+        <div className="rounded-xl bg-white p-8 shadow-sm">
 
             <div className="mb-5 flex justify-between">
 

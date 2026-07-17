@@ -6,6 +6,7 @@ import warehouseApi from "../api/warehouseApi.js";
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
+import Pagination from "../components/common/Pagination.jsx";
 
 import WarehouseTable from "../components/warehouses/WarehouseTable.jsx";
 import WarehouseForm from "../components/warehouses/WarehouseForm.jsx";
@@ -20,14 +21,27 @@ function WarehousePage() {
 
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
 
+    const [page, setPage] = useState(0);
+
+    const [pageSize, setPageSize] = useState(8);
+
+    const [totalPages, setTotalPages] = useState(0);
+
     const loadWarehouses = async () => {
 
         try {
 
             const response =
-                await warehouseApi.getAllWarehouses();
+                await warehouseApi.getAllWarehouses({
+                    page,
+                    size: pageSize,
+                });
 
-            setWarehouses(response.data.data.content);
+            const data = response.data.data;
+
+            setWarehouses(data.content);
+
+            setTotalPages(data.totalPages);
 
         } catch (error) {
 
@@ -41,7 +55,7 @@ function WarehousePage() {
 
         loadWarehouses();
 
-    }, []);
+    }, [page, pageSize]);
 
     const filteredWarehouses = warehouses.filter((warehouse) => {
 
@@ -111,6 +125,12 @@ function WarehousePage() {
 
                 onRefresh={loadWarehouses}
 
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
 
             {

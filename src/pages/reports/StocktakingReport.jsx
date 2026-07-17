@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CircleDollarSign, ClipboardCheck, Scale } from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Pagination from "../../components/common/Pagination.jsx";
 import StatCard from "../../components/common/StatCard.jsx";
 import ReportFilters, { FilterField, FilterInput } from "../../components/reports/ReportFilters.jsx";
 import StocktakingReportTable from "../../components/reports/StocktakingReportTable.jsx";
@@ -14,22 +15,37 @@ function StocktakingReport() {
     const [records, setRecords] = useState([]);
     const [variances, setVariances] = useState([]);
     const [summary, setSummary] = useState({});
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const loadReport = async () => {
             const [recordsResponse, variancesResponse, summaryResponse] = await Promise.all([
-                reportApi.getStocktaking(),
-                reportApi.getStocktakingVariances(),
+                reportApi.getStocktaking({
+                    page,
+                    size: pageSize,
+                }),
+                reportApi.getStocktakingVariances({
+                    page,
+                    size: pageSize,
+                }),
                 reportApi.getStocktakingSummary()
             ]);
 
-            setRecords(unwrap(recordsResponse, []));
-            setVariances(unwrap(variancesResponse, []));
+            const recordsData = recordsResponse.data.data;
+            const variancesData = variancesResponse.data.data;
+
+            setRecords(recordsData.content);
+            setVariances(variancesData.content);
+            setTotalPages(mode === "records"
+                ? recordsData.totalPages
+                : variancesData.totalPages);
             setSummary(unwrap(summaryResponse, {}));
         };
 
         loadReport().catch(console.log);
-    }, []);
+    }, [page, pageSize, mode]);
 
     const filteredRecords = useMemo(() => {
         const value = keyword.toLowerCase();
@@ -63,14 +79,20 @@ function StocktakingReport() {
             <div className="mb-6 flex gap-3">
                 <button
                     type="button"
-                    onClick={() => setMode("records")}
+                    onClick={() => {
+                        setMode("records");
+                        setPage(0);
+                    }}
                     className={`rounded-xl px-4 py-2 text-sm font-medium ${mode === "records" ? "bg-(--color-primary) text-white" : "bg-white text-gray-600"}`}
                 >
                     Phiếu kiểm kê
                 </button>
                 <button
                     type="button"
-                    onClick={() => setMode("variances")}
+                    onClick={() => {
+                        setMode("variances");
+                        setPage(0);
+                    }}
                     className={`rounded-xl px-4 py-2 text-sm font-medium ${mode === "variances" ? "bg-(--color-primary) text-white" : "bg-white text-gray-600"}`}
                 >
                     Chênh lệch
@@ -97,6 +119,12 @@ function StocktakingReport() {
                 mode={mode}
                 records={filteredRecords}
                 variances={filteredVariances}
+            />
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
         </div>
     );
