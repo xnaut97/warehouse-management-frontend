@@ -1,8 +1,17 @@
 import Badge from "../common/Badge.jsx";
 import { formatCurrency, formatDate, formatNumber, toNumber } from "./reportUtils.js";
+import SortableHeader from "../common/SortableHeader.jsx";
 
-function StocktakingReportTable({ records = [], variances = [], mode = "records" }) {
+function StocktakingReportTable({
+    records = [],
+    variances = [],
+    mode = "records",
+    sortField,
+    sortDir,
+    onSort,
+}) {
     const isVariance = mode === "variances";
+    const sortProps = { sortField, sortDir, onSort };
 
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
@@ -10,21 +19,21 @@ function StocktakingReportTable({ records = [], variances = [], mode = "records"
                 <thead className="border-b border-pink-100">
                 {isVariance ? (
                     <tr>
-                        <th className="px-6 py-4 text-left">Mã phiếu</th>
-                        <th className="px-6 py-4 text-left">Mã vật tư</th>
-                        <th className="px-6 py-4 text-left">Tên vật tư</th>
-                        <th className="px-6 py-4 text-left">Sổ sách</th>
-                        <th className="px-6 py-4 text-left">Thực tế</th>
-                        <th className="px-6 py-4 text-left">Chênh lệch</th>
-                        <th className="px-6 py-4 text-left">Giá trị</th>
+                        <SortableHeader field="stocktakingNo"     label="Mã phiếu"    {...sortProps} className="text-left" />
+                        <SortableHeader field="materialCode"      label="Mã vật tư"   {...sortProps} className="text-left" />
+                        <SortableHeader field="materialName"      label="Tên vật tư"  {...sortProps} className="text-left" />
+                        <SortableHeader field="systemQuantity"    label="Sổ sách"     {...sortProps} className="text-left" />
+                        <SortableHeader field="physicalQuantity"  label="Thực tế"     {...sortProps} className="text-left" />
+                        <SortableHeader field="varianceQuantity"  label="Chênh lệch"  {...sortProps} className="text-left" />
+                        <SortableHeader field="varianceValue"     label="Giá trị"     {...sortProps} className="text-left" />
                     </tr>
                 ) : (
                     <tr>
-                        <th className="px-6 py-4 text-left">Mã phiếu</th>
-                        <th className="px-6 py-4 text-left">Kho</th>
-                        <th className="px-6 py-4 text-left">Ngày kiểm kê</th>
-                        <th className="px-6 py-4 text-left">Người kiểm kê</th>
-                        <th className="px-6 py-4 text-center">Trạng thái</th>
+                        <SortableHeader field="stocktakingNo"    label="Mã phiếu"      {...sortProps} className="text-left" />
+                        <SortableHeader field="warehouse"        label="Kho"            {...sortProps} className="text-left" />
+                        <SortableHeader field="stocktakingDate"  label="Ngày kiểm kê"  {...sortProps} className="text-left" />
+                        <SortableHeader field="createdBy"        label="Người kiểm kê" {...sortProps} className="text-left" />
+                        <SortableHeader field="status"           label="Trạng thái"    {...sortProps} className="text-center" />
                     </tr>
                 )}
                 </thead>
@@ -38,9 +47,11 @@ function StocktakingReportTable({ records = [], variances = [], mode = "records"
                         </tr>
                     ) : variances.map((item) => {
                         const largeVariance = Math.abs(toNumber(item.varianceQuantity)) >= 10;
-
                         return (
-                            <tr key={`${item.stocktakingNo}-${item.materialCode}`} className="border-b border-pink-100 transition hover:bg-pink-50">
+                            <tr
+                                key={`${item.stocktakingNo}-${item.materialCode}`}
+                                className="border-b border-pink-100 transition hover:bg-pink-50"
+                            >
                                 <td className="px-6 py-4 text-sm text-slate-700">{item.stocktakingNo}</td>
                                 <td className="px-6 py-4 text-sm text-slate-700">{item.materialCode}</td>
                                 <td className="px-6 py-4 text-sm text-slate-700">{item.materialName}</td>

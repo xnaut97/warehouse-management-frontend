@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import {Edit, Pencil, Trash2} from "lucide-react";
 
 function ReceiptItemTable({
                               items,
@@ -44,7 +44,7 @@ function ReceiptItemTable({
 
                     {
                         editable && (
-                            <th className="w-32 px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                            <th className="w-32 px-6 py-4 text-center text-md font-semibold text-slate-700">
                                 Thao tác
                             </th>
                         )
@@ -108,15 +108,15 @@ function ReceiptItemTable({
 
                                                 <button
                                                     onClick={() => onUpdate(item)}
-                                                    className="rounded-lg p-2 text-blue-600 transition hover:bg-blue-50 hover:text-blue-700"
+                                                    className="rounded-lg p-2 text-(--color-primary) transition hover:text-(--color-primary-hover)"
                                                     title="Chỉnh sửa"
                                                 >
-                                                    <Pencil size={18} />
+                                                    <Edit size={18} />
                                                 </button>
 
                                                 <button
                                                     onClick={() => onDelete(item)}
-                                                    className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
+                                                    className="rounded-lg p-2 text-(--color-primary) transition hover:text-(--color-primary-hover)"
                                                     title="Xóa"
                                                 >
                                                     <Trash2 size={18} />

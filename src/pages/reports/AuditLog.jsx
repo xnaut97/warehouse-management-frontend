@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileClock, Pencil, Plus, Trash2 } from "lucide-react";
+import {Edit, FileClock, Pencil, Plus, Trash2} from "lucide-react";
 
 import PageHeader from "../../components/common/PageHeader.jsx";
 import Pagination from "../../components/common/Pagination.jsx";
@@ -8,6 +8,8 @@ import ReportFilters, { FilterField, FilterInput, FilterSelect } from "../../com
 import AuditLogTable from "../../components/reports/AuditLogTable.jsx";
 import { firstDayOfMonth, formatNumber, today } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
+import useSort from "../../hooks/useSort.js";
+
 
 function AuditLog() {
     const [filters, setFilters] = useState({
@@ -20,6 +22,8 @@ function AuditLog() {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(8);
     const [totalPages, setTotalPages] = useState(0);
+    const { sortField, sortDir, onSort, sortParam } = useSort("createdAt", "desc");
+
 
     useEffect(() => {
         const loadLogs = async () => {
@@ -30,7 +34,9 @@ function AuditLog() {
                 toDate: filters.toDate,
                 page,
                 size: pageSize,
+                sort: sortParam,
             });
+
 
             const data = response.data.data;
 
@@ -39,7 +45,8 @@ function AuditLog() {
         };
 
         loadLogs().catch(console.log);
-    }, [filters, page, pageSize]);
+    }, [filters, page, pageSize, sortParam]);
+
 
     const counts = useMemo(() => ({
         create: logs.filter((item) => item.action === "CREATE").length,
@@ -93,11 +100,11 @@ function AuditLog() {
             <div className="mb-6 grid gap-6 md:grid-cols-4">
                 <StatCard title="Tổng nhật ký" value={formatNumber(logs.length)} icon={<FileClock size={24} className="text-pink-600" />} />
                 <StatCard title="Create" value={formatNumber(counts.create)} icon={<Plus size={24} className="text-emerald-600" />} />
-                <StatCard title="Update" value={formatNumber(counts.update)} icon={<Pencil size={24} className="text-orange-600" />} />
+                <StatCard title="Update" value={formatNumber(counts.update)} icon={<Edit size={24} className="text-orange-600" />} />
                 <StatCard title="Delete" value={formatNumber(counts.delete)} icon={<Trash2 size={24} className="text-red-600" />} />
             </div>
 
-            <AuditLogTable logs={logs} />
+            <AuditLogTable logs={logs} sortField={sortField} sortDir={sortDir} onSort={onSort} />
 
             <Pagination
                 page={page}

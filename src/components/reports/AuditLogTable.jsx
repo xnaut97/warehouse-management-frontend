@@ -1,5 +1,7 @@
 import Badge from "../common/Badge.jsx";
 import { formatDate } from "./reportUtils.js";
+import SortableHeader from "../common/SortableHeader.jsx";
+
 
 function actionLabel(action) {
     const labels = {
@@ -21,18 +23,20 @@ function actionColor(action) {
     return "gray";
 }
 
-function AuditLogTable({ logs = [] }) {
+function AuditLogTable({ logs = [], sortField, sortDir, onSort }) {
+    const sortProps = { sortField, sortDir, onSort };
+
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="min-w-[980px] w-full">
                 <thead className="border-b border-pink-100">
                 <tr>
-                    <th className="px-6 py-4 text-left">Thời gian</th>
-                    <th className="px-6 py-4 text-left">Người dùng</th>
-                    <th className="px-6 py-4 text-left">Hành động</th>
-                    <th className="px-6 py-4 text-left">Đối tượng</th>
-                    <th className="px-6 py-4 text-left">Mô tả</th>
-                    <th className="px-6 py-4 text-left">Địa chỉ IP</th>
+                    <SortableHeader field="createdAt"  label="Thời gian"  {...sortProps} className="text-left" />
+                    <SortableHeader field="username"   label="Người dùng" {...sortProps} className="text-left" />
+                    <SortableHeader field="action"     label="Hành động"  {...sortProps} className="text-left" />
+                    <SortableHeader field="entityType" label="Đối tượng"  {...sortProps} className="text-left" />
+                    <th className="px-6 py-4 text-left font-semibold text-slate-700">Mô tả</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-700">Địa chỉ IP</th>
                 </tr>
                 </thead>
                 <tbody>

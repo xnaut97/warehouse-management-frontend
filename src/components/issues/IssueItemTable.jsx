@@ -1,107 +1,126 @@
-function IssueItemTable({ items }) {
+import {Edit, Pencil, Trash2} from "lucide-react";
+
+function IssueItemTable({ items, status, onUpdate, onDelete }) {
+
+    const editable = status === "DRAFT";
+
+    const formatCurrency = (value) =>
+        Number(value ?? 0).toLocaleString("vi-VN");
 
     return (
-
-        <div className="overflow-x-auto rounded-xl border border-pink-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-pink-100 shadow">
 
             <table className="min-w-[760px] w-full">
 
-                <thead className="border-b border-pink-100 bg-pink-50">
+                <thead className="bg-white">
+                <tr className="border-b border-pink-100">
 
-                <tr>
-
-                    <th className="px-6 py-4 text-left">
+                    <th className="px-6 py-4 text-left text-md font-semibold text-slate-700">
                         Mã NVL
                     </th>
 
-                    <th className="px-6 py-4 text-left">
+                    <th className="px-6 py-4 text-left text-md font-semibold text-slate-700">
                         Tên nguyên vật liệu
                     </th>
 
-                    <th className="px-6 py-4 text-right">
+                    <th className="px-6 py-4 text-center text-md font-semibold text-slate-700">
                         Số lượng
                     </th>
 
-                    <th className="px-6 py-4 text-right">
+                    <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
                         Đơn giá
                     </th>
 
-                    <th className="px-6 py-4 text-right">
+                    <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
                         Thành tiền
                     </th>
 
-                </tr>
+                    {editable && (
+                        <th className="w-32 px-6 py-4 text-center text-sm font-semibold text-slate-700">
+                            Thao tác
+                        </th>
+                    )}
 
+                </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="divide-y divide-slate-100 bg-white">
 
-                {
-                    items.length === 0 ? (
+                {items.length === 0 ? (
 
-                        <tr>
+                    <tr>
+                        <td
+                            colSpan={editable ? 6 : 5}
+                            className="py-16 text-center text-slate-500"
+                        >
+                            Chưa có hàng hóa
+                        </td>
+                    </tr>
 
-                            <td
-                                colSpan={5}
-                                className="py-8 text-center text-slate-500"
-                            >
-                                Chưa có hàng hóa
+                ) : (
+
+                    items.map((item) => (
+
+                        <tr
+                            key={item.id}
+                            className="transition hover:bg-pink-50"
+                        >
+
+                            <td className="px-6 py-4 text-slate-800">
+                                {item.materialCode}
                             </td>
+
+                            <td className="px-6 py-4 text-slate-700">
+                                {item.materialName}
+                            </td>
+
+                            <td className="px-6 py-4 text-center text-slate-700">
+                                {item.quantity}
+                            </td>
+
+                            <td className="px-6 py-4 text-right text-slate-700">
+                                {formatCurrency(item.unitPrice)}
+                            </td>
+
+                            <td className="px-6 py-4 text-right font-semibold text-slate-800">
+                                {formatCurrency(item.amount)}
+                            </td>
+
+                            {editable && (
+                                <td className="px-6 py-4">
+                                    <div className="flex justify-center gap-2">
+
+                                        <button
+                                            onClick={() => onUpdate(item)}
+                                            className="rounded-lg p-2 text-blue-600 transition hover:bg-blue-50 hover:text-blue-700"
+                                            title="Chỉnh sửa"
+                                        >
+                                            <Edit size={18} />
+                                        </button>
+
+                                        <button
+                                            onClick={() => onDelete(item)}
+                                            className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
+                                            title="Xóa"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+
+                                    </div>
+                                </td>
+                            )}
 
                         </tr>
 
-                    ) : (
+                    ))
 
-                        items.map(item => (
-
-                            <tr
-                                key={item.id}
-                                className="border-b border-pink-100 hover:bg-pink-50"
-                            >
-
-                                <td className="px-6 py-4">
-
-                                    {item.materialCode}
-
-                                </td>
-
-                                <td className="px-6 py-4">
-
-                                    {item.materialName}
-
-                                </td>
-
-                                <td className="px-6 py-4 text-right">
-
-                                    {item.quantity}
-
-                                </td>
-
-                                <td className="px-6 py-4 text-right">
-
-                                    {item.unitPrice}
-
-                                </td>
-
-                                <td className="px-6 py-4 text-right font-semibold">
-
-                                    {item.amount}
-
-                                </td>
-
-                            </tr>
-
-                        ))
-
-                    )
-                }
+                )}
 
                 </tbody>
 
             </table>
 
         </div>
-
     );
 
 }

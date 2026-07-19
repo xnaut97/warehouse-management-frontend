@@ -1,61 +1,45 @@
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 
 import ReceiptStatusBadge from "./ReceiptStatusBadge.jsx";
+import SortableHeader from "../common/SortableHeader.jsx";
 
+function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }) {
 
-function ReceiptTable({
-                          receipts,
-                          onView
-                      }) {
-
+    const sortProps = { sortField, sortDir, onSort };
 
     return (
-
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
 
             <table className="min-w-[860px] w-full">
 
                 <thead className="border-b border-pink-100">
-
                 <tr>
 
-                    <th className="px-6 py-4 text-left">
-                        Số phiếu nhập
-                    </th>
+                    <SortableHeader field="receiptNo"   label="Số phiếu nhập"   {...sortProps} className="text-left" />
+                    <SortableHeader field="supplier"    label="Nhà cung cấp"    {...sortProps} className="text-left" />
+                    <SortableHeader field="warehouse"   label="Kho"             {...sortProps} className="text-left" />
+                    <SortableHeader field="receiptDate" label="Ngày"            {...sortProps} className="text-left" />
+                    <SortableHeader field="status"      label="Trạng thái"      {...sortProps} className="text-center" />
 
-
-                    <th className="px-6 py-4 text-left">
-                        Nhà cung cấp
-                    </th>
-
-
-                    <th className="px-6 py-4 text-left">
-                        Kho
-                    </th>
-
-
-                    <th className="px-6 py-4 text-left">
-                        Ngày
-                    </th>
-
-
-                    <th className="px-6 py-4 text-center">
-                        Trạng thái
-                    </th>
-
-
-                    <th className="px-6 py-4 text-center">
+                    <th className="px-6 py-4 text-center font-semibold text-slate-700">
                         Thao tác
                     </th>
 
                 </tr>
-
                 </thead>
-
 
                 <tbody>
 
-                {
+                {receipts.length === 0 ? (
+
+                    <tr>
+                        <td colSpan={6} className="px-6 py-10 text-center text-slate-500">
+                            Không có dữ liệu
+                        </td>
+                    </tr>
+
+                ) : (
+
                     receipts.map((receipt) => (
 
                         <tr
@@ -63,65 +47,63 @@ function ReceiptTable({
                             className="border-b border-pink-100 transition hover:bg-pink-50"
                         >
 
-                            <td className="px-6 py-4 text-sm text-slate-700">
+                            <td className="px-6 py-4 font-medium text-slate-800">
                                 {receipt.receiptNo}
                             </td>
-
 
                             <td className="px-6 py-4 text-sm text-slate-700">
                                 {receipt.supplier}
                             </td>
 
-
                             <td className="px-6 py-4 text-sm text-slate-700">
                                 {receipt.warehouse}
                             </td>
-
 
                             <td className="px-6 py-4 text-sm text-slate-700">
                                 {receipt.receiptDate}
                             </td>
 
-
                             <td className="px-6 py-4 text-center">
-                                <ReceiptStatusBadge
-                                    status={receipt.status}
-                                />
+                                <ReceiptStatusBadge status={receipt.status} />
                             </td>
 
-
                             <td className="px-6 py-4">
-
-                                <div className="flex justify-center">
+                                <div className="flex items-center justify-center gap-1">
 
                                     <button
                                         onClick={() => onView(receipt.id)}
                                         className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"
+                                        title="Xem chi tiết"
                                     >
-
-                                        <Eye size={18}/>
-
+                                        <Eye size={18} />
                                     </button>
 
+                                    {receipt.status === "DRAFT" && onDelete && (
+                                        <button
+                                            onClick={() => onDelete(receipt)}
+                                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                                            title="Xóa phiếu nhập"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    )}
+
                                 </div>
-
                             </td>
-
 
                         </tr>
 
                     ))
-                }
+
+                )}
 
                 </tbody>
 
             </table>
 
         </div>
-
     );
 
 }
-
 
 export default ReceiptTable;

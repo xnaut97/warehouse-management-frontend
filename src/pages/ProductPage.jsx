@@ -2,189 +2,106 @@ import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 import productApi from "../api/productApi.js";
+import useSort from "../hooks/useSort.js";
 
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Modal from "../components/common/Modal.jsx";
 import Pagination from "../components/common/Pagination.jsx";
-
 import ProductForm from "../components/products/ProductForm.jsx";
 import ProductTable from "../components/products/ProductTable.jsx";
 
 function ProductPage() {
 
     const [products, setProducts] = useState([]);
-
     const [search, setSearch] = useState("");
-
     const [showForm, setShowForm] = useState(false);
-
     const [selectedProducts, setSelectedProducts] = useState(null);
-
     const [page, setPage] = useState(0);
-
-    const [pageSize, setPageSize] = useState(8);
-
+    const [pageSize] = useState(8);
     const [totalPages, setTotalPages] = useState(0);
 
+    const { sortField, sortDir, onSort, sortParam } = useSort("name", "asc");
+
     const loadProducts = async () => {
-
         try {
-
-            const response =
-                await productApi.getProducts({
-                    page,
-                    size: pageSize,
-                });
-
+            const response = await productApi.getProducts({
+                page,
+                size: pageSize,
+                sort: sortParam,
+            });
             const data = response.data.data;
-
             setProducts(data.content);
-
             setTotalPages(data.totalPages);
-
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
+    useEffect(() => { setPage(0); }, [sortParam]);
+
     useEffect(() => {
-
         loadProducts();
+    }, [page, pageSize, sortParam]);
 
-    }, [page, pageSize]);
-
-    const filteredProducts = products.filter((products) => {
-
+    const filteredProducts = products.filter((product) => {
         const keyword = search.toLowerCase();
-
         return (
-
-            products.name.toLowerCase().includes(keyword) ||
-
-            products.code.toLowerCase().includes(keyword) ||
-
-            (products.address || "")
-                .toLowerCase()
-                .includes(keyword) ||
-
-            (products.managerName || "")
-                .toLowerCase()
-                .includes(keyword)
-
+            product.name.toLowerCase().includes(keyword) ||
+            product.code.toLowerCase().includes(keyword) ||
+            (product.address || "").toLowerCase().includes(keyword) ||
+            (product.managerName || "").toLowerCase().includes(keyword)
         );
-
     });
 
     return (
-
         <div>
 
             <PageHeader
-
                 title="Sản phẩm"
-
                 description="Quản lý sản phẩm."
-
                 actionLabel="Thêm sản phẩm"
-
                 actionIcon={<Plus size={18}/>}
-
                 onAction={() => {
-
                     setSelectedProducts(null);
-
                     setShowForm(true);
-
                 }}
-
             />
 
-            <TableToolbar
-
-                search={search}
-
-                setSearch={setSearch}
-
-            />
+            <TableToolbar search={search} setSearch={setSearch} />
 
             <ProductTable
-
                 products={filteredProducts}
-
                 onEdit={(product) => {
-
                     setSelectedProducts(product);
-
                     setShowForm(true);
-
                 }}
-
                 onRefresh={loadProducts}
-
+                sortField={sortField}
+                sortDir={sortDir}
+                onSort={onSort}
             />
 
-            <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-            />
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
-            {
-
-                showForm &&
-
+            {showForm && (
                 <Modal
-
-                    title={
-
-                        selectedProducts
-
-                            ? "Chỉnh sửa sản phẩm"
-
-                            : "Thêm sản phẩm"
-
-                    }
-
-                    onClose={() =>
-
-                        setShowForm(false)
-
-                    }
-
+                    title={selectedProducts ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"}
+                    onClose={() => setShowForm(false)}
                 >
-
                     <ProductForm
-
                         product={selectedProducts}
-
-                        onCancel={() =>
-
-                            setShowForm(false)
-
-                        }
-
+                        onCancel={() => setShowForm(false)}
                         onSuccess={() => {
-
                             setShowForm(false);
-
                             loadProducts();
-
                         }}
-
                     />
-
                 </Modal>
-
-            }
+            )}
 
         </div>
-
     );
-
 }
 
 export default ProductPage;

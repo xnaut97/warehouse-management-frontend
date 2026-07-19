@@ -1,7 +1,7 @@
 import {
-    Pencil,
     Lock,
-    Unlock, Edit
+    Unlock,
+    Edit
 } from "lucide-react";
 
 import { toast } from "react-hot-toast";

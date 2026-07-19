@@ -1,18 +1,21 @@
 import ReceiptStatusBadge from "../receipts/ReceiptStatusBadge.jsx";
 import { formatCurrency, formatDate } from "./reportUtils.js";
+import SortableHeader from "../common/SortableHeader.jsx";
 
-function ReceiptReportTable({ receipts = [] }) {
+function ReceiptReportTable({ receipts = [], sortField, sortDir, onSort }) {
+    const sortProps = { sortField, sortDir, onSort };
+
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="min-w-[920px] w-full">
                 <thead className="border-b border-pink-100">
                 <tr>
-                    <th className="px-6 py-4 text-left">Mã phiếu</th>
-                    <th className="px-6 py-4 text-left">Ngày nhập</th>
-                    <th className="px-6 py-4 text-left">Nhà cung cấp</th>
-                    <th className="px-6 py-4 text-left">Kho</th>
-                    <th className="px-6 py-4 text-left">Tổng tiền</th>
-                    <th className="px-6 py-4 text-center">Trạng thái</th>
+                    <SortableHeader field="receiptNo"    label="Mã phiếu"        {...sortProps} className="text-left" />
+                    <SortableHeader field="receiptDate"  label="Ngày nhập"        {...sortProps} className="text-left" />
+                    <SortableHeader field="supplier"     label="Nhà cung cấp"     {...sortProps} className="text-left" />
+                    <SortableHeader field="warehouse"    label="Kho"              {...sortProps} className="text-left" />
+                    <SortableHeader field="totalAmount"  label="Tổng tiền"        {...sortProps} className="text-left" />
+                    <SortableHeader field="status"       label="Trạng thái"       {...sortProps} className="text-center" />
                 </tr>
                 </thead>
                 <tbody>
