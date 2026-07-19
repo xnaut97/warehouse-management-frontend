@@ -22,62 +22,36 @@ function IssueReport() {
     const [customers, setCustomers] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [page, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(8);
+    const [pageSize] = useState(8);
     const [totalPages, setTotalPages] = useState(0);
 
-    const loadReport = async () => {
-        const [
-            issuesResponse,
-            dailyResponse,
-            customersResponse,
-            materialsResponse
-        ] = await Promise.all([
-            issueApi.getAll({
-                page,
-                size: pageSize,
-            }),
-            reportApi.getIssueDaily({ date: filters.toDate || today() }),
-            reportApi.getIssueCustomers({
-                fromDate: filters.fromDate,
-                toDate: filters.toDate
-            }),
-            reportApi.getIssueMaterials({
-                fromDate: filters.fromDate,
-                toDate: filters.toDate
-            })
-        ]);
-
-        const data = issuesResponse.data.data;
-
-        setIssues(data.content);
-        setTotalPages(data.totalPages);
-        setDaily(unwrap(dailyResponse, {}));
-        setCustomers(unwrap(customersResponse, []));
-        setMaterials(unwrap(materialsResponse, []));
-    };
-
     useEffect(() => {
+        const loadReport = async () => {
+            const [
+                issuesResponse,
+                dailyResponse,
+                customersResponse,
+                materialsResponse
+            ] = await Promise.all([
+                issueApi.getAll({ page, size: pageSize }),
+                reportApi.getIssueDaily({ date: filters.toDate || today() }),
+                reportApi.getIssueCustomers({ fromDate: filters.fromDate, toDate: filters.toDate }),
+                reportApi.getIssueMaterials({ fromDate: filters.fromDate, toDate: filters.toDate })
+            ]);
+
+            const data = issuesResponse.data.data;
+            setIssues(data.content);
+            setTotalPages(data.totalPages);
+            setDaily(unwrap(dailyResponse, {}));
+            setCustomers(unwrap(customersResponse, []));
+            setMaterials(unwrap(materialsResponse, []));
+        };
+
         loadReport().catch(console.log);
-    }, [filters.fromDate, filters.toDate, page, pageSize]);
-
-    const filteredIssues = useMemo(() => {
-        const customer = filters.customer.toLowerCase();
-
-        return issues.filter((issue) => {
-            const inDateRange =
-                (!filters.fromDate || issue.issueDate >= filters.fromDate) &&
-                (!filters.toDate || issue.issueDate <= filters.toDate);
-            const matchCustomer =
-                !customer ||
-                issue.customer?.toLowerCase().includes(customer);
-
-            return inDateRange && matchCustomer;
-        });
-    }, [issues, filters]);
+    }, [page, pageSize, filters.fromDate, filters.toDate]);
 
     const filteredMaterials = materials.filter((item) => {
         const keyword = filters.material.toLowerCase();
-
         return !keyword ||
             item.materialCode?.toLowerCase().includes(keyword) ||
             item.materialName?.toLowerCase().includes(keyword);
@@ -95,28 +69,28 @@ function IssueReport() {
                     <FilterInput
                         type="date"
                         value={filters.fromDate}
-                        onChange={(event) => setFilters({ ...filters, fromDate: event.target.value })}
+                        onChange={(e) => { setPage(0); setFilters({ ...filters, fromDate: e.target.value }); }}
                     />
                 </FilterField>
                 <FilterField label="Đến ngày">
                     <FilterInput
                         type="date"
                         value={filters.toDate}
-                        onChange={(event) => setFilters({ ...filters, toDate: event.target.value })}
+                        onChange={(e) => { setPage(0); setFilters({ ...filters, toDate: e.target.value }); }}
                     />
                 </FilterField>
                 <FilterField label="Khách hàng">
                     <FilterInput
                         value={filters.customer}
                         placeholder="Tìm theo khách hàng"
-                        onChange={(event) => setFilters({ ...filters, customer: event.target.value })}
+                        onChange={(e) => setFilters({ ...filters, customer: e.target.value })}
                     />
                 </FilterField>
                 <FilterField label="Thành phẩm">
                     <FilterInput
                         value={filters.material}
                         placeholder="Tìm theo mã hoặc tên"
-                        onChange={(event) => setFilters({ ...filters, material: event.target.value })}
+                        onChange={(e) => setFilters({ ...filters, material: e.target.value })}
                     />
                 </FilterField>
             </ReportFilters>
@@ -153,13 +127,9 @@ function IssueReport() {
                 </div>
             </div>
 
-            <IssueReportTable issues={filteredIssues} />
+            <IssueReportTable issues={filters.customer} />
 
-            <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-            />
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
     );
 }

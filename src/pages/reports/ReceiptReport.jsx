@@ -21,57 +21,35 @@ function ReceiptReport() {
     const [monthly, setMonthly] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [page, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(8);
+    const [pageSize] = useState(8);
     const [totalPages, setTotalPages] = useState(0);
 
-    const loadReport = async () => {
+    useEffect(() => {
         const year = new Date(filters.fromDate || today()).getFullYear();
 
-        const [
-            receiptsResponse,
-            dailyResponse,
-            monthlyResponse,
-            suppliersResponse
-        ] = await Promise.all([
-            receiptApi.getAll({
-                page,
-                size: pageSize,
-            }),
-            reportApi.getReceiptDaily({ date: filters.toDate || today() }),
-            reportApi.getReceiptMonthly({ year }),
-            reportApi.getReceiptSuppliers({
-                fromDate: filters.fromDate,
-                toDate: filters.toDate
-            })
-        ]);
+        const loadReport = async () => {
+            const [
+                receiptsResponse,
+                dailyResponse,
+                monthlyResponse,
+                suppliersResponse
+            ] = await Promise.all([
+                receiptApi.getAll({ page, size: pageSize }),
+                reportApi.getReceiptDaily({ date: filters.toDate || today() }),
+                reportApi.getReceiptMonthly({ year }),
+                reportApi.getReceiptSuppliers({ fromDate: filters.fromDate, toDate: filters.toDate })
+            ]);
 
-        const data = receiptsResponse.data.data;
+            const data = receiptsResponse.data.data;
+            setReceipts(data.content);
+            setTotalPages(data.totalPages);
+            setDaily(unwrap(dailyResponse, {}));
+            setMonthly(unwrap(monthlyResponse, []));
+            setSuppliers(unwrap(suppliersResponse, []));
+        };
 
-        setReceipts(data.content);
-        setTotalPages(data.totalPages);
-        setDaily(unwrap(dailyResponse, {}));
-        setMonthly(unwrap(monthlyResponse, []));
-        setSuppliers(unwrap(suppliersResponse, []));
-    };
-
-    useEffect(() => {
         loadReport().catch(console.log);
-    }, [filters.fromDate, filters.toDate, page, pageSize]);
-
-    const filteredReceipts = useMemo(() => {
-        const supplier = filters.supplier.toLowerCase();
-
-        return receipts.filter((receipt) => {
-            const inDateRange =
-                (!filters.fromDate || receipt.receiptDate >= filters.fromDate) &&
-                (!filters.toDate || receipt.receiptDate <= filters.toDate);
-            const matchSupplier =
-                !supplier ||
-                receipt.supplier?.toLowerCase().includes(supplier);
-
-            return inDateRange && matchSupplier;
-        });
-    }, [receipts, filters]);
+    }, [page, pageSize, filters.fromDate, filters.toDate]);
 
     const monthlyTotalAmount = sumBy(monthly, "totalAmount");
 
@@ -87,29 +65,29 @@ function ReceiptReport() {
                     <FilterInput
                         type="date"
                         value={filters.fromDate}
-                        onChange={(event) => setFilters({ ...filters, fromDate: event.target.value })}
+                        onChange={(e) => { setPage(0); setFilters({ ...filters, fromDate: e.target.value }); }}
                     />
                 </FilterField>
                 <FilterField label="Đến ngày">
                     <FilterInput
                         type="date"
                         value={filters.toDate}
-                        onChange={(event) => setFilters({ ...filters, toDate: event.target.value })}
+                        onChange={(e) => { setPage(0); setFilters({ ...filters, toDate: e.target.value }); }}
                     />
                 </FilterField>
                 <FilterField label="Nhà cung cấp">
                     <FilterInput
                         value={filters.supplier}
                         placeholder="Tìm theo nhà cung cấp"
-                        onChange={(event) => setFilters({ ...filters, supplier: event.target.value })}
+                        onChange={(e) => setFilters({ ...filters, supplier: e.target.value })}
                     />
                 </FilterField>
             </ReportFilters>
 
             <div className="mb-6 grid gap-6 md:grid-cols-3">
-                <StatCard title="Phiếu nhập trong ngày" value={formatNumber(daily.totalReceipts)} icon={<ArrowDownToLine size={24} className="text-emerald-600" />} />
-                <StatCard title="Tổng số lượng" value={formatNumber(daily.totalQuantity)} icon={<PackageCheck size={24} className="text-pink-600" />} />
-                <StatCard title="Tổng tiền theo tháng" value={formatCurrency(monthlyTotalAmount)} icon={<CircleDollarSign size={24} className="text-sky-600" />} />
+                <StatCard title="Phiếu nhập trong ngày" value={formatNumber(daily.totalReceipts)}  icon={<ArrowDownToLine  size={24} className="text-emerald-600" />} />
+                <StatCard title="Tổng số lượng"         value={formatNumber(daily.totalQuantity)}  icon={<PackageCheck     size={24} className="text-pink-600"    />} />
+                <StatCard title="Tổng tiền theo tháng"  value={formatCurrency(monthlyTotalAmount)} icon={<CircleDollarSign size={24} className="text-sky-600"     />} />
             </div>
 
             <div className="mb-6 grid gap-6 xl:grid-cols-2">
@@ -138,13 +116,9 @@ function ReceiptReport() {
                 </div>
             </div>
 
-            <ReceiptReportTable receipts={filteredReceipts} />
+            <ReceiptReportTable receipts={filters.supplier} />
 
-            <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-            />
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
     );
 }

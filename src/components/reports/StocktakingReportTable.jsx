@@ -1,17 +1,8 @@
 import Badge from "../common/Badge.jsx";
 import { formatCurrency, formatDate, formatNumber, toNumber } from "./reportUtils.js";
-import SortableHeader from "../common/SortableHeader.jsx";
 
-function StocktakingReportTable({
-    records = [],
-    variances = [],
-    mode = "records",
-    sortField,
-    sortDir,
-    onSort,
-}) {
+function StocktakingReportTable({ records = [], variances = [], mode = "records" }) {
     const isVariance = mode === "variances";
-    const sortProps = { sortField, sortDir, onSort };
 
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
@@ -19,21 +10,21 @@ function StocktakingReportTable({
                 <thead className="border-b border-pink-100">
                 {isVariance ? (
                     <tr>
-                        <SortableHeader field="stocktakingNo"     label="Mã phiếu"    {...sortProps} className="text-left" />
-                        <SortableHeader field="materialCode"      label="Mã vật tư"   {...sortProps} className="text-left" />
-                        <SortableHeader field="materialName"      label="Tên vật tư"  {...sortProps} className="text-left" />
-                        <SortableHeader field="systemQuantity"    label="Sổ sách"     {...sortProps} className="text-left" />
-                        <SortableHeader field="physicalQuantity"  label="Thực tế"     {...sortProps} className="text-left" />
-                        <SortableHeader field="varianceQuantity"  label="Chênh lệch"  {...sortProps} className="text-left" />
-                        <SortableHeader field="varianceValue"     label="Giá trị"     {...sortProps} className="text-left" />
+                        <th className="px-6 py-4 text-left">Mã phiếu</th>
+                        <th className="px-6 py-4 text-left">Mã vật tư</th>
+                        <th className="px-6 py-4 text-left">Tên vật tư</th>
+                        <th className="px-6 py-4 text-left">Sổ sách</th>
+                        <th className="px-6 py-4 text-left">Thực tế</th>
+                        <th className="px-6 py-4 text-left">Chênh lệch</th>
+                        <th className="px-6 py-4 text-left">Giá trị</th>
                     </tr>
                 ) : (
                     <tr>
-                        <SortableHeader field="stocktakingNo"    label="Mã phiếu"      {...sortProps} className="text-left" />
-                        <SortableHeader field="warehouse"        label="Kho"            {...sortProps} className="text-left" />
-                        <SortableHeader field="stocktakingDate"  label="Ngày kiểm kê"  {...sortProps} className="text-left" />
-                        <SortableHeader field="createdBy"        label="Người kiểm kê" {...sortProps} className="text-left" />
-                        <SortableHeader field="status"           label="Trạng thái"    {...sortProps} className="text-center" />
+                        <th className="px-6 py-4 text-left">Mã phiếu</th>
+                        <th className="px-6 py-4 text-left">Kho</th>
+                        <th className="px-6 py-4 text-left">Ngày kiểm kê</th>
+                        <th className="px-6 py-4 text-left">Người kiểm kê</th>
+                        <th className="px-6 py-4 text-center">Trạng thái</th>
                     </tr>
                 )}
                 </thead>

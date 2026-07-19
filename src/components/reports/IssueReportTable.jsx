@@ -1,21 +1,18 @@
 import IssueStatusBadge from "../issues/IssueStatusBadge.jsx";
 import { formatCurrency, formatDate } from "./reportUtils.js";
-import SortableHeader from "../common/SortableHeader.jsx";
 
-function IssueReportTable({ issues = [], sortField, sortDir, onSort }) {
-    const sortProps = { sortField, sortDir, onSort };
-
+function IssueReportTable({ issues = [] }) {
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="min-w-[920px] w-full">
                 <thead className="border-b border-pink-100">
                 <tr>
-                    <SortableHeader field="issueNo"      label="Mã phiếu"   {...sortProps} className="text-left" />
-                    <SortableHeader field="issueDate"    label="Ngày xuất"   {...sortProps} className="text-left" />
-                    <SortableHeader field="customer"     label="Khách hàng"  {...sortProps} className="text-left" />
-                    <SortableHeader field="warehouse"    label="Kho"         {...sortProps} className="text-left" />
-                    <SortableHeader field="totalAmount"  label="Tổng tiền"   {...sortProps} className="text-left" />
-                    <SortableHeader field="status"       label="Trạng thái"  {...sortProps} className="text-center" />
+                    <th className="px-6 py-4 text-left">Mã phiếu</th>
+                    <th className="px-6 py-4 text-left">Ngày xuất</th>
+                    <th className="px-6 py-4 text-left">Khách hàng</th>
+                    <th className="px-6 py-4 text-left">Kho</th>
+                    <th className="px-6 py-4 text-left">Tổng tiền</th>
+                    <th className="px-6 py-4 text-center">Trạng thái</th>
                 </tr>
                 </thead>
                 <tbody>
