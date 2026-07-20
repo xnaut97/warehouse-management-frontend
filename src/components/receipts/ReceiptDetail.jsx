@@ -156,7 +156,8 @@ function ReceiptDetail() {
 
                             <button
                                 onClick={handleOpenAddItem}
-                                className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-5 py-3 font-medium text-blue-600 transition hover:bg-blue-50"
+                                className="flex items-center justify-center gap-2 rounded-lg border border-(--color-border) px-5 py-3 font-medium
+                                 text-(--color-primary) transition hover:bg-pink-100 hover:text-(--color-primary-hover)"
                             >
                                 <Plus size={18}/>
                                 Thêm mặt hàng
@@ -164,7 +165,8 @@ function ReceiptDetail() {
 
                             <button
                                 onClick={() => setShowConfirm(true)}
-                                className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+                                className="flex items-center justify-center gap-2 rounded-lg bg-(--color-primary) px-5 py-3 font-medium
+                                 text-white transition hover:bg-(--color-primary-hover)"
                             >
                                 <Check size={18}/>
                                 Xác nhận phiếu
@@ -214,7 +216,6 @@ function ReceiptDetail() {
             )}
 
 
-            {/* Confirm receipt dialog */}
             {showConfirm && (
                 <ConfirmDialog
                     title="Xác nhận phiếu nhập"
@@ -228,7 +229,6 @@ function ReceiptDetail() {
             )}
 
 
-            {/* Delete item dialog */}
             {showDeleteItem && (
                 <ConfirmDialog
                     title="Xóa mặt hàng"

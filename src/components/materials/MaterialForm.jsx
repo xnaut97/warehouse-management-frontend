@@ -233,7 +233,8 @@ function MaterialForm({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-xl border px-5 py-2.5"
+                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
+                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
                 >
 
                     Hủy
@@ -242,14 +243,8 @@ function MaterialForm({
 
                 <button
                     type="submit"
-                    className="
-                        rounded-xl
-                        bg-pink-500
-                        px-5
-                        py-2.5
-                        text-white
-                        hover:bg-pink-600
-                    "
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
                 >
 
                     {

@@ -19,10 +19,10 @@ function Button({
                 "disabled:cursor-not-allowed disabled:opacity-50",
 
                 {
-                    "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]":
+                    "bg-(--color-primary) text-white hover:bg-(--color-primary-hover)":
                         variant === "primary",
 
-                    "border border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-pink-50":
+                    "border border-(--color-border) bg-white text-(--color-primary) hover:bg-pink-50":
                         variant === "secondary",
 
                     "bg-red-500 text-white hover:bg-red-600":

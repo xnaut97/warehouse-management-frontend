@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, Plus } from "lucide-react";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {ArrowLeft, Check, Plus} from "lucide-react";
 import toast from "react-hot-toast";
 
 import issueApi from "../../api/issueApi.js";
@@ -13,7 +13,7 @@ import Modal from "../common/Modal.jsx";
 
 function IssueDetail() {
 
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
 
     const [issue, setIssue] = useState(null);
@@ -125,12 +125,11 @@ function IssueDetail() {
                 onClick={() => navigate("/issues")}
                 className="group flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-blue-600 sm:text-lg"
             >
-                <ArrowLeft size={18} className="transition group-hover:-translate-x-1" />
+                <ArrowLeft size={18} className="transition group-hover:-translate-x-1"/>
                 Quay lại danh sách phiếu xuất
             </button>
 
 
-            {/* Header card */}
             <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -156,17 +155,19 @@ function IssueDetail() {
 
                             <button
                                 onClick={handleOpenAddItem}
-                                className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-5 py-3 font-medium text-blue-600 transition hover:bg-blue-50"
+                                className="flex items-center justify-center gap-2 rounded-lg border border-(--color-border) px-5 py-3 font-medium
+                                 text-(--color-primary) transition hover:bg-pink-50 hover:text-(--color-primary-hover)"
                             >
-                                <Plus size={18} />
+                                <Plus size={18}/>
                                 Thêm hàng hóa
                             </button>
 
                             <button
                                 onClick={() => setShowConfirm(true)}
-                                className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+                                className="flex items-center justify-center gap-2 rounded-lg bg-(--color-primary-hover) px-5 py-3 font-medium
+                                 text-white transition hover:bg-(--color-primary)"
                             >
-                                <Check size={18} />
+                                <Check size={18}/>
                                 Xác nhận phiếu
                             </button>
 
@@ -178,30 +179,16 @@ function IssueDetail() {
             </div>
 
 
-            {/* Detail card */}
-            <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
-                <h2 className="mb-5 text-lg font-semibold text-slate-800">
-                    Thông tin phiếu xuất
-                </h2>
-                <IssueDetailCard issue={issue} />
-            </div>
+            <IssueDetailCard issue={issue}/>
+
+            <IssueItemTable
+                items={issue.items ?? []}
+                status={issue.status}
+                onUpdate={handleOpenEditItem}
+                onDelete={handleOpenDeleteItem}
+            />
 
 
-            {/* Items table */}
-            <div className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
-                <h2 className="mb-5 text-lg font-semibold text-slate-800">
-                    Danh sách hàng hóa
-                </h2>
-                <IssueItemTable
-                    items={issue.items ?? []}
-                    status={issue.status}
-                    onUpdate={handleOpenEditItem}
-                    onDelete={handleOpenDeleteItem}
-                />
-            </div>
-
-
-            {/* Add / Edit item modal */}
             {showItemForm && (
                 <Modal
                     title={selectedItem ? "Cập nhật hàng hóa" : "Thêm hàng hóa"}

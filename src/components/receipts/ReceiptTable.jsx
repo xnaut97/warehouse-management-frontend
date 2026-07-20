@@ -10,7 +10,7 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
 
-            <table className="min-w-[860px] w-full">
+            <table className="min-w-215 w-full">
 
                 <thead className="border-b border-pink-100">
                 <tr>
@@ -18,8 +18,8 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                     <SortableHeader field="receiptNo"   label="Số phiếu nhập"   {...sortProps} className="text-left" />
                     <SortableHeader field="supplier"    label="Nhà cung cấp"    {...sortProps} className="text-left" />
                     <SortableHeader field="warehouse"   label="Kho"             {...sortProps} className="text-left" />
-                    <SortableHeader field="receiptDate" label="Ngày"            {...sortProps} className="text-left" />
-                    <SortableHeader field="status"      label="Trạng thái"      {...sortProps} className="text-center" />
+                    <SortableHeader field="receiptDate" label="Ngày"            {...sortProps} className="text-right" />
+                    <SortableHeader field="status"      label="Trạng thái"      {...sortProps} className="text-right" />
 
                     <th className="px-6 py-4 text-center font-semibold text-slate-700">
                         Thao tác
@@ -72,7 +72,7 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
 
                                     <button
                                         onClick={() => onView(receipt.id)}
-                                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"
+                                        className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                         title="Xem chi tiết"
                                     >
                                         <Eye size={18} />
@@ -81,7 +81,7 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                                     {receipt.status === "DRAFT" && onDelete && (
                                         <button
                                             onClick={() => onDelete(receipt)}
-                                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                                            className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                             title="Xóa phiếu nhập"
                                         >
                                             <Trash2 size={18} />

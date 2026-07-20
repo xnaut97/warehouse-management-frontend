@@ -219,13 +219,8 @@ function UserForm({
 
             <button
 
-                className="
-                    w-full
-                    bg-(--color-primary)
-                    text-white
-                    py-2
-                    rounded
-                "
+                className="w-full rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
 
             >
 

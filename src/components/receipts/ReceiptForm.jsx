@@ -146,20 +146,21 @@ function ReceiptForm({ receipt, onSuccess, onCancel }) {
                 />
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
                 <button
                     type="button"
                     onClick={onCancel}
                     disabled={loading}
-                    className="rounded-xl border px-6 py-3 transition hover:bg-gray-100 disabled:opacity-50"
+                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
+                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
                 >
                     Hủy
                 </button>
                 <button
                     type="submit"
                     disabled={loading}
-                    className="rounded-xl bg-pink-500 px-6 py-3 font-medium text-white transition hover:bg-pink-600 disabled:opacity-50"
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
                 >
                     {loading
                         ? "Đang xử lý..."

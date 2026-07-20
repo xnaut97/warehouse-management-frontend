@@ -108,7 +108,7 @@ function ReceiptItemTable({
 
                                                 <button
                                                     onClick={() => onUpdate(item)}
-                                                    className="rounded-lg p-2 text-(--color-primary) transition hover:text-(--color-primary-hover)"
+                                                    className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                                     title="Chỉnh sửa"
                                                 >
                                                     <Edit size={18} />
@@ -116,7 +116,7 @@ function ReceiptItemTable({
 
                                                 <button
                                                     onClick={() => onDelete(item)}
-                                                    className="rounded-lg p-2 text-(--color-primary) transition hover:text-(--color-primary-hover)"
+                                                    className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                                     title="Xóa"
                                                 >
                                                     <Trash2 size={18} />

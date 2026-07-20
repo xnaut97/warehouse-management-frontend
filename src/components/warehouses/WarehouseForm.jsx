@@ -75,8 +75,7 @@ function WarehouseForm({
 
         try {
 
-            const response =
-                await userApi.getAllUsers();
+            const response = await userApi.getAllUsers();
 
             setUsers(
 
@@ -87,6 +86,8 @@ function WarehouseForm({
                 )
 
             );
+
+            console.log(users);
 
         } catch (error) {
 
@@ -441,14 +442,16 @@ function WarehouseForm({
 
             }
 
-            <div className="
+            <div
+                className="
                 flex
                 flex-col-reverse
                 sm:flex-row
                 sm:justify-end
                 gap-3
                 pt-4
-            ">
+            "
+            >
 
                 <button
 
@@ -456,14 +459,8 @@ function WarehouseForm({
 
                     onClick={onCancel}
 
-                    className="
-                        rounded-xl
-                        border
-                        px-6
-                        py-3
-                        transition
-                        hover:bg-gray-100
-                    "
+                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
+                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
 
                 >
 
@@ -475,16 +472,8 @@ function WarehouseForm({
 
                     type="submit"
 
-                    className="
-                        rounded-xl
-                        bg-pink-500
-                        px-6
-                        py-3
-                        font-medium
-                        text-white
-                        transition
-                        hover:bg-pink-600
-                    "
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
 
                 >
 

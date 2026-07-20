@@ -37,11 +37,27 @@ axiosClient.interceptors.request.use(
 
 axiosClient.interceptors.response.use(
 
-    (response) => response,
+    response => response,
 
-    (error) => {
+    error => {
 
-        if (error.response?.status === 401 && !isRedirecting) {
+        const status = error.response?.status;
+
+        const url = error.config?.url;
+
+        const token = authStore.getState().token;
+
+        if (
+
+            status === 401 &&
+
+            token &&
+
+            url !== "/auth/login" &&
+
+            !isRedirecting
+
+        ) {
 
             isRedirecting = true;
 
@@ -56,7 +72,6 @@ axiosClient.interceptors.response.use(
                 window.location.href = "/login";
 
             }, 1000);
-
 
         }
 

@@ -33,7 +33,7 @@ function ProductTable({ products, onEdit, onRefresh, sortField, sortDir, onSort 
                     products.map((product) => (
                         <tr
                             key={product.id}
-                            className="border-t border-[var(--color-border)] transition hover:bg-pink-50/50"
+                            className="border-t border-(--color-border) transition hover:bg-pink-50/50"
                         >
                             <td className="px-6 py-4">{product.name}</td>
                             <td className="px-6 py-4">{product.code}</td>

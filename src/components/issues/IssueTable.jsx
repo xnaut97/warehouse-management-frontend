@@ -91,7 +91,7 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
 
                                     <button
                                         onClick={() => handleView(issue.id)}
-                                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"
+                                        className="rounded-lg p-2 text-slate-600 transition  hover:text-(--color-primary-hover)"
                                         title="Xem chi tiết"
                                     >
                                         <Eye size={18} />
@@ -100,7 +100,7 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
                                     {issue.status === "DRAFT" && onDelete && (
                                         <button
                                             onClick={() => onDelete(issue)}
-                                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                                            className="rounded-lg p-2 text-slate-600 transition hover:text-(--color-primary-hover)"
                                             title="Xóa phiếu xuất"
                                         >
                                             <Trash2 size={18} />

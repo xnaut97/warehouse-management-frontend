@@ -339,8 +339,8 @@ function ProductForm({
 
                     onClick={onCancel}
 
-                    className="rounded-xl border px-6 py-3 transition hover:bg-gray-100"
-
+                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
+                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
                 >
 
                     Hủy
@@ -352,8 +352,8 @@ function ProductForm({
 
                     type="submit"
 
-                    className="rounded-xl bg-pink-500 px-6 py-3 font-medium text-white transition hover:bg-pink-600"
-
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
                 >
 
                     {

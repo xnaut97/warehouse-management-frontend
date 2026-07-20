@@ -70,17 +70,6 @@ function CustomerForm({
             >
 
 
-                <h2 className="mb-5 text-xl font-semibold text-slate-800">
-
-                    {
-                        customer
-                            ? "Cập nhật khách hàng"
-                            : "Thêm khách hàng"
-                    }
-
-                </h2>
-
-
 
                 {
                     [
@@ -94,7 +83,7 @@ function CustomerForm({
 
                         <div key={name}>
 
-                            <label className="mb-1 block text-sm text-slate-600">
+                            <label className="mb-1 block text-sm font-medium text-slate-800">
                                 {label}
                             </label>
 
@@ -118,7 +107,8 @@ function CustomerForm({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="rounded-lg border px-5 py-2.5 text-slate-600"
+                        className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
+                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
                     >
                         Hủy
                     </button>
@@ -126,7 +116,8 @@ function CustomerForm({
 
 
                     <button
-                        className="rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-white"
+                        className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
                     >
                         Lưu
                     </button>

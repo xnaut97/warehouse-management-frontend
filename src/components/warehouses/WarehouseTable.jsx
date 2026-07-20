@@ -43,7 +43,7 @@ function WarehouseTable({ warehouses, onEdit, onRefresh, sortField, sortDir, onS
                             <td className="px-6 py-4">{warehouse.code}</td>
                             <td className="px-6 py-4">{warehouse.managerName || "-"}</td>
                             <td className="px-6 py-4">{warehouse.address || "-"}</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-6 py-4 text-left">
                                 <Badge color={warehouse.enabled ? "green" : "red"}>
                                     {warehouse.enabled ? "Hoạt động" : "Đã khóa"}
                                 </Badge>

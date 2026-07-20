@@ -24,7 +24,8 @@ function PageHeader({
             {actionLabel && (
                 <Button
                     onClick={onAction}
-                    className="w-full sm:w-auto"
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
                 >
                     {actionIcon}
                     {actionLabel}

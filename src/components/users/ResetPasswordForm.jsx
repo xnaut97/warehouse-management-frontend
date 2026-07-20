@@ -49,7 +49,8 @@ function ResetPasswordForm({ user, onSuccess }) {
 
 
             <button
-                className="w-full bg-primary text-white py-2.5 rounded"
+                className="w-full rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
             >
                 Đặt lại mật khẩu
             </button>

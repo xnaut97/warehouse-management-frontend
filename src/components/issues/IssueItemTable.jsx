@@ -8,7 +8,7 @@ function IssueItemTable({ items, status, onUpdate, onDelete }) {
         Number(value ?? 0).toLocaleString("vi-VN");
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-pink-100 shadow">
+        <div className="overflow-x-auto rounded-xl border border-pink-100 shadow ">
 
             <table className="min-w-[760px] w-full">
 
@@ -92,7 +92,7 @@ function IssueItemTable({ items, status, onUpdate, onDelete }) {
 
                                         <button
                                             onClick={() => onUpdate(item)}
-                                            className="rounded-lg p-2 text-blue-600 transition hover:bg-blue-50 hover:text-blue-700"
+                                            className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                             title="Chỉnh sửa"
                                         >
                                             <Edit size={18} />
@@ -100,7 +100,7 @@ function IssueItemTable({ items, status, onUpdate, onDelete }) {
 
                                         <button
                                             onClick={() => onDelete(item)}
-                                            className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
+                                            className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                             title="Xóa"
                                         >
                                             <Trash2 size={18} />

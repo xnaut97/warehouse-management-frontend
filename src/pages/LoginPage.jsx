@@ -1,10 +1,11 @@
-import { useState } from "react";
+import {useState} from "react";
 import authApi from "../api/authApi.js";
 import authStore from "../store/authStore.js";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-hot-toast";
 
 
-function LoginPage(){
+function LoginPage() {
 
     const navigate = useNavigate();
 
@@ -13,16 +14,16 @@ function LoginPage(){
     );
 
 
-    const [username,setUsername] = useState("");
-    const [password,setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
 
-        try{
+        try {
 
             const response =
                 await authApi.login({
@@ -37,17 +38,18 @@ function LoginPage(){
             login(user, token);
 
             navigate("/");
-        }
-        catch(error){
+        } catch (error) {
 
             console.log(error);
 
-            alert("Đăng nhập thất bại");
+            toast.error(
+                error.response?.data?.message ||
+                "Đã xảy ra lỗi. Vui lòng thử lại."
+            );
 
         }
 
     }
-
 
 
     return (
@@ -99,7 +101,7 @@ function LoginPage(){
                     value={username}
 
                     onChange={
-                        e=>setUsername(e.target.value)
+                        e => setUsername(e.target.value)
                     }
 
                 />
@@ -122,7 +124,7 @@ function LoginPage(){
                     value={password}
 
                     onChange={
-                        e=>setPassword(e.target.value)
+                        e => setPassword(e.target.value)
                     }
 
                 />
@@ -130,14 +132,8 @@ function LoginPage(){
 
                 <button
 
-                    className="
-                        w-full
-                        bg-(--color-primary)
-                        text-white
-                        py-2
-                        rounded
-                        hover:bg-primary-hover
-                    "
+                    className="w-full rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
+                    hover:bg-(--color-primary) disabled:opacity-50"
 
                 >
 
