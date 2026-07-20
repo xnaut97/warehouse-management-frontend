@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import userApi from "../../api/userApi.js";
 
 
@@ -23,7 +24,10 @@ function ResetPasswordForm({ user, onSuccess }) {
 
             console.log(error);
 
-            alert("Đặt lại mật khẩu thất bại");
+            toast.error(
+                error.response?.data?.message ||
+                "Đặt lại mật khẩu thất bại"
+            );
 
         }
 

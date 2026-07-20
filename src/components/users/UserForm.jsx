@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import userApi from "../../api/userApi.js";
 
 function UserForm({
@@ -69,7 +70,8 @@ function UserForm({
 
             console.log(error);
 
-            alert(
+            toast.error(
+                error.response?.data?.message ||
                 "Thao tác thất bại"
             );
 

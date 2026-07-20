@@ -79,7 +79,7 @@ function WarehouseForm({
 
             setUsers(
 
-                response.data.data.filter(
+                response.data.data.content.filter(
 
                     user => user.enabled
 
