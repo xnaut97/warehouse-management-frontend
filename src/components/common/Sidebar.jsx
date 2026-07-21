@@ -28,8 +28,6 @@ function Sidebar({ isOpen = false, onClose }) {
 
         <>
 
-            {/* Mobile overlay */}
-
             <div
 
                 onClick={onClose}
@@ -90,8 +88,6 @@ function Sidebar({ isOpen = false, onClose }) {
 
             >
 
-                {/* Header */}
-
                 <div className="border-b border-(--color-border) p-5">
 
                     <div className="mb-4 flex justify-end lg:hidden">
@@ -141,8 +137,6 @@ function Sidebar({ isOpen = false, onClose }) {
                 </div>
 
 
-
-                {/* Menu */}
 
                 <div className="flex-1 overflow-y-auto px-4 py-6">
 

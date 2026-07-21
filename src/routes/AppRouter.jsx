@@ -1,5 +1,5 @@
 import {
-    BrowserRouter, Routes, Route
+    BrowserRouter, Routes, Route, Navigate
 } from "react-router-dom";
 
 import LoginPage from "../pages/LoginPage.jsx";
@@ -47,15 +47,7 @@ function AppRouter() {
 
                 <Route
                     path="/"
-                    element={<ProtectedRoute>
-
-                        <AppLayout>
-
-                            <DashboardPage/>
-
-                        </AppLayout>
-
-                    </ProtectedRoute>}
+                    element={<Navigate to="/dashboard" replace />}
                 />
 
                 <Route
