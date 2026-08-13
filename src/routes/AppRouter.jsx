@@ -34,6 +34,7 @@ import ProductReceiptDetailPage from "../pages/ProductReceiptDetailPage.jsx";
 import ProductIssueDetailPage from "../pages/ProductIssueDetailPage.jsx";
 import StocktakingPage from "../pages/StocktakingPage.jsx";
 import StocktakingDetailPage from "../pages/StocktakingDetailPage.jsx";
+import ProductDocumentNew from "../components/products/ProductDocumentNew.jsx";
 
 function AppRouter() {
 
@@ -170,7 +171,13 @@ function AppRouter() {
 
                 <Route
                     path="/receipts/:id"
-                    element={<ReceiptDetail/>}
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ReceiptDetail/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
                 />
 
                 {/*<Route*/}
@@ -349,6 +356,28 @@ function AppRouter() {
                         <ProtectedRoute>
                             <AppLayout>
                                 <StocktakingDetailPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/product-receipts/new"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ProductDocumentNew transactionType="RECEIPT"/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/product-issues/new"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ProductDocumentNew transactionType="ISSUE"/>
                             </AppLayout>
                         </ProtectedRoute>
                     }

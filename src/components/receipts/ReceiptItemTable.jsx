@@ -1,4 +1,4 @@
-import {Edit, Pencil, Trash2} from "lucide-react";
+import {Edit, Trash2} from "lucide-react";
 
 function ReceiptItemTable({
                               items,
@@ -10,7 +10,9 @@ function ReceiptItemTable({
     const editable = status === "DRAFT";
 
     const formatCurrency = (value) =>
-        Number(value ?? 0).toLocaleString("vi-VN");
+        value === null || value === undefined
+            ? "—"
+            : Number(value).toLocaleString("vi-VN");
 
     return (
 
@@ -30,12 +32,16 @@ function ReceiptItemTable({
                         Tên nguyên vật liệu
                     </th>
 
+                    <th className="px-6 py-4 text-left text-md font-semibold text-slate-700">
+                        ĐVT
+                    </th>
+
                     <th className="px-6 py-4 text-center text-md font-semibold text-slate-700">
                         Số lượng
                     </th>
 
                     <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
-                        Đơn giá
+                        Đơn giá nhập
                     </th>
 
                     <th className="px-6 py-4 text-right text-md font-semibold text-slate-700">
@@ -62,7 +68,7 @@ function ReceiptItemTable({
                         <tr>
 
                             <td
-                                colSpan={editable ? 6 : 5}
+                                colSpan={editable ? 7 : 6}
                                 className="py-16 text-center text-slate-500"
                             >
                                 Không có mặt hàng nào.
@@ -85,6 +91,10 @@ function ReceiptItemTable({
 
                                 <td className="px-6 py-4 text-slate-700">
                                     {item.materialName}
+                                </td>
+
+                                <td className="px-6 py-4 text-slate-700">
+                                    {item.unit || "—"}
                                 </td>
 
                                 <td className="px-6 py-4 text-center text-slate-700">

@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Plus, Trash2, Edit } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import productIssueApi from "../api/productIssueApi.js";
+
+import Loading from "../components/common/Loading.jsx";
+import Modal from "../components/common/Modal.jsx";
+import ConfirmDialog from "../components/common/ConfirmDialog.jsx";
+import EmptyState from "../components/common/EmptyState.jsx";
+import IssueStatusBadge from "../components/issues/IssueStatusBadge.jsx";
+import ProductDocumentItemForm from "../components/products/ProductDocumentItemForm.jsx";
+
+import { unwrapData } from "../utils/apiResponse.js";
+import { formatDate, formatNumber } from "../components/reports/reportUtils.js";
 
 function ProductIssueDetailPage() {
     const { id } = useParams();
@@ -12,43 +22,39 @@ function ProductIssueDetailPage() {
     const [issue, setIssue] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const loadIssue = async () => {
-        try {
-            setLoading(true);
+    const [showItemForm, setShowItemForm] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
-            const response =
-                await productIssueApi.getDetail(id);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
-            setIssue(response.data);
-        } catch (error) {
-            toast.error(
-                error.response?.data?.message ||
-                "Không thể tải phiếu xuất"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+    const loadIssue = () =>
+        productIssueApi.getDetail(id)
+            .then((response) => {
+                setIssue(unwrapData(response));
+            })
+            .catch((error) => {
+                toast.error(
+                    error.response?.data?.message ||
+                    "Không thể tải phiếu xuất"
+                );
+                setIssue(null);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
 
     useEffect(() => {
         loadIssue();
     }, [id]);
 
     const handleConfirm = async () => {
-        const confirmed = window.confirm(
-            "Xác nhận phiếu xuất này?"
-        );
-
-        if (!confirmed) {
-            return;
-        }
+        setShowConfirm(false);
 
         try {
             await productIssueApi.confirm(id);
 
-            toast.success(
-                "Đã xác nhận phiếu xuất"
-            );
+            toast.success("Đã xác nhận phiếu xuất");
 
             await loadIssue();
         } catch (error) {
@@ -59,24 +65,15 @@ function ProductIssueDetailPage() {
         }
     };
 
-    const handleDeleteItem = async (itemId) => {
-        const confirmed = window.confirm(
-            "Xóa sản phẩm này khỏi phiếu xuất?"
-        );
+    const handleDeleteItem = async () => {
+        const item = itemToDelete;
 
-        if (!confirmed) {
-            return;
-        }
+        setItemToDelete(null);
 
         try {
-            await productIssueApi.deleteItem(
-                id,
-                itemId
-            );
+            await productIssueApi.deleteItem(id, item.id);
 
-            toast.success(
-                "Đã xóa sản phẩm khỏi phiếu xuất"
-            );
+            toast.success("Đã xóa sản phẩm khỏi phiếu xuất");
 
             await loadIssue();
         } catch (error) {
@@ -88,21 +85,19 @@ function ProductIssueDetailPage() {
     };
 
     if (loading) {
-        return (
-            <div className="flex min-h-[400px] items-center justify-center">
-                <span className="text-sm text-slate-500">
-                    Đang tải dữ liệu...
-                </span>
-            </div>
-        );
+        return <Loading rows={6} />;
     }
 
     if (!issue) {
-        return null;
+        return (
+            <EmptyState
+                title="Không tìm thấy phiếu xuất"
+                description="Phiếu xuất sản phẩm không tồn tại hoặc đã bị xóa."
+            />
+        );
     }
 
-    const isDraft =
-        issue.status === "DRAFT";
+    const isDraft = issue.status === "DRAFT";
 
     return (
         <div className="space-y-6">
@@ -110,18 +105,20 @@ function ProductIssueDetailPage() {
                 <div>
                     <button
                         type="button"
-                        onClick={() =>
-                            navigate("/receipts-issues")
-                        }
-                        className="mb-3 flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800"
+                        onClick={() => navigate("/receipts-issues")}
+                        className="mb-3 flex items-center gap-2 text-sm text-slate-500 transition hover:text-(--color-primary-hover)"
                     >
                         <ArrowLeft size={16} />
                         Quay lại
                     </button>
 
-                    <h1 className="text-2xl font-bold text-slate-800">
-                        Phiếu xuất sản phẩm
-                    </h1>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <h1 className="text-2xl font-bold text-slate-800">
+                            Phiếu xuất sản phẩm
+                        </h1>
+
+                        <IssueStatusBadge status={issue.status} />
+                    </div>
 
                     <p className="mt-1 text-sm text-slate-500">
                         {issue.issueNo}
@@ -132,12 +129,11 @@ function ProductIssueDetailPage() {
                     <div className="flex gap-3">
                         <button
                             type="button"
-                            onClick={() =>
-                                navigate(
-                                    `/product-issues/${id}/items/new`
-                                )
-                            }
-                            className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white hover:bg-(--color-primary)"
+                            onClick={() => {
+                                setSelectedItem(null);
+                                setShowItemForm(true);
+                            }}
+                            className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white transition hover:bg-(--color-primary)"
                         >
                             <Plus size={18} />
                             Thêm sản phẩm
@@ -145,9 +141,9 @@ function ProductIssueDetailPage() {
 
                         <button
                             type="button"
-                            onClick={handleConfirm}
+                            onClick={() => setShowConfirm(true)}
                             disabled={!issue.items?.length}
-                            className="flex items-center gap-2 rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 transition hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <Check size={18} />
                             Xác nhận
@@ -164,17 +160,17 @@ function ProductIssueDetailPage() {
 
                 <InfoCard
                     label="Kho"
-                    value={issue.warehouse || "-"}
+                    value={issue.warehouse || "—"}
                 />
 
                 <InfoCard
                     label="Ngày xuất"
-                    value={issue.issueDate || "-"}
+                    value={formatDate(issue.issueDate) || "—"}
                 />
 
                 <InfoCard
                     label="Khách hàng"
-                    value={issue.customer || "-"}
+                    value={issue.customer || "—"}
                 />
             </div>
 
@@ -182,36 +178,40 @@ function ProductIssueDetailPage() {
                 <table className="min-w-[1100px] w-full">
                     <thead className="border-b border-pink-100">
                     <tr>
-                        <th className="px-6 py-4 text-left">
-                            SẢN PHẨM
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
+                            MÃ SẢN PHẨM
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
+                            TÊN SẢN PHẨM
+                        </th>
+
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             ĐVT
                         </th>
 
-                        <th className="px-6 py-4 text-center">
+                        <th className="px-6 py-4 text-right font-semibold text-slate-700">
                             SỐ LƯỢNG
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             LÔ
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             HSD
                         </th>
 
-                        <th className="px-6 py-4 text-right">
+                        <th className="px-6 py-4 text-right font-semibold text-slate-700">
                             ĐƠN GIÁ XUẤT
                         </th>
 
-                        <th className="px-6 py-4 text-right">
+                        <th className="px-6 py-4 text-right font-semibold text-slate-700">
                             THÀNH TIỀN
                         </th>
 
                         {isDraft && (
-                            <th className="px-6 py-4 text-center">
+                            <th className="px-6 py-4 text-center font-semibold text-slate-700">
                                 THAO TÁC
                             </th>
                         )}
@@ -221,57 +221,49 @@ function ProductIssueDetailPage() {
                     <tbody>
                     {!issue.items?.length ? (
                         <tr>
-                            <td
-                                colSpan={
-                                    isDraft ? 8 : 7
-                                }
-                                className="py-12 text-center text-slate-500"
-                            >
-                                Phiếu chưa có sản phẩm.
+                            <td colSpan={isDraft ? 9 : 8}>
+                                <EmptyState
+                                    title="Phiếu chưa có sản phẩm"
+                                    description="Thêm sản phẩm để hoàn tất phiếu xuất."
+                                />
                             </td>
                         </tr>
                     ) : (
                         issue.items.map((item) => (
                             <tr
                                 key={item.id}
-                                className="border-t border-(--color-border)"
+                                className="border-t border-(--color-border) transition hover:bg-pink-50"
                             >
-                                <td className="px-6 py-4">
-                                    <p className="font-semibold">
-                                        {item.productName}
-                                    </p>
-
-                                    <p className="text-sm text-slate-500">
-                                        {item.productCode}
-                                    </p>
+                                <td className="px-6 py-4 font-medium text-slate-800">
+                                    {item.productCode}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.unit || "-"}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.productName}
                                 </td>
 
-                                <td className="px-6 py-4 text-center">
-                                    {item.quantity}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.unit || "—"}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.lotNumber || "-"}
+                                <td className="px-6 py-4 text-right text-sm text-slate-700">
+                                    {formatNumber(item.quantity)}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.expirationDate || "-"}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.lotNumber || "—"}
                                 </td>
 
-                                <td className="px-6 py-4 text-right">
-                                    {formatMoney(
-                                        item.unitPrice
-                                    )}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {formatDate(item.expirationDate) || "—"}
                                 </td>
 
-                                <td className="px-6 py-4 text-right">
-                                    {formatMoney(
-                                        item.amount
-                                    )}
+                                <td className="px-6 py-4 text-right text-sm text-slate-700">
+                                    {formatMoney(item.unitPrice)}
+                                </td>
+
+                                <td className="px-6 py-4 text-right text-sm text-slate-800">
+                                    {formatMoney(item.amount)}
                                 </td>
 
                                 {isDraft && (
@@ -279,28 +271,23 @@ function ProductIssueDetailPage() {
                                         <div className="flex justify-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/product-issues/${id}/items/${item.id}/edit`
-                                                    )
-                                                }
-                                                className="rounded-xl px-3 py-2 text-sm text-slate-500 hover:bg-pink-50 hover:text-(--color-primary)"
+                                                onClick={() => {
+                                                    setSelectedItem(item);
+                                                    setShowItemForm(true);
+                                                }}
+                                                className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
+                                                title="Chỉnh sửa"
                                             >
-                                                Sửa
+                                                <Edit size={18} />
                                             </button>
 
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    handleDeleteItem(
-                                                        item.id
-                                                    )
-                                                }
-                                                className="rounded-xl p-2 text-slate-500 hover:bg-red-50 hover:text-red-500"
+                                                onClick={() => setItemToDelete(item)}
+                                                className="rounded-lg p-2 text-slate-500 transition hover:text-red-500"
+                                                title="Xóa"
                                             >
-                                                <Trash2
-                                                    size={17}
-                                                />
+                                                <Trash2 size={17} />
                                             </button>
                                         </div>
                                     </td>
@@ -319,12 +306,54 @@ function ProductIssueDetailPage() {
                     </p>
 
                     <p className="mt-1 text-2xl font-bold text-slate-800">
-                        {formatMoney(
-                            issue.totalAmount
-                        )}
+                        {formatMoney(issue.totalAmount)}
                     </p>
                 </div>
             </div>
+
+            {showItemForm && (
+                <Modal
+                    title={selectedItem ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+                    onClose={() => {
+                        setShowItemForm(false);
+                        setSelectedItem(null);
+                    }}
+                >
+                    <ProductDocumentItemForm
+                        transactionType="ISSUE"
+                        documentId={Number(id)}
+                        item={selectedItem}
+                        onSuccess={async () => {
+                            setShowItemForm(false);
+                            setSelectedItem(null);
+                            await loadIssue();
+                        }}
+                        onCancel={() => {
+                            setShowItemForm(false);
+                            setSelectedItem(null);
+                        }}
+                    />
+                </Modal>
+            )}
+
+            {showConfirm && (
+                <ConfirmDialog
+                    title="Xác nhận phiếu xuất"
+                    message="Xác nhận phiếu xuất sản phẩm? Tồn kho sẽ được trừ và phiếu không thể chỉnh sửa."
+                    onConfirm={handleConfirm}
+                    onCancel={() => setShowConfirm(false)}
+                />
+            )}
+
+            {itemToDelete && (
+                <ConfirmDialog
+                    title="Xóa sản phẩm"
+                    message={`Xóa "${itemToDelete.productName}" khỏi phiếu xuất?`}
+                    danger
+                    onConfirm={handleDeleteItem}
+                    onCancel={() => setItemToDelete(null)}
+                />
+            )}
         </div>
     );
 }
@@ -344,7 +373,11 @@ function InfoCard({ label, value }) {
 }
 
 function formatMoney(value) {
-    return `${Number(value ?? 0).toLocaleString("vi-VN")} ₫`;
+    if (value === null || value === undefined) {
+        return "—";
+    }
+
+    return `${Number(value).toLocaleString("vi-VN")} ₫`;
 }
 
 export default ProductIssueDetailPage;

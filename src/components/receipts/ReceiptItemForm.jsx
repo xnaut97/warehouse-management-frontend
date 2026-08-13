@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import materialReceiptApi from "../../api/materialReceiptApi.js";
 import materialApi from "../../api/materialApi";
 
+import { unwrapContent } from "../../utils/apiResponse.js";
+
 function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
 
     const [materials, setMaterials] = useState([]);
@@ -22,7 +24,19 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             : Number(form.unitPrice);
 
     useEffect(() => {
-        loadMaterials();
+        materialApi.getAllMaterials({ size: 1000 })
+            .then((response) => {
+                setMaterials(
+                    unwrapContent(response)
+                        .filter((material) => material.enabled !== false)
+                );
+            })
+            .catch((error) => {
+                toast.error(
+                    error.response?.data?.message ||
+                    "Không thể tải danh sách nguyên vật liệu"
+                );
+            });
     }, []);
 
     useEffect(() => {
@@ -33,17 +47,6 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             unitPrice: item.unitPrice ?? "",
         });
     }, [item]);
-
-    const loadMaterials = async () => {
-        try {
-            const response = await materialApi.getAllMaterials({ size: 1000 });
-            const data = response.data.data;
-            const list = Array.isArray(data) ? data : data?.content ?? [];
-            setMaterials(list.filter((m) => m.enabled !== false));
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -68,18 +71,16 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
         setLoading(true);
         try {
             if (item) {
-                await materialReceiptApi.addItem(receiptId, {
-                    materialId: Number(form.materialId),
+                await materialReceiptApi.updateItem(receiptId, item.id, {
                     quantity: Number(form.quantity),
                     unitPrice,
                 });
                 toast.success("Đã cập nhật mặt hàng");
             } else {
-                // Add new item
                 await materialReceiptApi.addItem(receiptId, {
                     materialId: Number(form.materialId),
                     quantity: Number(form.quantity),
-                    unitPrice: Number(form.unitPrice),
+                    unitPrice,
                 });
                 toast.success("Đã thêm mặt hàng");
             }
@@ -147,17 +148,16 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             {/* Đơn giá */}
             <div>
                 <label className="mb-2 block font-medium">
-                    Đơn giá (VNĐ) <span className="text-red-500">*</span>
+                    Đơn giá nhập (VNĐ)
                 </label>
                 <input
                     type="number"
                     name="unitPrice"
                     value={form.unitPrice}
                     onChange={handleChange}
-                    required
-                    min="0.01"
+                    min="0"
                     step="any"
-                    placeholder="Nhập đơn giá"
+                    placeholder="Có thể bỏ trống"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
                 />
             </div>

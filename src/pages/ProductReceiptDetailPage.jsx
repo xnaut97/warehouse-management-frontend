@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Plus, Trash2, Edit } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import productReceiptApi from "../api/productReceiptApi.js";
+
+import Loading from "../components/common/Loading.jsx";
+import Modal from "../components/common/Modal.jsx";
+import ConfirmDialog from "../components/common/ConfirmDialog.jsx";
+import EmptyState from "../components/common/EmptyState.jsx";
+import ReceiptStatusBadge from "../components/receipts/ReceiptStatusBadge.jsx";
+import ProductDocumentItemForm from "../components/products/ProductDocumentItemForm.jsx";
+
+import { unwrapData } from "../utils/apiResponse.js";
+import { formatDate, formatNumber } from "../components/reports/reportUtils.js";
 
 function ProductReceiptDetailPage() {
     const { id } = useParams();
@@ -12,43 +22,39 @@ function ProductReceiptDetailPage() {
     const [receipt, setReceipt] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const loadReceipt = async () => {
-        try {
-            setLoading(true);
+    const [showItemForm, setShowItemForm] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
-            const response =
-                await productReceiptApi.getDetail(id);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
-            setReceipt(response.data);
-        } catch (error) {
-            toast.error(
-                error.response?.data?.message ||
-                "Không thể tải phiếu nhập"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+    const loadReceipt = () =>
+        productReceiptApi.getDetail(id)
+            .then((response) => {
+                setReceipt(unwrapData(response));
+            })
+            .catch((error) => {
+                toast.error(
+                    error.response?.data?.message ||
+                    "Không thể tải phiếu nhập"
+                );
+                setReceipt(null);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
 
     useEffect(() => {
         loadReceipt();
     }, [id]);
 
     const handleConfirm = async () => {
-        const confirmed = window.confirm(
-            "Xác nhận phiếu nhập này?"
-        );
-
-        if (!confirmed) {
-            return;
-        }
+        setShowConfirm(false);
 
         try {
             await productReceiptApi.confirm(id);
 
-            toast.success(
-                "Đã xác nhận phiếu nhập"
-            );
+            toast.success("Đã xác nhận phiếu nhập");
 
             await loadReceipt();
         } catch (error) {
@@ -59,24 +65,15 @@ function ProductReceiptDetailPage() {
         }
     };
 
-    const handleDeleteItem = async (itemId) => {
-        const confirmed = window.confirm(
-            "Xóa sản phẩm này khỏi phiếu nhập?"
-        );
+    const handleDeleteItem = async () => {
+        const item = itemToDelete;
 
-        if (!confirmed) {
-            return;
-        }
+        setItemToDelete(null);
 
         try {
-            await productReceiptApi.deleteItem(
-                id,
-                itemId
-            );
+            await productReceiptApi.deleteItem(id, item.id);
 
-            toast.success(
-                "Đã xóa sản phẩm khỏi phiếu nhập"
-            );
+            toast.success("Đã xóa sản phẩm khỏi phiếu nhập");
 
             await loadReceipt();
         } catch (error) {
@@ -88,21 +85,19 @@ function ProductReceiptDetailPage() {
     };
 
     if (loading) {
-        return (
-            <div className="flex min-h-[400px] items-center justify-center">
-                <span className="text-sm text-slate-500">
-                    Đang tải dữ liệu...
-                </span>
-            </div>
-        );
+        return <Loading rows={6} />;
     }
 
     if (!receipt) {
-        return null;
+        return (
+            <EmptyState
+                title="Không tìm thấy phiếu nhập"
+                description="Phiếu nhập sản phẩm không tồn tại hoặc đã bị xóa."
+            />
+        );
     }
 
-    const isDraft =
-        receipt.status === "DRAFT";
+    const isDraft = receipt.status === "DRAFT";
 
     return (
         <div className="space-y-6">
@@ -110,18 +105,20 @@ function ProductReceiptDetailPage() {
                 <div>
                     <button
                         type="button"
-                        onClick={() =>
-                            navigate("/receipts-issues")
-                        }
-                        className="mb-3 flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800"
+                        onClick={() => navigate("/receipts-issues")}
+                        className="mb-3 flex items-center gap-2 text-sm text-slate-500 transition hover:text-(--color-primary-hover)"
                     >
                         <ArrowLeft size={16} />
                         Quay lại
                     </button>
 
-                    <h1 className="text-2xl font-bold text-slate-800">
-                        Phiếu nhập sản phẩm
-                    </h1>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <h1 className="text-2xl font-bold text-slate-800">
+                            Phiếu nhập sản phẩm
+                        </h1>
+
+                        <ReceiptStatusBadge status={receipt.status} />
+                    </div>
 
                     <p className="mt-1 text-sm text-slate-500">
                         {receipt.receiptNo}
@@ -132,12 +129,11 @@ function ProductReceiptDetailPage() {
                     <div className="flex gap-3">
                         <button
                             type="button"
-                            onClick={() =>
-                                navigate(
-                                    `/product-receipts/${id}/items/new`
-                                )
-                            }
-                            className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white hover:bg-(--color-primary)"
+                            onClick={() => {
+                                setSelectedItem(null);
+                                setShowItemForm(true);
+                            }}
+                            className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white transition hover:bg-(--color-primary)"
                         >
                             <Plus size={18} />
                             Thêm sản phẩm
@@ -145,11 +141,9 @@ function ProductReceiptDetailPage() {
 
                         <button
                             type="button"
-                            onClick={handleConfirm}
-                            disabled={
-                                !receipt.items?.length
-                            }
-                            className="flex items-center gap-2 rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => setShowConfirm(true)}
+                            disabled={!receipt.items?.length}
+                            className="flex items-center gap-2 rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 transition hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <Check size={18} />
                             Xác nhận
@@ -158,7 +152,7 @@ function ProductReceiptDetailPage() {
                 )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-3">
                 <InfoCard
                     label="Mã phiếu"
                     value={receipt.receiptNo}
@@ -166,54 +160,45 @@ function ProductReceiptDetailPage() {
 
                 <InfoCard
                     label="Kho"
-                    value={receipt.warehouse || "-"}
+                    value={receipt.warehouse || "—"}
                 />
 
                 <InfoCard
                     label="Ngày nhập"
-                    value={receipt.receiptDate || "-"}
-                />
-
-                <InfoCard
-                    label="Nhà cung cấp"
-                    value={receipt.supplier || "-"}
+                    value={formatDate(receipt.receiptDate) || "—"}
                 />
             </div>
 
             <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
-                <table className="min-w-[1000px] w-full">
+                <table className="min-w-[900px] w-full">
                     <thead className="border-b border-pink-100">
                     <tr>
-                        <th className="px-6 py-4 text-left">
-                            SẢN PHẨM
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
+                            MÃ SẢN PHẨM
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
+                            TÊN SẢN PHẨM
+                        </th>
+
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             ĐVT
                         </th>
 
-                        <th className="px-6 py-4 text-center">
+                        <th className="px-6 py-4 text-right font-semibold text-slate-700">
                             SỐ LƯỢNG
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             LÔ
                         </th>
 
-                        <th className="px-6 py-4 text-left">
+                        <th className="px-6 py-4 text-left font-semibold text-slate-700">
                             HSD
                         </th>
 
-                        <th className="px-6 py-4 text-right">
-                            ĐƠN GIÁ
-                        </th>
-
-                        <th className="px-6 py-4 text-right">
-                            THÀNH TIỀN
-                        </th>
-
                         {isDraft && (
-                            <th className="px-6 py-4 text-center">
+                            <th className="px-6 py-4 text-center font-semibold text-slate-700">
                                 THAO TÁC
                             </th>
                         )}
@@ -223,57 +208,41 @@ function ProductReceiptDetailPage() {
                     <tbody>
                     {!receipt.items?.length ? (
                         <tr>
-                            <td
-                                colSpan={
-                                    isDraft ? 8 : 7
-                                }
-                                className="py-12 text-center text-slate-500"
-                            >
-                                Phiếu chưa có sản phẩm.
+                            <td colSpan={isDraft ? 7 : 6}>
+                                <EmptyState
+                                    title="Phiếu chưa có sản phẩm"
+                                    description="Thêm sản phẩm để hoàn tất phiếu nhập."
+                                />
                             </td>
                         </tr>
                     ) : (
                         receipt.items.map((item) => (
                             <tr
                                 key={item.id}
-                                className="border-t border-(--color-border)"
+                                className="border-t border-(--color-border) transition hover:bg-pink-50"
                             >
-                                <td className="px-6 py-4">
-                                    <p className="font-semibold">
-                                        {item.productName}
-                                    </p>
-
-                                    <p className="text-sm text-slate-500">
-                                        {item.productCode}
-                                    </p>
+                                <td className="px-6 py-4 font-medium text-slate-800">
+                                    {item.productCode}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.unit || "-"}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.productName}
                                 </td>
 
-                                <td className="px-6 py-4 text-center">
-                                    {item.quantity}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.unit || "—"}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.lotNumber || "-"}
+                                <td className="px-6 py-4 text-right text-sm text-slate-700">
+                                    {formatNumber(item.quantity)}
                                 </td>
 
-                                <td className="px-6 py-4">
-                                    {item.expirationDate || "-"}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {item.lotNumber || "—"}
                                 </td>
 
-                                <td className="px-6 py-4 text-right">
-                                    {formatMoney(
-                                        item.unitPrice
-                                    )}
-                                </td>
-
-                                <td className="px-6 py-4 text-right">
-                                    {formatMoney(
-                                        item.amount
-                                    )}
+                                <td className="px-6 py-4 text-sm text-slate-700">
+                                    {formatDate(item.expirationDate) || "—"}
                                 </td>
 
                                 {isDraft && (
@@ -281,28 +250,23 @@ function ProductReceiptDetailPage() {
                                         <div className="flex justify-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/product-receipts/${id}/items/${item.id}/edit`
-                                                    )
-                                                }
-                                                className="rounded-xl px-3 py-2 text-sm text-slate-500 hover:bg-pink-50 hover:text-(--color-primary)"
+                                                onClick={() => {
+                                                    setSelectedItem(item);
+                                                    setShowItemForm(true);
+                                                }}
+                                                className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
+                                                title="Chỉnh sửa"
                                             >
-                                                Sửa
+                                                <Edit size={18} />
                                             </button>
 
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    handleDeleteItem(
-                                                        item.id
-                                                    )
-                                                }
-                                                className="rounded-xl p-2 text-slate-500 hover:bg-red-50 hover:text-red-500"
+                                                onClick={() => setItemToDelete(item)}
+                                                className="rounded-lg p-2 text-slate-500 transition hover:text-red-500"
+                                                title="Xóa"
                                             >
-                                                <Trash2
-                                                    size={17}
-                                                />
+                                                <Trash2 size={17} />
                                             </button>
                                         </div>
                                     </td>
@@ -314,19 +278,49 @@ function ProductReceiptDetailPage() {
                 </table>
             </div>
 
-            <div className="flex justify-end">
-                <div className="rounded-2xl border border-(--color-border) bg-white px-8 py-5 shadow-sm">
-                    <p className="text-sm text-slate-500">
-                        Tổng tiền
-                    </p>
+            {showItemForm && (
+                <Modal
+                    title={selectedItem ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+                    onClose={() => {
+                        setShowItemForm(false);
+                        setSelectedItem(null);
+                    }}
+                >
+                    <ProductDocumentItemForm
+                        transactionType="RECEIPT"
+                        documentId={Number(id)}
+                        item={selectedItem}
+                        onSuccess={async () => {
+                            setShowItemForm(false);
+                            setSelectedItem(null);
+                            await loadReceipt();
+                        }}
+                        onCancel={() => {
+                            setShowItemForm(false);
+                            setSelectedItem(null);
+                        }}
+                    />
+                </Modal>
+            )}
 
-                    <p className="mt-1 text-2xl font-bold text-slate-800">
-                        {formatMoney(
-                            receipt.totalAmount
-                        )}
-                    </p>
-                </div>
-            </div>
+            {showConfirm && (
+                <ConfirmDialog
+                    title="Xác nhận phiếu nhập"
+                    message="Xác nhận phiếu nhập sản phẩm? Tồn kho sẽ được cập nhật và phiếu không thể chỉnh sửa."
+                    onConfirm={handleConfirm}
+                    onCancel={() => setShowConfirm(false)}
+                />
+            )}
+
+            {itemToDelete && (
+                <ConfirmDialog
+                    title="Xóa sản phẩm"
+                    message={`Xóa "${itemToDelete.productName}" khỏi phiếu nhập?`}
+                    danger
+                    onConfirm={handleDeleteItem}
+                    onCancel={() => setItemToDelete(null)}
+                />
+            )}
         </div>
     );
 }
@@ -343,10 +337,6 @@ function InfoCard({ label, value }) {
             </p>
         </div>
     );
-}
-
-function formatMoney(value) {
-    return `${Number(value ?? 0).toLocaleString("vi-VN")} ₫`;
 }
 
 export default ProductReceiptDetailPage;

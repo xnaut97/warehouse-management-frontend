@@ -40,7 +40,7 @@ function ReceiptDetailCard({
                     </p>
 
                     <p className="font-medium">
-                        {receipt.supplier}
+                        {receipt.supplier || "—"}
                     </p>
                 </div>
 
@@ -73,7 +73,10 @@ function ReceiptDetailCard({
                     </p>
 
                     <p className="font-medium">
-                        {receipt.totalAmount}
+                        {receipt.totalAmount === null ||
+                        receipt.totalAmount === undefined
+                            ? "—"
+                            : `${Number(receipt.totalAmount).toLocaleString("vi-VN")} ₫`}
                     </p>
                 </div>
 

@@ -151,16 +151,6 @@ function ReceiptForm({ receipt, onSuccess, onCancel }) {
         e.preventDefault();
 
 
-        if (!form.supplierId) {
-
-            toast.error(
-                "Vui lòng chọn nhà cung cấp"
-            );
-
-            return;
-        }
-
-
         if (!form.warehouseId) {
 
             toast.error(
@@ -323,7 +313,7 @@ function ReceiptForm({ receipt, onSuccess, onCancel }) {
                 >
 
                     <option value="">
-                        Chọn nhà cung cấp
+                        Không chọn nhà cung cấp
                     </option>
 
                     {suppliers.map((supplier) => (

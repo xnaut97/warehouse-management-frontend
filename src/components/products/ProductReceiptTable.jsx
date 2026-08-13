@@ -1,3 +1,5 @@
+import ReceiptStatusBadge from "../receipts/ReceiptStatusBadge.jsx";
+
 function ProductReceiptTable({ receipts, onView }) {
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
@@ -43,15 +45,15 @@ function ProductReceiptTable({ receipts, onView }) {
                             </td>
 
                             <td className="px-6 py-4">
-                                {receipt.warehouse || "-"}
+                                {receipt.warehouse || "—"}
                             </td>
 
                             <td className="px-6 py-4">
-                                {receipt.receiptDate || "-"}
+                                {receipt.receiptDate || "—"}
                             </td>
 
                             <td className="px-6 py-4 text-center">
-                                {receipt.status}
+                                <ReceiptStatusBadge status={receipt.status} />
                             </td>
 
                             <td className="px-6 py-4 text-center">
