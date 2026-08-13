@@ -32,6 +32,8 @@ import ReceiptNew from "../components/receipts/ReceiptNew.jsx";
 import IssueNew from "../components/issues/IssueNew.jsx";
 import ProductReceiptDetailPage from "../pages/ProductReceiptDetailPage.jsx";
 import ProductIssueDetailPage from "../pages/ProductIssueDetailPage.jsx";
+import StocktakingPage from "../pages/StocktakingPage.jsx";
+import StocktakingDetailPage from "../pages/StocktakingDetailPage.jsx";
 
 function AppRouter() {
 
@@ -325,6 +327,28 @@ function AppRouter() {
                         <ProtectedRoute>
                             <AppLayout>
                                 <AuditLog/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/stocktaking"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <StocktakingPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/stocktaking/:id"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <StocktakingDetailPage/>
                             </AppLayout>
                         </ProtectedRoute>
                     }
