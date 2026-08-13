@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {ArrowLeft, Check, Plus} from "lucide-react";
 import toast from "react-hot-toast";
 
-import receiptApi from "../../api/receiptApi.js";
+import materialReceiptApi from "../../api/materialReceiptApi.js";
 
 import ReceiptDetailCard from "./ReceiptDetailCard.jsx";
 import ReceiptItemTable from "./ReceiptItemTable.jsx";
@@ -31,7 +31,7 @@ function ReceiptDetail() {
 
     const loadReceipt = async () => {
         try {
-            const response = await receiptApi.getDetail(id);
+            const response = await materialReceiptApi.getDetail(id);
             setReceipt(response.data.data);
         } catch (error) {
             console.error(error);
@@ -46,7 +46,7 @@ function ReceiptDetail() {
     /* ── Confirm receipt ── */
     const handleConfirm = async () => {
         try {
-            await receiptApi.confirm(id);
+            await materialReceiptApi.confirm(id);
             await loadReceipt();
             toast.success("Đã xác nhận phiếu nhập");
         } catch (error) {
@@ -79,7 +79,7 @@ function ReceiptDetail() {
 
     const handleDeleteItem = async () => {
         try {
-            await receiptApi.deleteItem(id, itemToDelete.id);
+            await materialReceiptApi.deleteItem(id, itemToDelete.id);
             toast.success("Đã xóa mặt hàng");
             await loadReceipt();
         } catch (error) {
@@ -120,9 +120,8 @@ function ReceiptDetail() {
 
         <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-12 lg:py-10">
 
-            {/* Back */}
             <button
-                onClick={() => navigate("/receipts")}
+                onClick={() => navigate("/receipts-issues")}
                 className="group flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-(--color-primary-hover) sm:text-lg"
             >
                 <ArrowLeft size={18} className="transition group-hover:-translate-x-1"/>

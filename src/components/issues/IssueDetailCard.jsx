@@ -1,97 +1,40 @@
-import IssueStatusBadge from "./IssueStatusBadge";
+import IssueStatusBadge from "./IssueStatusBadge.jsx";
 
 function IssueDetailCard({ issue }) {
-
     return (
+        <div className="rounded-xl bg-white p-4 shadow-sm sm:p-8">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="text-xl font-semibold text-slate-800">
+                    Thông tin phiếu xuất
+                </h2>
 
-        <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:p-6">
-
-            <div className="grid gap-6 sm:grid-cols-2">
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Mã phiếu
-                    </p>
-
-                    <p className="mt-1 font-semibold">
-                        {issue.issueNo}
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Trạng thái
-                    </p>
-
-                    <div className="mt-1">
-
-                        <IssueStatusBadge
-                            status={issue.status}
-                        />
-
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Kho
-                    </p>
-
-                    <p className="mt-1">
-                        {issue.warehouse}
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Khách hàng
-                    </p>
-
-                    <p className="mt-1">
-                        {issue.customer}
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Ngày xuất
-                    </p>
-
-                    <p className="mt-1">
-                        {issue.issueDate}
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <p className="text-sm text-slate-500">
-                        Tổng tiền
-                    </p>
-
-                    <p className="mt-1 font-semibold">
-
-                        {issue.totalAmount}
-
-                    </p>
-
-                </div>
-
+                <IssueStatusBadge status={issue.status} />
             </div>
 
+            <div className="grid gap-4 text-sm sm:grid-cols-2">
+                <div>
+                    <p className="text-gray-500">Số phiếu xuất</p>
+                    <p className="font-medium">
+                        {issue.issueNo}
+                    </p>
+                </div>
+
+                <div>
+                    <p className="text-gray-500">Kho</p>
+                    <p className="font-medium">
+                        {issue.warehouse}
+                    </p>
+                </div>
+
+                <div>
+                    <p className="text-gray-500">Ngày xuất</p>
+                    <p className="font-medium">
+                        {issue.issueDate}
+                    </p>
+                </div>
+            </div>
         </div>
-
     );
-
 }
 
 export default IssueDetailCard;

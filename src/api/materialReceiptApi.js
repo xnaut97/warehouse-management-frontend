@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const receiptApi = {
+const materialReceiptApi = {
 
     getAll: (params) =>
         axiosClient.get("/receipts", { params }),
@@ -31,4 +31,4 @@ const receiptApi = {
 
 };
 
-export default receiptApi;
+export default materialReceiptApi;

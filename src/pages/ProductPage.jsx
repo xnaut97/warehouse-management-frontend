@@ -26,33 +26,31 @@ function ProductPage() {
     const loadProducts = async () => {
         try {
             const response = await productApi.getProducts({
+                keyword: search.trim(),
                 page,
                 size: pageSize,
                 sort: sortParam,
             });
+
             const data = response.data.data;
-            setProducts(data.content);
-            setTotalPages(data.totalPages);
+
+            setProducts(data.content ?? []);
+            setTotalPages(data.totalPages ?? 0);
         } catch (error) {
-            console.log(error);
+            console.error(error);
+
+            setProducts([]);
+            setTotalPages(0);
         }
     };
 
-    useEffect(() => { setPage(0); }, [sortParam]);
+    useEffect(() => {
+        setPage(0);
+    }, [sortParam, search]);
 
     useEffect(() => {
         loadProducts();
-    }, [page, pageSize, sortParam]);
-
-    const filteredProducts = products.filter((product) => {
-        const keyword = search.toLowerCase();
-        return (
-            product.name.toLowerCase().includes(keyword) ||
-            product.code.toLowerCase().includes(keyword) ||
-            (product.address || "").toLowerCase().includes(keyword) ||
-            (product.managerName || "").toLowerCase().includes(keyword)
-        );
-    });
+    }, [page, pageSize, sortParam, search]);
 
     return (
         <div>
@@ -71,7 +69,7 @@ function ProductPage() {
             <TableToolbar search={search} setSearch={setSearch} />
 
             <ProductTable
-                products={filteredProducts}
+                products={products}
                 onEdit={(product) => {
                     setSelectedProducts(product);
                     setShowForm(true);
@@ -80,6 +78,7 @@ function ProductPage() {
                 sortField={sortField}
                 sortDir={sortDir}
                 onSort={onSort}
+                startIndex={page * pageSize}
             />
 
             <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

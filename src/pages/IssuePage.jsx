@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import issueApi from "../api/issueApi.js";
+import materialIssueApi from "../api/materialIssueApi.js";
 import useSort from "../hooks/useSort.js";
 
 import PageHeader from "../components/common/PageHeader.jsx";
@@ -36,7 +36,7 @@ function IssuePage() {
 
     const loadIssues = async () => {
         try {
-            const response = await issueApi.getAll({
+            const response = await materialIssueApi.getAll({
                 page,
                 size: pageSize,
                 sort: sortParam,
@@ -75,7 +75,7 @@ function IssuePage() {
 
     const handleDelete = async () => {
         try {
-            await issueApi.delete(issueToDelete.id);
+            await materialIssueApi.delete(issueToDelete.id);
             toast.success("Đã xóa phiếu xuất");
             await loadIssues();
         } catch (error) {

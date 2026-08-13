@@ -1,18 +1,18 @@
 import {
     LayoutDashboard,
-    Users,
-    Truck,
-    Package,
+    User,
+    Box,
     Warehouse,
+    Package,
+    ClipboardList,
     ArrowDownToLine,
     ArrowUpFromLine,
     Boxes,
-    Archive,
-    ChartColumn,
     ClipboardCheck,
-    FileClock,
-    User,
-    Box,
+    TriangleAlert,
+    ChartColumn,
+    CircleDollarSign,
+    FileChartColumn, ListChecks, ArrowDownUp,
 } from "lucide-react";
 
 export const sidebarItems = [
@@ -30,35 +30,35 @@ export const sidebarItems = [
     {
         title: "QUẢN LÝ",
         items: [
-            {
-                icon: User,
-                label: "Người dùng",
-                path: "/users",
-            },
-            {
-                icon: Truck,
-                label: "Nhà cung cấp",
-                path: "/suppliers",
-            },
+            // {
+            //     icon: User,
+            //     label: "Người dùng",
+            //     path: "/users",
+            // },
+            // {
+            //     icon: Truck,
+            //     label: "Nhà cung cấp",
+            //     path: "/suppliers",
+            // },
             {
                 icon: Box,
                 label: "Nguyên vật liệu",
                 path: "/materials",
             },
-            {
-                icon: Users,
-                label: "Khách hàng",
-                path: "/customers",
-            },
-            {
-                icon: Warehouse,
-                label: "Kho",
-                path: "/warehouses",
-            },
+            // {
+            //     icon: Warehouse,
+            //     label: "Kho",
+            //     path: "/warehouses",
+            // },
             {
                 icon: Package,
                 label: "Sản phẩm",
                 path: "/products",
+            },
+            {
+                icon: ClipboardList,
+                label: "Định mức nguyên vật liệu",
+                path: "/materials-consumptions",
             },
         ],
     },
@@ -67,19 +67,43 @@ export const sidebarItems = [
         title: "VẬN HÀNH",
         items: [
             {
-                icon: ArrowDownToLine,
-                label: "Phiếu nhập kho",
-                path: "/receipts",
+                icon: ArrowDownUp,
+                label: "Phiếu nhập xuất",
+                path: "/receipts-issues",
             },
-            {
-                icon: ArrowUpFromLine,
-                label: "Phiếu xuất kho",
-                path: "/issues",
-            },
+
             {
                 icon: Boxes,
                 label: "Tồn kho",
                 path: "/inventories",
+            },
+            {
+                icon: ListChecks,
+                label: "Kiểm kê",
+                path: "/stocktaking",
+            },
+
+        ],
+    },
+
+    {
+        title: "TÁC NGHIỆP",
+        items: [
+            {
+                icon: FileChartColumn,
+                label: "Báo cáo tác nghiệp",
+                path: "/operations",
+            },
+        ],
+    },
+
+    {
+        title: "HỆ THỐNG",
+        items: [
+            {
+                icon: TriangleAlert,
+                label: "Trung tâm cảnh báo",
+                path: "/alerts",
             },
         ],
     },
@@ -88,34 +112,19 @@ export const sidebarItems = [
         title: "BÁO CÁO",
         items: [
             {
+                icon: CircleDollarSign,
+                label: "Báo cáo giá trị vốn lưu động tồn kho",
+                path: "/reports/inventory-value",
+            },
+            {
                 icon: ChartColumn,
-                label: "Tổng quan báo cáo",
-                path: "/reports",
-            },
-            {
-                icon: ArrowDownToLine,
-                label: "Báo cáo nhập kho",
-                path: "/reports/receipts",
-            },
-            {
-                icon: ArrowUpFromLine,
-                label: "Báo cáo xuất kho",
-                path: "/reports/issues",
-            },
-            {
-                icon: Archive,
-                label: "Báo cáo tồn kho",
-                path: "/reports/inventory",
+                label: "Báo cáo hiệu quả vận hành & định mức",
+                path: "/reports/operations",
             },
             {
                 icon: ClipboardCheck,
-                label: "Báo cáo kiểm kê",
+                label: "Báo cáo kiểm kê & tỉ lệ chính xác kho",
                 path: "/reports/stocktaking",
-            },
-            {
-                icon: FileClock,
-                label: "Nhật ký hệ thống",
-                path: "/reports/audit-logs",
             },
         ],
     },

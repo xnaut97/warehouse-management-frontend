@@ -8,7 +8,7 @@ import ReportFilters, { FilterField, FilterInput } from "../../components/report
 import ReceiptReportTable from "../../components/reports/ReceiptReportTable.jsx";
 import { firstDayOfMonth, formatCurrency, formatNumber, sumBy, today, unwrap } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
-import receiptApi from "../../api/receiptApi.js";
+import materialReceiptApi from "../../api/materialReceiptApi.js";
 
 function ReceiptReport() {
     const [filters, setFilters] = useState({
@@ -34,7 +34,7 @@ function ReceiptReport() {
                 monthlyResponse,
                 suppliersResponse
             ] = await Promise.all([
-                receiptApi.getAll({ page, size: pageSize }),
+                materialReceiptApi.getAll({ page, size: pageSize }),
                 reportApi.getReceiptDaily({ date: filters.toDate || today() }),
                 reportApi.getReceiptMonthly({ year }),
                 reportApi.getReceiptSuppliers({ fromDate: filters.fromDate, toDate: filters.toDate })

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-import receiptApi from "../../api/receiptApi";
+import materialReceiptApi from "../../api/materialReceiptApi.js";
 import materialApi from "../../api/materialApi";
 
 function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
@@ -9,11 +9,17 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(false);
 
+
     const [form, setForm] = useState({
         materialId: "",
         quantity: "",
         unitPrice: "",
     });
+
+    const unitPrice =
+        form.unitPrice === ""
+            ? null
+            : Number(form.unitPrice);
 
     useEffect(() => {
         loadMaterials();
@@ -51,23 +57,26 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             toast.error("Số lượng phải lớn hơn 0");
             return;
         }
-        if (!form.unitPrice || Number(form.unitPrice) <= 0) {
-            toast.error("Đơn giá phải lớn hơn 0");
+        if (
+            form.unitPrice !== "" &&
+            Number(form.unitPrice) < 0
+        ) {
+            toast.error("Đơn giá không hợp lệ");
             return;
         }
 
         setLoading(true);
         try {
             if (item) {
-                // Update — only quantity and unitPrice are editable
-                await receiptApi.updateItem(receiptId, item.id, {
+                await materialReceiptApi.addItem(receiptId, {
+                    materialId: Number(form.materialId),
                     quantity: Number(form.quantity),
-                    unitPrice: Number(form.unitPrice),
+                    unitPrice,
                 });
                 toast.success("Đã cập nhật mặt hàng");
             } else {
                 // Add new item
-                await receiptApi.addItem(receiptId, {
+                await materialReceiptApi.addItem(receiptId, {
                     materialId: Number(form.materialId),
                     quantity: Number(form.quantity),
                     unitPrice: Number(form.unitPrice),
@@ -129,8 +138,6 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
                     name="quantity"
                     value={form.quantity}
                     onChange={handleChange}
-                    required
-                    min="0.01"
                     step="any"
                     placeholder="Nhập số lượng"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"

@@ -8,7 +8,7 @@ import ReportFilters, { FilterField, FilterInput } from "../../components/report
 import IssueReportTable from "../../components/reports/IssueReportTable.jsx";
 import { firstDayOfMonth, formatCurrency, formatNumber, today, unwrap } from "../../components/reports/reportUtils.js";
 import reportApi from "../../api/reportApi.js";
-import issueApi from "../../api/issueApi.js";
+import materialIssueApi from "../../api/materialIssueApi.js";
 
 function IssueReport() {
     const [filters, setFilters] = useState({
@@ -33,7 +33,7 @@ function IssueReport() {
                 customersResponse,
                 materialsResponse
             ] = await Promise.all([
-                issueApi.getAll({ page, size: pageSize }),
+                materialIssueApi.getAll({ page, size: pageSize }),
                 reportApi.getIssueDaily({ date: filters.toDate || today() }),
                 reportApi.getIssueCustomers({ fromDate: filters.fromDate, toDate: filters.toDate }),
                 reportApi.getIssueMaterials({ fromDate: filters.fromDate, toDate: filters.toDate })

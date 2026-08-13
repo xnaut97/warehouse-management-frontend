@@ -4,155 +4,96 @@ import { toast } from "react-hot-toast";
 import materialApi from "../../api/materialApi.js";
 import supplierApi from "../../api/supplierApi.js";
 
-function MaterialForm({
+const emptyForm = {
+    code: "",
+    name: "",
+    unit: "",
+    unitPrice: "",
+    minimumStock: "",
+    maximumStock: "",
+    supplierId: "",
+};
 
-                          material,
-
-                          onSuccess,
-
-                          onCancel
-
-                      }) {
-
+function MaterialForm({ material, onSuccess, onCancel }) {
     const [suppliers, setSuppliers] = useState([]);
-
-    const [form, setForm] = useState({
-
-        code: "",
-
-        name: "",
-
-        unit: "",
-
-        unitPrice: "",
-
-        minimumStock: "",
-
-        supplierId: ""
-
-    });
+    const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
-
         loadSuppliers();
-
     }, []);
 
     useEffect(() => {
-
-        if (material) {
-
-            setForm({
-
-                code: material.code,
-
-                name: material.name,
-
-                unit: material.unit,
-
-                unitPrice: material.unitPrice,
-
-                minimumStock: material.minimumStock,
-
-                supplierId: material.supplierId
-
-            });
-
+        if (!material) {
+            setForm(emptyForm);
+            return;
         }
 
+        setForm({
+            code: material.code || "",
+            name: material.name || "",
+            unit: material.unit || "",
+            unitPrice: material.unitPrice ?? "",
+            minimumStock: material.minimumStock ?? "",
+            maximumStock: material.maximumStock ?? "",
+            supplierId: material.supplierId || "",
+        });
     }, [material]);
 
     const loadSuppliers = async () => {
-
         try {
-
-            const response =
-                await supplierApi.getAllSuppliers();
-
-            setSuppliers(
-                response.data.data.content
-            );
-
+            const response = await supplierApi.getAllSuppliers();
+            setSuppliers(response.data.data.content);
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     const handleChange = (e) => {
-
         setForm({
-
             ...form,
-
-            [e.target.name]: e.target.value
-
+            [e.target.name]: e.target.value,
         });
-
     };
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
+        if (Number(form.maximumStock) < Number(form.minimumStock)) {
+            toast.error("Tồn max phải lớn hơn hoặc bằng tồn min");
+            return;
+        }
+
+        const payload = {
+            ...form,
+            unitPrice: Number(form.unitPrice),
+            minimumStock: Number(form.minimumStock),
+            maximumStock: Number(form.maximumStock),
+            supplierId: Number(form.supplierId),
+        };
+
         try {
-
             if (material) {
-
-                await materialApi.updateMaterial(
-
-                    material.id,
-
-                    form
-
-                );
-
-                toast.success(
-                    "Đã cập nhật nguyên vật liệu thành công"
-                );
-
+                await materialApi.updateMaterial(material.id, payload);
+                toast.success("Đã cập nhật nguyên vật liệu thành công");
             } else {
-
-                await materialApi.createMaterial(
-                    form
-                );
-
-                toast.success(
-                    "Đã thêm nguyên vật liệu thành công"
-                );
-
+                await materialApi.createMaterial(payload);
+                toast.success("Đã thêm nguyên vật liệu thành công");
             }
 
             onSuccess();
-
         } catch (error) {
-
-            toast.error(
-
-                error.response?.data?.message ||
-
-                "Thao tác thất bại"
-
-            );
-
+            toast.error(error.response?.data?.message || "Thao tác thất bại");
         }
-
     };
 
     return (
-
-        <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-        >
-
+        <form onSubmit={handleSubmit} className="space-y-5">
             <input
                 name="code"
-                placeholder="Mã"
+                placeholder="Mã NVL"
                 value={form.code}
                 onChange={handleChange}
+                required
                 className="w-full rounded-xl border px-4 py-3"
             />
 
@@ -161,6 +102,7 @@ function MaterialForm({
                 placeholder="Tên nguyên vật liệu"
                 value={form.name}
                 onChange={handleChange}
+                required
                 className="w-full rounded-xl border px-4 py-3"
             />
 
@@ -169,100 +111,81 @@ function MaterialForm({
                 placeholder="Đơn vị tính"
                 value={form.unit}
                 onChange={handleChange}
+                required
                 className="w-full rounded-xl border px-4 py-3"
             />
 
             <input
                 type="number"
                 step="0.01"
+                min="0"
                 name="unitPrice"
-                placeholder="Đơn giá"
+                placeholder="Giá trung bình"
                 value={form.unitPrice}
                 onChange={handleChange}
+                required
                 className="w-full rounded-xl border px-4 py-3"
             />
 
-            <input
-                type="number"
-                step="0.01"
-                name="minimumStock"
-                placeholder="Tồn kho tối thiểu"
-                value={form.minimumStock}
-                onChange={handleChange}
-                className="w-full rounded-xl border px-4 py-3"
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+                <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    name="minimumStock"
+                    placeholder="Tồn min"
+                    value={form.minimumStock}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-xl border px-4 py-3"
+                />
+
+                <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    name="maximumStock"
+                    placeholder="Tồn max"
+                    value={form.maximumStock}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-xl border px-4 py-3"
+                />
+            </div>
 
             <select
                 name="supplierId"
                 value={form.supplierId}
                 onChange={handleChange}
+                required
                 className="w-full rounded-xl border px-4 py-3"
             >
-
-                <option value="">
-                    Chọn nhà cung cấp
-                </option>
-
-                {
-
-                    suppliers.map((supplier) => (
-
-                        <option
-                            key={supplier.id}
-                            value={supplier.id}
-                        >
-
-                            {supplier.name}
-
-                        </option>
-
-                    ))
-
-                }
-
+                <option value="">Chọn nhà cung cấp</option>
+                {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.id}>
+                        {supplier.name}
+                    </option>
+                ))}
             </select>
 
-            <div className="
-                flex
-                flex-col-reverse
-                sm:flex-row
-                sm:justify-end
-                gap-3
-            ">
-
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium
-                    transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
+                    className="rounded-xl text-(--color-primary-hover) border border-(--color-border) px-6 py-3 font-medium transition hover:bg-pink-50 hover:text-(--color-primary) disabled:opacity-50"
                 >
-
                     Hủy
-
                 </button>
 
                 <button
                     type="submit"
-                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
-                    hover:bg-(--color-primary) disabled:opacity-50"
+                    className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition hover:bg-(--color-primary) disabled:opacity-50"
                 >
-
-                    {
-
-                        material
-                            ? "Cập nhật"
-                            : "Thêm mới"
-
-                    }
-
+                    {material ? "Cập nhật" : "Thêm mới"}
                 </button>
-
             </div>
-
         </form>
-
     );
-
 }
 
 export default MaterialForm;
