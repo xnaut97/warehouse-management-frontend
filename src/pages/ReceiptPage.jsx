@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import receiptApi from "../api/receiptApi.js";
+import materialReceiptApi from "../api/materialReceiptApi.js";
 import useSort from "../hooks/useSort.js";
 
 import PageHeader from "../components/common/PageHeader.jsx";
@@ -36,7 +36,7 @@ function ReceiptPage() {
 
     const loadReceipts = async () => {
         try {
-            const response = await receiptApi.getAll({
+            const response = await materialReceiptApi.getAll({
                 page,
                 size: pageSize,
                 sort: sortParam,
@@ -75,7 +75,7 @@ function ReceiptPage() {
 
     const handleDelete = async () => {
         try {
-            await receiptApi.delete(receiptToDelete.id);
+            await materialReceiptApi.delete(receiptToDelete.id);
             toast.success("Đã xóa phiếu nhập");
             await loadReceipts();
         } catch (error) {

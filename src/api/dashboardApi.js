@@ -25,6 +25,12 @@ const dashboardApi = {
 
     getInventoryTrend: () =>
         api.get("/dashboard/inventory-trend"),
+
+    getOperationAlerts: () =>
+        api.get("/dashboard/operation-alerts"),
+
+    getRecentTransactions: () =>
+        api.get("/dashboard/recent-transactions"),
 };
 
 export default dashboardApi;

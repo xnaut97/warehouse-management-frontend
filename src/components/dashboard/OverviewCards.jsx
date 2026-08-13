@@ -47,7 +47,7 @@ function OverviewCards({ data }) {
             path: "/issues",
         },
         {
-            title: "Tồn kho hiện tại",
+            title: "Tồn kho sản phẩm",
             value: formatNumber(data?.currentInventoryQuantity),
             icon: <Factory size={24} className="text-indigo-600" />,
             path: "/inventories",

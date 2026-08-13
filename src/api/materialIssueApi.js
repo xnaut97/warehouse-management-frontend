@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const issueApi = {
+const materialIssueApi = {
 
     getAll: (params) =>
         axiosClient.get("/issues", { params }),
@@ -31,4 +31,4 @@ const issueApi = {
 
 };
 
-export default issueApi;
+export default materialIssueApi;

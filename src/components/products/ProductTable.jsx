@@ -2,59 +2,63 @@ import Badge from "../common/Badge.jsx";
 import ProductActions from "./ProductActions.jsx";
 import SortableHeader from "../common/SortableHeader.jsx";
 
-function ProductTable({ products, onEdit, onRefresh, sortField, sortDir, onSort }) {
+function ProductTable({ products, onEdit, onRefresh, sortField, sortDir, onSort, startIndex = 0 }) {
     const sortProps = { sortField, sortDir, onSort };
 
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
-
-            <table className="min-w-[920px] w-full">
-
+            <table className="min-w-[1080px] w-full">
                 <thead className="border-b border-pink-100">
                 <tr>
-                    <SortableHeader field="name"          label="Tên"         {...sortProps} className="text-left" />
-                    <SortableHeader field="code"          label="Mã"          {...sortProps} className="text-left" />
-                    <SortableHeader field="specification" label="Thông số"    {...sortProps} className="text-left" />
-                    <SortableHeader field="unit"          label="Đơn vị"      {...sortProps} className="text-left" />
-                    <SortableHeader field="sellingPrice"  label="Giá bán"     {...sortProps} className="text-center" />
-                    <SortableHeader field="enabled"       label="Trạng thái"  {...sortProps} className="text-center" />
-                    <th className="px-6 py-4 text-center font-semibold text-slate-700">Thao tác</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-700">STT</th>
+                    <SortableHeader field="name" label="SẢN PHẨM" {...sortProps} className="text-left" />
+                    <SortableHeader field="unit" label="ĐVT" {...sortProps} className="text-left" />
+                    <SortableHeader field="category" label="PHÂN LOẠI" {...sortProps} className="text-left" />
+                    <SortableHeader field="averagePrice" label="GIÁ TRUNG BÌNH" {...sortProps} className="text-center" />
+                    <SortableHeader field="minimumStock" label="TỒN MIN" {...sortProps} className="text-center" />
+                    <SortableHeader field="maximumStock" label="TỒN MAX" {...sortProps} className="text-center" />
+                    <SortableHeader field="enabled" label="TRẠNG THÁI" {...sortProps} className="text-center" />
                 </tr>
                 </thead>
 
                 <tbody>
                 {products.length === 0 ? (
                     <tr>
-                        <td colSpan={7} className="py-12 text-center italic text-gray-500">
+                        <td colSpan={8} className="py-12 text-center italic text-gray-500">
                             Không tìm thấy sản phẩm.
                         </td>
                     </tr>
                 ) : (
-                    products.map((product) => (
+                    products.map((product, index) => (
                         <tr
                             key={product.id}
                             className="border-t border-(--color-border) transition hover:bg-pink-50/50"
                         >
-                            <td className="px-6 py-4">{product.name}</td>
-                            <td className="px-6 py-4">{product.code}</td>
-                            <td className="px-6 py-4">{product.specification}</td>
-                            <td className="px-6 py-4">{product.unit}</td>
-                            <td className="px-6 py-4 text-center">{product.sellingPrice} đ</td>
-                            <td className="px-6 py-4 text-center">
-                                <Badge color={product.enabled ? "green" : "red"}>
-                                    {product.enabled ? "Hoạt động" : "Đã khóa"}
-                                </Badge>
+                            <td className="px-6 py-4">{startIndex + index + 1}</td>
+                            <td className="px-6 py-4">
+                                <p className="font-semibold">{product.name}</p>
+                                <p className="text-sm text-gray-500">{product.code}</p>
                             </td>
+                            <td className="px-6 py-4">{product.unit}</td>
+                            <td className="px-6 py-4">{product.category || "-"}</td>
                             <td className="px-6 py-4 text-center">
-                                <ProductActions product={product} onEdit={onEdit} onRefresh={onRefresh} />
+                                {Number(product.averagePrice ?? product.sellingPrice ?? 0).toLocaleString("vi-VN")} ₫
+                            </td>
+                            <td className="px-6 py-4 text-center">{product.minimumStock ?? 0} {product.unit}</td>
+                            <td className="px-6 py-4 text-center">{product.maximumStock ?? 0} {product.unit}</td>
+                            <td className="px-6 py-4 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                    <Badge color={product.enabled ? "green" : "red"}>
+                                        {product.enabled ? "Hoạt động" : "Đã khóa"}
+                                    </Badge>
+                                    <ProductActions product={product} onEdit={onEdit} onRefresh={onRefresh} />
+                                </div>
                             </td>
                         </tr>
                     ))
                 )}
                 </tbody>
-
             </table>
-
         </div>
     );
 }

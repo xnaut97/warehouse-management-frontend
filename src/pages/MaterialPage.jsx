@@ -50,7 +50,10 @@ function MaterialPage() {
             material.name.toLowerCase().includes(keyword) ||
             material.code.toLowerCase().includes(keyword) ||
             material.unit.toLowerCase().includes(keyword) ||
-            material.supplierName.toLowerCase().includes(keyword)
+            (material.supplierName || "").toLowerCase().includes(keyword) ||
+            String(material.unitPrice || "").includes(keyword) ||
+            String(material.minimumStock || "").includes(keyword) ||
+            String(material.maximumStock || "").includes(keyword)
         );
     });
 
@@ -80,6 +83,7 @@ function MaterialPage() {
                 sortField={sortField}
                 sortDir={sortDir}
                 onSort={onSort}
+                startIndex={page * pageSize}
             />
 
             <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

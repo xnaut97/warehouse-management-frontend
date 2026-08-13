@@ -26,6 +26,12 @@ import IssueReport from "../pages/reports/IssueReport.jsx";
 import InventoryReport from "../pages/reports/InventoryReport.jsx";
 import StocktakingReport from "../pages/reports/StocktakingReport.jsx";
 import AuditLog from "../pages/reports/AuditLog.jsx";
+import ReceiptsIssuesPage from "../pages/ReceiptsIssuesPage.jsx";
+import MaterialConsumptionPage from "../pages/MaterialConsumptionPage.jsx";
+import ReceiptNew from "../components/receipts/ReceiptNew.jsx";
+import IssueNew from "../components/issues/IssueNew.jsx";
+import ProductReceiptDetailPage from "../pages/ProductReceiptDetailPage.jsx";
+import ProductIssueDetailPage from "../pages/ProductIssueDetailPage.jsx";
 
 function AppRouter() {
 
@@ -63,38 +69,38 @@ function AppRouter() {
                     </ProtectedRoute>}
                 />
 
-                <Route
+                {/*<Route*/}
 
-                    path="/users"
+                {/*    path="/users"*/}
 
-                    element={
+                {/*    element={*/}
 
-                        <ProtectedRoute>
+                {/*        <ProtectedRoute>*/}
 
-                            <AppLayout>
+                {/*            <AppLayout>*/}
 
-                                <UserPage/>
+                {/*                <UserPage/>*/}
 
-                            </AppLayout>
+                {/*            </AppLayout>*/}
 
-                        </ProtectedRoute>
+                {/*        </ProtectedRoute>*/}
 
-                    }
+                {/*    }*/}
 
-                />
+                {/*/>*/}
 
-                <Route
-                    path="/suppliers"
-                    element={<ProtectedRoute>
+                {/*<Route*/}
+                {/*    path="/suppliers"*/}
+                {/*    element={<ProtectedRoute>*/}
 
-                        <AppLayout>
+                {/*        <AppLayout>*/}
 
-                            <SupplierPage/>
+                {/*            <SupplierPage/>*/}
 
-                        </AppLayout>
+                {/*        </AppLayout>*/}
 
-                    </ProtectedRoute>}
-                />
+                {/*    </ProtectedRoute>}*/}
+                {/*/>*/}
 
                 <Route
 
@@ -116,33 +122,45 @@ function AppRouter() {
 
                 />
 
+                {/*<Route*/}
+
+                {/*    path="/warehouses"*/}
+
+                {/*    element={*/}
+
+                {/*        <ProtectedRoute>*/}
+
+                {/*            <AppLayout>*/}
+
+                {/*                <WarehousePage/>*/}
+
+                {/*            </AppLayout>*/}
+
+                {/*        </ProtectedRoute>*/}
+
+                {/*    }*/}
+
+                {/*/>*/}
+
                 <Route
-
-                    path="/warehouses"
-
-                    element={
-
-                        <ProtectedRoute>
-
-                            <AppLayout>
-
-                                <WarehousePage/>
-
-                            </AppLayout>
-
-                        </ProtectedRoute>
-
-                    }
-
-                />
-
-                <Route
-                    path="/receipts"
+                    path="/materials-consumptions"
                     element=
                         {
                             <ProtectedRoute>
                                 <AppLayout>
-                                    <ReceiptPage/>
+                                    <MaterialConsumptionPage/>
+                                </AppLayout>
+                            </ProtectedRoute>
+                        }
+                />
+
+                <Route
+                    path="/receipts/new"
+                    element=
+                        {
+                            <ProtectedRoute>
+                                <AppLayout>
+                                    <ReceiptNew/>
                                 </AppLayout>
                             </ProtectedRoute>
                         }
@@ -153,21 +171,50 @@ function AppRouter() {
                     element={<ReceiptDetail/>}
                 />
 
+                {/*<Route*/}
+                {/*    path="/issues"*/}
+                {/*    element=*/}
+                {/*        {*/}
+                {/*            <ProtectedRoute>*/}
+                {/*                <AppLayout>*/}
+                {/*                    <IssuePage/>*/}
+                {/*                </AppLayout>*/}
+                {/*            </ProtectedRoute>*/}
+                {/*        }*/}
+                {/*/>*/}
+
                 <Route
-                    path="/issues"
-                    element=
-                        {
-                            <ProtectedRoute>
-                                <AppLayout>
-                                    <IssuePage/>
-                                </AppLayout>
-                            </ProtectedRoute>
-                        }
+                    path="/issues/new"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <IssueNew />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/issues/:id"
-                    element={<IssueDetail/>}
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <IssueDetail />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/receipts-issues"
+                    element=
+                        {
+                            <ProtectedRoute>
+                                <AppLayout>
+                                    <ReceiptsIssuesPage/>
+                                </AppLayout>
+                            </ProtectedRoute>
+                        }
                 />
 
                 <Route
@@ -249,6 +296,7 @@ function AppRouter() {
                     }
                 />
 
+
                 <Route
                     path="/reports/inventory"
                     element={
@@ -277,6 +325,28 @@ function AppRouter() {
                         <ProtectedRoute>
                             <AppLayout>
                                 <AuditLog/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/product-receipts/:id"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ProductReceiptDetailPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/product-issues/:id"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <ProductIssueDetailPage/>
                             </AppLayout>
                         </ProtectedRoute>
                     }
