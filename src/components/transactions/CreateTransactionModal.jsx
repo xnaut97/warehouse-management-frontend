@@ -1,109 +1,136 @@
 import { useState } from "react";
+import { ArrowDownToLine, ArrowLeft, ArrowUpFromLine, Box, Package } from "lucide-react";
+
+import Modal from "../common/Modal.jsx";
+import Button from "../common/Button.jsx";
+
+const CREATE_ROUTES = {
+    MATERIAL: {
+        RECEIPT: "/receipts/new?type=MATERIAL",
+        ISSUE: "/issues/new?type=MATERIAL",
+    },
+    PRODUCT: {
+        RECEIPT: "/product-receipts/new",
+        ISSUE: "/product-issues/new",
+    },
+};
+
+const GOODS_LABEL = {
+    MATERIAL: "Nguyên vật liệu",
+    PRODUCT: "Sản phẩm",
+};
+
+function ChoiceButton({ icon, title, description, onClick }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className="flex w-full items-center gap-4 rounded-xl border border-(--color-border) px-5 py-4 text-left transition hover:border-(--color-primary) hover:bg-pink-50"
+        >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-(--color-primary)">
+                {icon}
+            </span>
+
+            <span className="min-w-0">
+                <span className="block font-semibold text-slate-800">
+                    {title}
+                </span>
+
+                <span className="mt-0.5 block text-sm text-slate-500">
+                    {description}
+                </span>
+            </span>
+        </button>
+    );
+}
 
 function CreateTransactionModal({
                                     open,
                                     onClose,
                                     onNavigate,
                                 }) {
-    const [goodsType, setGoodsType] = useState("MATERIAL");
+
+    const [goodsType, setGoodsType] = useState(null);
 
     if (!open) {
         return null;
     }
 
-    const handleCreate = (transactionType) => {
-        if (goodsType === "PRODUCT") {
-            onNavigate(
-                transactionType === "RECEIPT"
-                    ? "/product-receipts/new"
-                    : "/product-issues/new"
-            );
+    const handleClose = () => {
+        setGoodsType(null);
+        onClose();
+    };
 
-            onClose();
-            return;
-        }
-
-        onNavigate(
-            transactionType === "RECEIPT"
-                ? "/receipts/new"
-                : "/issues/new"
-        );
-
+    const handleSelectTransactionType = (transactionType) => {
+        onNavigate(CREATE_ROUTES[goodsType][transactionType]);
+        setGoodsType(null);
         onClose();
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-                <div className="mb-6">
-                    <h2 className="text-xl font-semibold text-slate-800">
-                        Thêm phiếu nhập / xuất
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        Chọn loại hàng hóa và loại phiếu.
+        <Modal
+            title={
+                goodsType
+                    ? `Thêm phiếu — ${GOODS_LABEL[goodsType]}`
+                    : "Thêm phiếu nhập / xuất"
+            }
+            onClose={handleClose}
+        >
+            {!goodsType ? (
+                <div className="space-y-4">
+                    <p className="text-sm text-slate-500">
+                        Bước 1: Chọn loại hàng hóa.
                     </p>
-                </div>
 
-                <div className="mb-6">
-                    <label className="mb-3 block font-medium text-slate-700">
-                        Loại hàng hóa
-                    </label>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <button
-                            type="button"
+                    <div className="space-y-3">
+                        <ChoiceButton
+                            icon={<Box size={20} />}
+                            title="Nguyên vật liệu"
+                            description="Phiếu nhập / xuất nguyên vật liệu"
                             onClick={() => setGoodsType("MATERIAL")}
-                            className={`rounded-xl border px-4 py-3 font-medium transition ${
-                                goodsType === "MATERIAL"
-                                    ? "border-(--color-primary) bg-pink-50 text-(--color-primary)"
-                                    : "border-(--color-border) text-slate-600 hover:bg-slate-50"
-                            }`}
-                        >
-                            Nguyên vật liệu
-                        </button>
+                        />
 
-                        <button
-                            type="button"
+                        <ChoiceButton
+                            icon={<Package size={20} />}
+                            title="Sản phẩm"
+                            description="Phiếu nhập / xuất sản phẩm theo lô"
                             onClick={() => setGoodsType("PRODUCT")}
-                            className={`rounded-xl border px-4 py-3 font-medium transition ${
-                                goodsType === "PRODUCT"
-                                    ? "border-(--color-primary) bg-pink-50 text-(--color-primary)"
-                                    : "border-(--color-border) text-slate-600 hover:bg-slate-50"
-                            }`}
-                        >
-                            Sản phẩm
-                        </button>
+                        />
                     </div>
                 </div>
+            ) : (
+                <div className="space-y-4">
+                    <p className="text-sm text-slate-500">
+                        Bước 2: Chọn loại phiếu.
+                    </p>
 
-                <div className="space-y-3">
-                    <button
-                        type="button"
-                        onClick={() => handleCreate("RECEIPT")}
-                        className="w-full rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white transition hover:bg-(--color-primary)"
-                    >
-                        Tạo phiếu nhập
-                    </button>
+                    <div className="space-y-3">
+                        <ChoiceButton
+                            icon={<ArrowDownToLine size={20} />}
+                            title="Phiếu nhập"
+                            description={`Nhập kho ${GOODS_LABEL[goodsType].toLowerCase()}`}
+                            onClick={() => handleSelectTransactionType("RECEIPT")}
+                        />
 
-                    <button
-                        type="button"
-                        onClick={() => handleCreate("ISSUE")}
-                        className="w-full rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 transition hover:bg-pink-50"
+                        <ChoiceButton
+                            icon={<ArrowUpFromLine size={20} />}
+                            title="Phiếu xuất"
+                            description={`Xuất kho ${GOODS_LABEL[goodsType].toLowerCase()}`}
+                            onClick={() => handleSelectTransactionType("ISSUE")}
+                        />
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setGoodsType(null)}
                     >
-                        Tạo phiếu xuất
-                    </button>
+                        <ArrowLeft size={18} />
+                        Chọn lại loại hàng hóa
+                    </Button>
                 </div>
-
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="mt-4 w-full rounded-xl px-5 py-3 font-medium text-slate-500 transition hover:bg-slate-50"
-                >
-                    Hủy
-                </button>
-            </div>
-        </div>
+            )}
+        </Modal>
     );
 }
 

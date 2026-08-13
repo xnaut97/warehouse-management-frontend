@@ -1,3 +1,5 @@
+import IssueStatusBadge from "../issues/IssueStatusBadge.jsx";
+
 function ProductIssueTable({ issues, onView }) {
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
@@ -49,23 +51,26 @@ function ProductIssueTable({ issues, onView }) {
                             </td>
 
                             <td className="px-6 py-4">
-                                {issue.warehouse || "-"}
+                                {issue.warehouse || "—"}
                             </td>
 
                             <td className="px-6 py-4">
-                                {issue.issueDate || "-"}
+                                {issue.issueDate || "—"}
                             </td>
 
                             <td className="px-6 py-4">
-                                {issue.customer || "-"}
+                                {issue.customer || "—"}
                             </td>
 
                             <td className="px-6 py-4 text-center">
-                                {issue.status}
+                                <IssueStatusBadge status={issue.status} />
                             </td>
 
-                            <td className="px-6 py-4 text-right">
-                                {Number(issue.totalAmount ?? 0).toLocaleString("vi-VN")} ₫
+                            <td className="px-6 py-4 text-right font-semibold text-slate-800">
+                                {issue.totalAmount === null ||
+                                issue.totalAmount === undefined
+                                    ? "—"
+                                    : `${Number(issue.totalAmount).toLocaleString("vi-VN")} ₫`}
                             </td>
 
                             <td className="px-6 py-4 text-center">

@@ -15,14 +15,15 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                 <thead className="border-b border-pink-100">
                 <tr>
 
-                    <SortableHeader field="receiptNo"   label="Số phiếu nhập"   {...sortProps} className="text-left" />
-                    <SortableHeader field="supplier"    label="Nhà cung cấp"    {...sortProps} className="text-left" />
-                    <SortableHeader field="warehouse"   label="Kho"             {...sortProps} className="text-left" />
-                    <SortableHeader field="receiptDate" label="Ngày"            {...sortProps} className="text-right" />
-                    <SortableHeader field="status"      label="Trạng thái"      {...sortProps} className="text-right" />
+                    <SortableHeader field="receiptNo"   label="MÃ PHIẾU"      {...sortProps} className="text-left" />
+                    <SortableHeader field="warehouse"   label="KHO"           {...sortProps} className="text-left" />
+                    <SortableHeader field="receiptDate" label="NGÀY NHẬP"     {...sortProps} className="text-left" />
+                    <SortableHeader field="supplier"    label="NHÀ CUNG CẤP"  {...sortProps} className="text-left" />
+                    <SortableHeader field="status"      label="TRẠNG THÁI"    {...sortProps} className="text-center" />
+                    <SortableHeader field="totalAmount" label="TỔNG TIỀN"     {...sortProps} className="text-right" />
 
                     <th className="px-6 py-4 text-center font-semibold text-slate-700">
-                        Thao tác
+                        THAO TÁC
                     </th>
 
                 </tr>
@@ -33,7 +34,7 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                 {receipts.length === 0 ? (
 
                     <tr>
-                        <td colSpan={6} className="px-6 py-10 text-center text-slate-500">
+                        <td colSpan={7} className="px-6 py-10 text-center text-slate-500">
                             Không có dữ liệu
                         </td>
                     </tr>
@@ -52,10 +53,6 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                             </td>
 
                             <td className="px-6 py-4 text-sm text-slate-700">
-                                {receipt.supplier}
-                            </td>
-
-                            <td className="px-6 py-4 text-sm text-slate-700">
                                 {receipt.warehouse}
                             </td>
 
@@ -63,8 +60,19 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                                 {receipt.receiptDate}
                             </td>
 
+                            <td className="px-6 py-4 text-sm text-slate-700">
+                                {receipt.supplier || "—"}
+                            </td>
+
                             <td className="px-6 py-4 text-center">
                                 <ReceiptStatusBadge status={receipt.status} />
+                            </td>
+
+                            <td className="px-6 py-4 text-right text-sm font-semibold text-slate-800">
+                                {receipt.totalAmount === null ||
+                                receipt.totalAmount === undefined
+                                    ? "—"
+                                    : `${Number(receipt.totalAmount).toLocaleString("vi-VN")} ₫`}
                             </td>
 
                             <td className="px-6 py-4">

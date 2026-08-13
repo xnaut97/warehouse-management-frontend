@@ -22,6 +22,8 @@ import productIssueApi from "../api/productIssueApi.js";
 import ProductReceiptTable from "../components/products/ProductReceiptTable.jsx";
 import ProductIssueTable from "../components/products/ProductIssueTable.jsx";
 
+import { unwrapContent, unwrapTotalPages } from "../utils/apiResponse.js";
+
 function ReceiptsIssuesPage() {
 
     const navigate = useNavigate();
@@ -136,15 +138,12 @@ function ReceiptsIssuesPage() {
 
                 }
 
-                const data =
-                    response.data?.data;
-
                 setTransactions(
-                    data?.content ?? []
+                    unwrapContent(response)
                 );
 
                 setTotalPages(
-                    data?.totalPages ?? 0
+                    unwrapTotalPages(response)
                 );
 
             } catch (error) {

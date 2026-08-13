@@ -8,9 +8,6 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
 
     const navigate = useNavigate();
 
-    const formatCurrency = (value) =>
-        Number(value ?? 0).toLocaleString("vi-VN");
-
     const handleView = (id) => {
         if (onView) {
             onView(id);
@@ -29,15 +26,13 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
                 <thead className="border-b border-pink-100">
                 <tr>
 
-                    <SortableHeader field="issueNo"    label="Mã phiếu"    {...sortProps} className="text-left" />
-                    <SortableHeader field="warehouse"  label="Kho"          {...sortProps} className="text-left" />
-                    <SortableHeader field="customer"   label="Khách hàng"   {...sortProps} className="text-left" />
-                    <SortableHeader field="issueDate"  label="Ngày xuất"    {...sortProps} className="text-left" />
-                    <SortableHeader field="status"     label="Trạng thái"   {...sortProps} className="text-left" />
-                    <SortableHeader field="totalAmount" label="Tổng tiền"   {...sortProps} className="text-right" />
+                    <SortableHeader field="issueNo"    label="MÃ PHIẾU"    {...sortProps} className="text-left" />
+                    <SortableHeader field="warehouse"  label="KHO"         {...sortProps} className="text-left" />
+                    <SortableHeader field="issueDate"  label="NGÀY XUẤT"   {...sortProps} className="text-left" />
+                    <SortableHeader field="status"     label="TRẠNG THÁI"  {...sortProps} className="text-left" />
 
                     <th className="px-6 py-4 text-center font-semibold text-slate-700">
-                        Thao tác
+                        THAO TÁC
                     </th>
 
                 </tr>
@@ -48,7 +43,7 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
                 {issues.length === 0 ? (
 
                     <tr>
-                        <td colSpan={7} className="px-6 py-10 text-center text-slate-500">
+                        <td colSpan={5} className="px-6 py-10 text-center text-slate-500">
                             Không có dữ liệu
                         </td>
                     </tr>
@@ -71,19 +66,11 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
                             </td>
 
                             <td className="px-6 py-4 text-slate-700">
-                                {issue.customer}
-                            </td>
-
-                            <td className="px-6 py-4 text-slate-700">
                                 {issue.issueDate}
                             </td>
 
                             <td className="px-6 py-4">
                                 <IssueStatusBadge status={issue.status} />
-                            </td>
-
-                            <td className="px-6 py-4 text-right font-semibold text-slate-800">
-                                {formatCurrency(issue.totalAmount)}
                             </td>
 
                             <td className="px-6 py-4">
