@@ -35,6 +35,7 @@ import ProductIssueDetailPage from "../pages/ProductIssueDetailPage.jsx";
 import StocktakingPage from "../pages/StocktakingPage.jsx";
 import StocktakingDetailPage from "../pages/StocktakingDetailPage.jsx";
 import ProductDocumentNew from "../components/products/ProductDocumentNew.jsx";
+import MaterialBOMPage from "../pages/MaterialBOMPage.jsx";
 
 function AppRouter() {
 
@@ -144,6 +145,17 @@ function AppRouter() {
                 {/*    }*/}
 
                 {/*/>*/}
+
+                <Route
+                    path="/material-bom"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <MaterialBOMPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
 
                 <Route
                     path="/materials-consumptions"
