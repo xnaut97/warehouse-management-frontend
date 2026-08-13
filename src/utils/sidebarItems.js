@@ -58,7 +58,7 @@ export const sidebarItems = [
             {
                 icon: ClipboardList,
                 label: "Định mức nguyên vật liệu",
-                path: "/materials-consumptions",
+                path: "/material-bom",
             },
         ],
     },

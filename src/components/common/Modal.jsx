@@ -1,7 +1,8 @@
 function Modal({
                    title,
                    children,
-                   onClose
+                   onClose,
+                   size = "md"
                }) {
 
 
@@ -19,17 +20,17 @@ function Modal({
         ">
 
 
-            <div className="
+            <div className={`
                 bg-white
                 rounded-xl
                 shadow-lg
                 w-full
-                max-w-[500px]
+                ${size === "lg" ? "max-w-4xl" : "max-w-[500px]"}
                 max-h-[calc(100vh-2rem)]
                 overflow-y-auto
                 p-4
                 sm:p-6
-            ">
+            `}>
 
 
                 <div className="
