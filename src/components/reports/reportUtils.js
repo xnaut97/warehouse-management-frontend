@@ -18,6 +18,47 @@ export const formatDate = (value) => {
     return new Intl.DateTimeFormat("vi-VN").format(new Date(value));
 };
 
+export const formatPercent = (value, fractionDigits = 2) => {
+    if (value === null || value === undefined || value === "") {
+        return "--";
+    }
+
+    return `${new Intl.NumberFormat("vi-VN", {
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits
+    }).format(toNumber(value))}%`;
+};
+
+export const formatMonth = (value) => {
+    if (!value) return "";
+
+    const [year, month] = String(value).split("-");
+
+    if (!year || !month) return value;
+
+    return `T${Number(month)}/${year}`;
+};
+
+export const formatCompactCurrency = (value) => {
+    const amount = toNumber(value);
+    const sign = amount < 0 ? "-" : "";
+    const absolute = Math.abs(amount);
+
+    if (absolute >= 1_000_000_000) {
+        return `${sign}${formatNumber(absolute / 1_000_000_000)} tỷ`;
+    }
+
+    if (absolute >= 1_000_000) {
+        return `${sign}${formatNumber(absolute / 1_000_000)} tr`;
+    }
+
+    if (absolute >= 1_000) {
+        return `${sign}${formatNumber(absolute / 1_000)} ng`;
+    }
+
+    return `${sign}${formatNumber(absolute)}`;
+};
+
 const toDateInputValue = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -32,6 +73,14 @@ export const firstDayOfMonth = () => {
     const date = new Date();
 
     return toDateInputValue(new Date(date.getFullYear(), date.getMonth(), 1));
+};
+
+export const firstDayOfMonthsAgo = (months) => {
+    const date = new Date();
+
+    return toDateInputValue(
+        new Date(date.getFullYear(), date.getMonth() - months, 1)
+    );
 };
 
 export const unwrap = (response, fallback) =>
