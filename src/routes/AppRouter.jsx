@@ -25,6 +25,9 @@ import ReceiptReport from "../pages/reports/ReceiptReport.jsx";
 import IssueReport from "../pages/reports/IssueReport.jsx";
 import InventoryReport from "../pages/reports/InventoryReport.jsx";
 import StocktakingReport from "../pages/reports/StocktakingReport.jsx";
+import InventoryValueReport from "../pages/reports/InventoryValueReport.jsx";
+import OperationsReport from "../pages/reports/OperationsReport.jsx";
+import StocktakingAccuracyReport from "../pages/reports/StocktakingAccuracyReport.jsx";
 import AuditLog from "../pages/reports/AuditLog.jsx";
 import ReceiptsIssuesPage from "../pages/ReceiptsIssuesPage.jsx";
 import MaterialConsumptionPage from "../pages/MaterialConsumptionPage.jsx";
@@ -330,7 +333,40 @@ function AppRouter() {
                 />
 
                 <Route
+                    path="/reports/inventory-value"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <InventoryValueReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/operations"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <OperationsReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
                     path="/reports/stocktaking"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <StocktakingAccuracyReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/stocktaking-records"
                     element={
                         <ProtectedRoute>
                             <AppLayout>

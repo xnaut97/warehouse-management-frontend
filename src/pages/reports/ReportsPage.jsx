@@ -25,7 +25,7 @@ const reports = [
     {
         title: "Báo cáo kiểm kê",
         description: "Phiếu kiểm kê, chênh lệch và giá trị sai lệch.",
-        path: "/reports/stocktaking",
+        path: "/reports/stocktaking-records",
         icon: ClipboardCheck
     },
     {
