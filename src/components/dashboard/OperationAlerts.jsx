@@ -24,8 +24,8 @@ function OperationAlerts({ data }) {
             <div className="grid gap-6 xl:grid-cols-3">
 
                 {/* Below MIN */}
-                <Card className="p-6">
-                    <div className="mb-5 flex items-center justify-between">
+                <Card className="flex max-h-[32rem] flex-col p-6">
+                    <div className="mb-5 flex shrink-0 items-center justify-between">
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">
                                 Dưới mức tối thiểu
@@ -39,6 +39,7 @@ function OperationAlerts({ data }) {
                         </Badge>
                     </div>
 
+                    <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                     {belowMin.length === 0 ? (
                         <p className="py-8 text-center text-sm text-gray-500">
                             Không có hàng hóa dưới mức tối thiểu.
@@ -81,11 +82,12 @@ function OperationAlerts({ data }) {
                             ))}
                         </div>
                     )}
+                    </div>
                 </Card>
 
                 {/* Above MAX */}
-                <Card className="p-6">
-                    <div className="mb-5 flex items-center justify-between">
+                <Card className="flex max-h-[32rem] flex-col p-6">
+                    <div className="mb-5 flex shrink-0 items-center justify-between">
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">
                                 Vượt mức tối đa
@@ -99,6 +101,7 @@ function OperationAlerts({ data }) {
                         </Badge>
                     </div>
 
+                    <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                     {aboveMax.length === 0 ? (
                         <p className="py-8 text-center text-sm text-gray-500">
                             Không có hàng hóa vượt mức tối đa.
@@ -141,11 +144,12 @@ function OperationAlerts({ data }) {
                             ))}
                         </div>
                     )}
+                    </div>
                 </Card>
 
                 {/* Near Expiration (FEFO) */}
-                <Card className="p-6">
-                    <div className="mb-5 flex items-center justify-between">
+                <Card className="flex max-h-[32rem] flex-col p-6">
+                    <div className="mb-5 flex shrink-0 items-center justify-between">
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">
                                 Sắp hết hạn
@@ -159,6 +163,7 @@ function OperationAlerts({ data }) {
                         </Badge>
                     </div>
 
+                    <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                     {nearExpiration.length === 0 ? (
                         <p className="py-8 text-center text-sm text-gray-500">
                             Không có lô hàng sắp hết hạn.
@@ -193,6 +198,7 @@ function OperationAlerts({ data }) {
                             ))}
                         </div>
                     )}
+                    </div>
                 </Card>
 
             </div>
