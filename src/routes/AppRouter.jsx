@@ -39,6 +39,7 @@ import StocktakingPage from "../pages/StocktakingPage.jsx";
 import StocktakingDetailPage from "../pages/StocktakingDetailPage.jsx";
 import ProductDocumentNew from "../components/products/ProductDocumentNew.jsx";
 import MaterialBOMPage from "../pages/MaterialBOMPage.jsx";
+import AlertsPage from "../pages/AlertsPage.jsx";
 
 function AppRouter() {
 
@@ -285,6 +286,17 @@ function AppRouter() {
                                 </AppLayout>
                             </ProtectedRoute>
                         }
+                />
+
+                <Route
+                    path="/alerts"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <AlertsPage/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
