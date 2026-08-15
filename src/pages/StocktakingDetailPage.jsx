@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCheck, Scale } from "lucide-react";
+import { ArrowLeft, ClipboardCheck, Save } from "lucide-react";
 import toast from "react-hot-toast";
 
 import stocktakingApi from "../api/stocktakingApi.js";
@@ -16,8 +16,15 @@ import StocktakingItemTable from "../components/stocktaking/StocktakingItemTable
 import {
     canBalance,
     canConfirm,
+    isBalanced,
     isEditable
 } from "../components/stocktaking/stocktakingLabels.js";
+
+import {
+    buildCountPayload,
+    buildDraft,
+    collectInvalidQuantities
+} from "../components/stocktaking/stocktakingDraft.js";
 
 function StocktakingDetailPage() {
 
@@ -27,7 +34,11 @@ function StocktakingDetailPage() {
 
     const [stocktaking, setStocktaking] = useState(null);
 
+    const [draft, setDraft] = useState({ items: {}, batches: {} });
+
     const [loading, setLoading] = useState(true);
+
+    const [submitting, setSubmitting] = useState(false);
 
     const [pendingAction, setPendingAction] = useState(null);
 
@@ -37,7 +48,11 @@ function StocktakingDetailPage() {
 
             .then((response) => {
 
-                setStocktaking(response.data.data);
+                const data = response.data.data;
+
+                setStocktaking(data);
+
+                setDraft(buildDraft(data?.items));
 
             })
 
@@ -64,72 +79,62 @@ function StocktakingDetailPage() {
 
     }, [id]);
 
-    const applyItem = (updatedItem) => {
+    const handleChangeItem = (itemId, field, value) => {
 
-        setStocktaking((current) => ({
+        setDraft((current) => ({
             ...current,
-            items: current.items.map((item) =>
-                item.id === updatedItem.id
-                    ? updatedItem
-                    : item
-            )
+            items: {
+                ...current.items,
+                [itemId]: {
+                    ...current.items[itemId],
+                    [field]: value
+                }
+            }
         }));
 
     };
 
-    const handleSaveItem = async (item, payload) => {
+    const handleChangeBatch = (batchId, field, value) => {
 
-        try {
-
-            const response = await stocktakingApi.updateItem(
-                item.id,
-                payload
-            );
-
-            applyItem(response.data.data);
-
-            toast.success("Đã cập nhật số thực tế.");
-
-            return true;
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.message ||
-                "Cập nhật số thực tế thất bại."
-            );
-
-            return false;
-
-        }
+        setDraft((current) => ({
+            ...current,
+            batches: {
+                ...current.batches,
+                [batchId]: {
+                    ...current.batches[batchId],
+                    [field]: value
+                }
+            }
+        }));
 
     };
 
-    const handleSaveBatch = async (batch, payload) => {
+    const handleSave = () => {
 
-        try {
+        const items = stocktaking.items ?? [];
 
-            const response = await stocktakingApi.updateBatch(
-                batch.id,
-                payload
-            );
+        if (items.length === 0) {
 
-            applyItem(response.data.data);
+            toast.error("Phiếu kiểm kê chưa có dòng hàng nào.");
 
-            toast.success("Đã cập nhật số thực tế của lô.");
-
-            return true;
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.message ||
-                "Cập nhật số thực tế của lô thất bại."
-            );
-
-            return false;
+            return;
 
         }
+
+        const invalid = collectInvalidQuantities(items, draft);
+
+        if (invalid.length > 0) {
+
+            toast.error(
+                `Vui lòng nhập số thực tế hợp lệ cho: ${invalid.slice(0, 3).join(", ")}` +
+                (invalid.length > 3 ? ` và ${invalid.length - 3} dòng khác.` : ".")
+            );
+
+            return;
+
+        }
+
+        setPendingAction("save");
 
     };
 
@@ -139,19 +144,24 @@ function StocktakingDetailPage() {
 
         setPendingAction(null);
 
+        setSubmitting(true);
+
         try {
 
-            if (type === "confirm") {
+            if (type === "save") {
 
-                await stocktakingApi.confirm(id);
+                await stocktakingApi.confirm(
+                    id,
+                    buildCountPayload(stocktaking.items ?? [], draft)
+                );
 
-                toast.success("Đã chốt số liệu kiểm kê.");
+                toast.success("Đã lưu số thực tế và chốt số liệu.");
 
             } else {
 
                 await stocktakingApi.balance(id);
 
-                toast.success("Đã cân bằng kho theo số liệu kiểm kê.");
+                toast.success("Đã kiểm kê và cân bằng kho.");
 
             }
 
@@ -163,6 +173,10 @@ function StocktakingDetailPage() {
                 error.response?.data?.message ||
                 "Thao tác không thành công."
             );
+
+        } finally {
+
+            setSubmitting(false);
 
         }
 
@@ -194,6 +208,8 @@ function StocktakingDetailPage() {
         );
 
     }
+
+    const editable = isEditable(stocktaking.status);
 
     return (
 
@@ -232,10 +248,11 @@ function StocktakingDetailPage() {
                         {canConfirm(stocktaking.status) && (
 
                             <Button
-                                onClick={() => setPendingAction("confirm")}
+                                onClick={handleSave}
+                                disabled={submitting}
                             >
-                                <CheckCheck size={18} />
-                                Chốt số liệu
+                                <Save size={18} />
+                                Lưu
                             </Button>
 
                         )}
@@ -244,9 +261,10 @@ function StocktakingDetailPage() {
 
                             <Button
                                 onClick={() => setPendingAction("balance")}
+                                disabled={submitting}
                             >
-                                <Scale size={18} />
-                                Cân bằng kho
+                                <ClipboardCheck size={18} />
+                                Kiểm kê
                             </Button>
 
                         )}
@@ -259,30 +277,55 @@ function StocktakingDetailPage() {
 
             <StocktakingDetailCard stocktaking={stocktaking} />
 
+            {editable && (
+
+                <p className="text-sm text-(--color-text-secondary)">
+                    Nhập số lượng thực tế đếm được tại kho, sau đó bấm “Lưu” để chốt số liệu.
+                </p>
+
+            )}
+
+            {canBalance(stocktaking.status) && (
+
+                <p className="text-sm text-(--color-text-secondary)">
+                    Số liệu đã được chốt. Bấm “Kiểm kê” để đối chiếu sổ sách với thực tế và cân bằng kho.
+                </p>
+
+            )}
+
+            {isBalanced(stocktaking.status) && (
+
+                <p className="text-sm text-(--color-text-secondary)">
+                    Kho đã được cân bằng theo số liệu kiểm kê. Phiếu này không thể chỉnh sửa hoặc kiểm kê lại.
+                </p>
+
+            )}
+
             <StocktakingItemTable
                 items={stocktaking.items ?? []}
-                editable={isEditable(stocktaking.status)}
-                onSaveItem={handleSaveItem}
-                onSaveBatch={handleSaveBatch}
+                editable={editable}
+                draft={draft}
+                onChangeItem={handleChangeItem}
+                onChangeBatch={handleChangeBatch}
             />
 
             {pendingAction && (
 
                 <ConfirmDialog
                     title={
-                        pendingAction === "confirm"
-                            ? "Chốt số liệu kiểm kê"
-                            : "Cân bằng kho"
+                        pendingAction === "save"
+                            ? "Lưu và chốt số liệu"
+                            : "Kiểm kê và cân bằng kho"
                     }
                     message={
-                        pendingAction === "confirm"
-                            ? `Chốt số liệu phiếu ${stocktaking.stocktakingNo}? Sau khi chốt, số thực tế không thể chỉnh sửa.`
-                            : `Cân bằng kho theo phiếu ${stocktaking.stocktakingNo}? Tồn kho sẽ được cập nhật theo số thực tế.`
+                        pendingAction === "save"
+                            ? `Lưu số thực tế của phiếu ${stocktaking.stocktakingNo}? Sau khi lưu, phiếu chuyển sang “Đã chốt số liệu” và số thực tế không thể chỉnh sửa.`
+                            : `Kiểm kê phiếu ${stocktaking.stocktakingNo}? Hệ thống sẽ đối chiếu sổ sách với thực tế và cập nhật tồn kho theo số thực tế.`
                     }
                     confirmText={
-                        pendingAction === "confirm"
-                            ? "Chốt số liệu"
-                            : "Cân bằng kho"
+                        pendingAction === "save"
+                            ? "Lưu"
+                            : "Kiểm kê"
                     }
                     onConfirm={handleConfirmAction}
                     onCancel={() => setPendingAction(null)}

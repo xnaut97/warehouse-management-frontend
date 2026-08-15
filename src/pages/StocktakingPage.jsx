@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 
 import stocktakingApi from "../api/stocktakingApi.js";
@@ -9,10 +10,12 @@ import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Pagination from "../components/common/Pagination.jsx";
 import Loading from "../components/common/Loading.jsx";
+import Modal from "../components/common/Modal.jsx";
 import ConfirmDialog from "../components/common/ConfirmDialog.jsx";
 import { FilterSelect } from "../components/reports/ReportFilters.jsx";
 
 import StocktakingTable from "../components/stocktaking/StocktakingTable.jsx";
+import StocktakingForm from "../components/stocktaking/StocktakingForm.jsx";
 
 import {
     STOCKTAKING_STATUS,
@@ -38,6 +41,8 @@ function StocktakingPage() {
     const [loading, setLoading] = useState(true);
 
     const [pendingAction, setPendingAction] = useState(null);
+
+    const [creating, setCreating] = useState(false);
 
     const { sortField, sortDir, onSort, sortParam } =
         useSort("stocktakingDate", "desc");
@@ -113,27 +118,17 @@ function StocktakingPage() {
 
     }, [page, pageSize, sortParam, search, status]);
 
-    const handleConfirmAction = async () => {
+    const handleBalance = async () => {
 
-        const { type, stocktaking } = pendingAction;
+        const { stocktaking } = pendingAction;
 
         setPendingAction(null);
 
         try {
 
-            if (type === "confirm") {
+            await stocktakingApi.balance(stocktaking.id);
 
-                await stocktakingApi.confirm(stocktaking.id);
-
-                toast.success("Đã chốt số liệu kiểm kê.");
-
-            } else {
-
-                await stocktakingApi.balance(stocktaking.id);
-
-                toast.success("Đã cân bằng kho theo số liệu kiểm kê.");
-
-            }
+            toast.success("Đã kiểm kê và cân bằng kho.");
 
             await loadStocktakings();
 
@@ -155,6 +150,9 @@ function StocktakingPage() {
             <PageHeader
                 title="Kiểm kê"
                 description="Quản lý phiếu kiểm kê, chốt số liệu và cân bằng kho."
+                actionLabel="Tạo phiếu kiểm kê"
+                actionIcon={<Plus size={18} />}
+                onAction={() => setCreating(true)}
             />
 
             <TableToolbar
@@ -193,17 +191,8 @@ function StocktakingPage() {
                     stocktakings={stocktakings}
                     onView={(id) => navigate(`/stocktaking/${id}`)}
                     onEdit={(id) => navigate(`/stocktaking/${id}`)}
-                    onConfirm={(stocktaking) =>
-                        setPendingAction({
-                            type: "confirm",
-                            stocktaking
-                        })
-                    }
                     onBalance={(stocktaking) =>
-                        setPendingAction({
-                            type: "balance",
-                            stocktaking
-                        })
+                        setPendingAction({ stocktaking })
                     }
                     sortField={sortField}
                     sortDir={sortDir}
@@ -218,25 +207,43 @@ function StocktakingPage() {
                 onPageChange={setPage}
             />
 
+            {creating && (
+
+                <Modal
+                    title="Tạo phiếu kiểm kê"
+                    onClose={() => setCreating(false)}
+                >
+
+                    <StocktakingForm
+                        onCancel={() => setCreating(false)}
+                        onSuccess={(createdId) => {
+
+                            setCreating(false);
+
+                            if (createdId) {
+
+                                navigate(`/stocktaking/${createdId}`);
+
+                                return;
+
+                            }
+
+                            loadStocktakings();
+
+                        }}
+                    />
+
+                </Modal>
+
+            )}
+
             {pendingAction && (
 
                 <ConfirmDialog
-                    title={
-                        pendingAction.type === "confirm"
-                            ? "Chốt số liệu kiểm kê"
-                            : "Cân bằng kho"
-                    }
-                    message={
-                        pendingAction.type === "confirm"
-                            ? `Chốt số liệu phiếu ${pendingAction.stocktaking.stocktakingNo}? Sau khi chốt, số thực tế không thể chỉnh sửa.`
-                            : `Cân bằng kho theo phiếu ${pendingAction.stocktaking.stocktakingNo}? Tồn kho sẽ được cập nhật theo số thực tế.`
-                    }
-                    confirmText={
-                        pendingAction.type === "confirm"
-                            ? "Chốt số liệu"
-                            : "Cân bằng kho"
-                    }
-                    onConfirm={handleConfirmAction}
+                    title="Kiểm kê và cân bằng kho"
+                    message={`Kiểm kê phiếu ${pendingAction.stocktaking.stocktakingNo}? Hệ thống sẽ đối chiếu sổ sách với thực tế và cập nhật tồn kho theo số thực tế.`}
+                    confirmText="Kiểm kê"
+                    onConfirm={handleBalance}
                     onCancel={() => setPendingAction(null)}
                 />
 

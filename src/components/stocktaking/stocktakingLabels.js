@@ -44,3 +44,6 @@ export const canConfirm = (status) =>
 
 export const canBalance = (status) =>
     status === STOCKTAKING_STATUS.COUNT_CONFIRMED;
+
+export const isBalanced = (status) =>
+    status === STOCKTAKING_STATUS.STOCK_BALANCED;

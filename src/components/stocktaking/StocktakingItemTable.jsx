@@ -10,9 +10,24 @@ import StocktakingItemStatusBadge from "./StocktakingItemStatusBadge.jsx";
 import { formatNumber } from "../reports/reportUtils.js";
 import { stockGroupLabel } from "./stocktakingLabels.js";
 
+import {
+    resolveItemQuantity,
+    resolveItemStatus
+} from "./stocktakingDraft.js";
+
 function VarianceValue({ value }) {
 
-    const variance = Number(value ?? 0);
+    if (value === null || value === undefined) {
+
+        return (
+            <span className="text-slate-400">
+                -
+            </span>
+        );
+
+    }
+
+    const variance = Number(value);
 
     return (
 
@@ -35,8 +50,9 @@ function VarianceValue({ value }) {
 function StocktakingItemTable({
                                   items,
                                   editable,
-                                  onSaveItem,
-                                  onSaveBatch
+                                  draft,
+                                  onChangeItem,
+                                  onChangeBatch
                               }) {
 
     const [expandedIds, setExpandedIds] = useState([]);
@@ -50,6 +66,43 @@ function StocktakingItemTable({
         );
 
     };
+
+    const readQuantity = (item) => {
+
+        if (!editable) {
+
+            return item.physicalQuantity === null ||
+            item.physicalQuantity === undefined
+                ? null
+                : Number(item.physicalQuantity);
+
+        }
+
+        return resolveItemQuantity(item, draft);
+
+    };
+
+    const readVariance = (item, physicalQuantity) => {
+
+        if (!editable) {
+
+            return item.physicalQuantity === null ||
+            item.physicalQuantity === undefined
+                ? null
+                : Number(item.varianceQuantity ?? 0);
+
+        }
+
+        return physicalQuantity === null
+            ? null
+            : physicalQuantity - Number(item.systemQuantity ?? 0);
+
+    };
+
+    const readStatus = (item, physicalQuantity) =>
+        editable
+            ? resolveItemStatus(item.systemQuantity, physicalQuantity)
+            : item.itemStatus;
 
     return (
 
@@ -111,7 +164,7 @@ function StocktakingItemTable({
 
                             <EmptyState
                                 title="Chưa có dòng kiểm kê"
-                                description="Phiếu kiểm kê này chưa có vật tư nào."
+                                description="Kho của phiếu kiểm kê này chưa có tồn kho nào."
                             />
 
                         </td>
@@ -123,6 +176,10 @@ function StocktakingItemTable({
                     items.map((item) => {
 
                         const expanded = expandedIds.includes(item.id);
+
+                        const physicalQuantity = readQuantity(item);
+
+                        const variance = readVariance(item, physicalQuantity);
 
                         return (
 
@@ -191,14 +248,18 @@ function StocktakingItemTable({
 
                                                 <EditableCell
                                                     type="number"
-                                                    value={item.physicalQuantity ?? ""}
-                                                    placeholder="0"
-                                                    className="h-9 w-28 text-right"
-                                                    onCommit={(next) =>
-                                                        onSaveItem(item, {
-                                                            physicalQuantity: Number(next),
-                                                            reason: item.reason ?? null
-                                                        })
+                                                    value={
+                                                        draft.items[item.id]
+                                                            ?.physicalQuantity ?? ""
+                                                    }
+                                                    placeholder="Nhập số thực tế"
+                                                    className="h-9 w-32 text-right"
+                                                    onChange={(next) =>
+                                                        onChangeItem(
+                                                            item.id,
+                                                            "physicalQuantity",
+                                                            next
+                                                        )
                                                     }
                                                 />
 
@@ -210,10 +271,9 @@ function StocktakingItemTable({
 
                                                 <span className="font-semibold text-slate-800">
                                                     {
-                                                        item.physicalQuantity === null ||
-                                                        item.physicalQuantity === undefined
+                                                        physicalQuantity === null
                                                             ? "-"
-                                                            : formatNumber(item.physicalQuantity)
+                                                            : formatNumber(physicalQuantity)
                                                     }
                                                 </span>
 
@@ -232,11 +292,15 @@ function StocktakingItemTable({
                                     </td>
 
                                     <td className="px-6 py-4 text-right text-sm">
-                                        <VarianceValue value={item.varianceQuantity} />
+                                        <VarianceValue value={variance} />
                                     </td>
 
                                     <td className="px-6 py-4 text-center">
-                                        <StocktakingItemStatusBadge status={item.itemStatus} />
+
+                                        <StocktakingItemStatusBadge
+                                            status={readStatus(item, physicalQuantity)}
+                                        />
+
                                     </td>
 
                                     <td className="px-6 py-4 text-sm">
@@ -244,20 +308,21 @@ function StocktakingItemTable({
                                         {editable && !item.batchManaged ? (
 
                                             <EditableCell
-                                                value={item.reason ?? ""}
+                                                value={
+                                                    draft.items[item.id]?.reason ?? ""
+                                                }
                                                 placeholder={
-                                                    Number(item.varianceQuantity ?? 0) === 0
+                                                    variance === null || variance === 0
                                                         ? "Không bắt buộc"
                                                         : "Lý do chênh lệch"
                                                 }
                                                 className="h-9 w-full min-w-45"
-                                                onCommit={(next) =>
-                                                    onSaveItem(item, {
-                                                        physicalQuantity: Number(
-                                                            item.physicalQuantity ?? 0
-                                                        ),
-                                                        reason: next
-                                                    })
+                                                onChange={(next) =>
+                                                    onChangeItem(
+                                                        item.id,
+                                                        "reason",
+                                                        next
+                                                    )
                                                 }
                                             />
 
@@ -282,7 +347,8 @@ function StocktakingItemTable({
                                             <StocktakingBatchTable
                                                 item={item}
                                                 editable={editable}
-                                                onSaveBatch={onSaveBatch}
+                                                draft={draft}
+                                                onChangeBatch={onChangeBatch}
                                             />
 
                                         </td>

@@ -1,4 +1,4 @@
-import { Eye, Pencil, CheckCheck, Scale } from "lucide-react";
+import { Eye, Pencil, ClipboardCheck } from "lucide-react";
 
 import SortableHeader from "../common/SortableHeader.jsx";
 import EmptyState from "../common/EmptyState.jsx";
@@ -18,7 +18,6 @@ function StocktakingTable({
                               stocktakings,
                               onView,
                               onEdit,
-                              onConfirm,
                               onBalance,
                               sortField,
                               sortDir,
@@ -146,27 +145,14 @@ function StocktakingTable({
 
                                     {canConfirm(stocktaking.status) && (
 
-                                        <>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => onEdit(stocktaking.id)}
-                                                className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
-                                                title="Nhập/chỉnh sửa số thực tế"
-                                            >
-                                                <Pencil size={18} />
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => onConfirm(stocktaking)}
-                                                className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
-                                                title="Chốt số liệu"
-                                            >
-                                                <CheckCheck size={18} />
-                                            </button>
-
-                                        </>
+                                        <button
+                                            type="button"
+                                            onClick={() => onEdit(stocktaking.id)}
+                                            className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
+                                            title="Nhập số thực tế và lưu"
+                                        >
+                                            <Pencil size={18} />
+                                        </button>
 
                                     )}
 
@@ -176,9 +162,9 @@ function StocktakingTable({
                                             type="button"
                                             onClick={() => onBalance(stocktaking)}
                                             className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
-                                            title="Xử lý/cân bằng kho"
+                                            title="Kiểm kê và cân bằng kho"
                                         >
-                                            <Scale size={18} />
+                                            <ClipboardCheck size={18} />
                                         </button>
 
                                     )}
