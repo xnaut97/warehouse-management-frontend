@@ -40,9 +40,9 @@ const stocktakingApi = {
 
     },
 
-    confirm(id) {
+    confirm(id, data) {
 
-        return api.post(`/stocktaking/${id}/confirm`);
+        return api.post(`/stocktaking/${id}/confirm`, data);
 
     },
 

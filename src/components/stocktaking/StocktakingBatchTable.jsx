@@ -5,9 +5,21 @@ import {
     formatNumber
 } from "../reports/reportUtils.js";
 
+import { parseQuantity } from "./stocktakingDraft.js";
+
 function VarianceValue({ value }) {
 
-    const variance = Number(value ?? 0);
+    if (value === null || value === undefined) {
+
+        return (
+            <span className="text-slate-400">
+                -
+            </span>
+        );
+
+    }
+
+    const variance = Number(value);
 
     return (
 
@@ -30,10 +42,45 @@ function VarianceValue({ value }) {
 function StocktakingBatchTable({
                                    item,
                                    editable,
-                                   onSaveBatch
+                                   draft,
+                                   onChangeBatch
                                }) {
 
     const batches = item.batches ?? [];
+
+    const readQuantity = (batch) => {
+
+        if (!editable) {
+
+            return batch.physicalQuantity === null ||
+            batch.physicalQuantity === undefined
+                ? null
+                : Number(batch.physicalQuantity);
+
+        }
+
+        return parseQuantity(
+            draft.batches[batch.id]?.physicalQuantity
+        );
+
+    };
+
+    const readVariance = (batch, physicalQuantity) => {
+
+        if (!editable) {
+
+            return batch.physicalQuantity === null ||
+            batch.physicalQuantity === undefined
+                ? null
+                : Number(batch.varianceQuantity ?? 0);
+
+        }
+
+        return physicalQuantity === null
+            ? null
+            : physicalQuantity - Number(batch.systemQuantity ?? 0);
+
+    };
 
     return (
 
@@ -93,102 +140,115 @@ function StocktakingBatchTable({
 
                         <tbody>
 
-                        {batches.map((batch) => (
+                        {batches.map((batch) => {
 
-                            <tr
-                                key={batch.id}
-                                className="border-b border-pink-100 last:border-b-0"
-                            >
+                            const physicalQuantity = readQuantity(batch);
 
-                                <td className="px-4 py-3 font-medium text-slate-800">
-                                    {batch.lotNumber || "-"}
-                                </td>
+                            const variance = readVariance(
+                                batch,
+                                physicalQuantity
+                            );
 
-                                <td className="px-4 py-3 text-slate-700">
-                                    {formatDate(batch.expirationDate) || "-"}
-                                </td>
+                            return (
 
-                                <td className="px-4 py-3 text-right text-slate-700">
-                                    {formatNumber(batch.systemQuantity)}
-                                </td>
+                                <tr
+                                    key={batch.id}
+                                    className="border-b border-pink-100 last:border-b-0"
+                                >
 
-                                <td className="px-4 py-3 text-right">
+                                    <td className="px-4 py-3 font-medium text-slate-800">
+                                        {batch.lotNumber || "-"}
+                                    </td>
 
-                                    {editable ? (
+                                    <td className="px-4 py-3 text-slate-700">
+                                        {formatDate(batch.expirationDate) || "-"}
+                                    </td>
 
-                                        <EditableCell
-                                            type="number"
-                                            value={
-                                                batch.physicalQuantity ?? ""
-                                            }
-                                            placeholder="0"
-                                            className="h-9 w-28 text-right"
-                                            onCommit={(next) =>
-                                                onSaveBatch(batch, {
-                                                    physicalQuantity: Number(next),
-                                                    reason: batch.reason ?? null
-                                                })
-                                            }
-                                        />
+                                    <td className="px-4 py-3 text-right text-slate-700">
+                                        {formatNumber(batch.systemQuantity)}
+                                    </td>
 
-                                    ) : (
+                                    <td className="px-4 py-3 text-right">
 
-                                        <span className="text-slate-800">
-                                            {
-                                                batch.physicalQuantity === null ||
-                                                batch.physicalQuantity === undefined
-                                                    ? "-"
-                                                    : formatNumber(batch.physicalQuantity)
-                                            }
-                                        </span>
+                                        {editable ? (
 
-                                    )}
+                                            <div className="flex justify-end">
 
-                                </td>
+                                                <EditableCell
+                                                    type="number"
+                                                    value={
+                                                        draft.batches[batch.id]
+                                                            ?.physicalQuantity ?? ""
+                                                    }
+                                                    placeholder="Nhập số thực tế"
+                                                    className="h-9 w-32 text-right"
+                                                    onChange={(next) =>
+                                                        onChangeBatch(
+                                                            batch.id,
+                                                            "physicalQuantity",
+                                                            next
+                                                        )
+                                                    }
+                                                />
 
-                                <td className="px-4 py-3 text-right">
-                                    <VarianceValue value={batch.varianceQuantity} />
-                                </td>
+                                            </div>
 
-                                <td className="px-4 py-3">
+                                        ) : (
 
-                                    {editable ? (
+                                            <span className="text-slate-800">
+                                                {
+                                                    physicalQuantity === null
+                                                        ? "-"
+                                                        : formatNumber(physicalQuantity)
+                                                }
+                                            </span>
 
-                                        <EditableCell
-                                            value={batch.reason ?? ""}
-                                            placeholder={
-                                                Number(batch.varianceQuantity ?? 0) === 0
-                                                    ? "Không bắt buộc"
-                                                    : "Lý do chênh lệch"
-                                            }
-                                            className="h-9 w-full min-w-45"
-                                            disabled={
-                                                batch.physicalQuantity === null ||
-                                                batch.physicalQuantity === undefined
-                                            }
-                                            onCommit={(next) =>
-                                                onSaveBatch(batch, {
-                                                    physicalQuantity: Number(
-                                                        batch.physicalQuantity ?? 0
-                                                    ),
-                                                    reason: next
-                                                })
-                                            }
-                                        />
+                                        )}
 
-                                    ) : (
+                                    </td>
 
-                                        <span className="text-slate-700">
-                                            {batch.reason || "-"}
-                                        </span>
+                                    <td className="px-4 py-3 text-right">
+                                        <VarianceValue value={variance} />
+                                    </td>
 
-                                    )}
+                                    <td className="px-4 py-3">
 
-                                </td>
+                                        {editable ? (
 
-                            </tr>
+                                            <EditableCell
+                                                value={
+                                                    draft.batches[batch.id]?.reason ?? ""
+                                                }
+                                                placeholder={
+                                                    variance === null || variance === 0
+                                                        ? "Không bắt buộc"
+                                                        : "Lý do chênh lệch"
+                                                }
+                                                className="h-9 w-full min-w-45"
+                                                onChange={(next) =>
+                                                    onChangeBatch(
+                                                        batch.id,
+                                                        "reason",
+                                                        next
+                                                    )
+                                                }
+                                            />
 
-                        ))}
+                                        ) : (
+
+                                            <span className="text-slate-700">
+                                                {batch.reason || "-"}
+                                            </span>
+
+                                        )}
+
+                                    </td>
+
+                                </tr>
+
+                            );
+
+                        })}
 
                         </tbody>
 

@@ -7,6 +7,18 @@ import {
 
 function StocktakingItemStatusBadge({ status }) {
 
+    if (!status) {
+
+        return (
+
+            <Badge color="gray">
+                Chưa kiểm kê
+            </Badge>
+
+        );
+
+    }
+
     return (
 
         <Badge color={itemStatusColor[status] || "gray"}>
