@@ -116,14 +116,14 @@ export const sidebarItems = [
                 path: "/reports/inventory-value",
             },
             {
-                icon: ClipboardCheck,
-                label: "Báo cáo kiểm kê & tỉ lệ chính xác kho",
-                path: "/reports/stocktaking",
-            },
-            {
                 icon: Gauge,
                 label: "Báo cáo hiệu quả vận hành & định mức",
                 path: "/reports/operations-efficiency",
+            },
+            {
+                icon: ClipboardCheck,
+                label: "Báo cáo kiểm kê & tỉ lệ chính xác kho",
+                path: "/reports/stocktaking",
             },
         ],
     },
