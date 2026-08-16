@@ -10,7 +10,6 @@ import {
     Boxes,
     ClipboardCheck,
     TriangleAlert,
-    ChartColumn,
     CircleDollarSign,
     FileChartColumn, ListChecks, ArrowDownUp,
 } from "lucide-react";
@@ -92,7 +91,7 @@ export const sidebarItems = [
             {
                 icon: FileChartColumn,
                 label: "Báo cáo tác nghiệp",
-                path: "/operations",
+                path: "/reports/operations",
             },
         ],
     },
@@ -115,11 +114,6 @@ export const sidebarItems = [
                 icon: CircleDollarSign,
                 label: "Báo cáo giá trị vốn lưu động tồn kho",
                 path: "/reports/inventory-value",
-            },
-            {
-                icon: ChartColumn,
-                label: "Báo cáo hiệu quả vận hành & định mức",
-                path: "/reports/operations",
             },
             {
                 icon: ClipboardCheck,
