@@ -27,6 +27,7 @@ import InventoryReport from "../pages/reports/InventoryReport.jsx";
 import StocktakingReport from "../pages/reports/StocktakingReport.jsx";
 import InventoryValueReport from "../pages/reports/InventoryValueReport.jsx";
 import OperationsReport from "../pages/reports/OperationsReport.jsx";
+import OperationsEfficiencyReport from "../pages/reports/OperationsEfficiencyReport.jsx";
 import StocktakingAccuracyReport from "../pages/reports/StocktakingAccuracyReport.jsx";
 import AuditLog from "../pages/reports/AuditLog.jsx";
 import ReceiptsIssuesPage from "../pages/ReceiptsIssuesPage.jsx";
@@ -361,6 +362,17 @@ function AppRouter() {
                         <ProtectedRoute>
                             <AppLayout>
                                 <OperationsReport/>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reports/operations-efficiency"
+                    element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <OperationsEfficiencyReport/>
                             </AppLayout>
                         </ProtectedRoute>
                     }
