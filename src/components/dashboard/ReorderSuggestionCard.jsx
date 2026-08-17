@@ -4,11 +4,9 @@ import { formatNumber } from "../../utils/dashboardUtils.js";
 
 function ReorderSuggestionCard({ items = [] }) {
 
-    const visibleItems = items.slice(0, 6);
-
     return (
-        <Card className="p-6">
-            <div className="mb-5">
+        <Card className="flex max-h-[32rem] flex-col p-6">
+            <div className="mb-5 shrink-0">
                 <h3 className="text-lg font-semibold text-gray-800">
                     Đề xuất nhập thêm
                 </h3>
@@ -17,13 +15,14 @@ function ReorderSuggestionCard({ items = [] }) {
                 </p>
             </div>
 
-            {visibleItems.length === 0 ? (
+            <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            {items.length === 0 ? (
                 <p className="py-8 text-center text-sm text-gray-500">
                     Chưa có đề xuất nhập thêm nguyên vật liệu.
                 </p>
             ) : (
                 <div className="space-y-4">
-                    {visibleItems.map((item) => (
+                    {items.map((item) => (
                         <div
                             key={`${item.code}-${item.name}`}
                             className="flex items-center justify-between gap-4 rounded-xl bg-pink-50 p-4"
@@ -43,6 +42,7 @@ function ReorderSuggestionCard({ items = [] }) {
                     ))}
                 </div>
             )}
+            </div>
         </Card>
     );
 

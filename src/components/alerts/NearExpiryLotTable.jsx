@@ -8,32 +8,32 @@ import { GROUP_SHORT_LABELS } from "./alertConstants.js";
 
 function NearExpiryLotTable({ lots = [] }) {
     return (
-        <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
+        <div className="max-h-[32rem] overflow-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="w-full min-w-[1080px]">
-                <thead className="border-b border-pink-100">
+                <thead>
                     <tr>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Mã vật tư
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Tên vật tư
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Phân loại
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Số Lô
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             HSD
                         </th>
-                        <th className="px-5 py-4 text-right text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-right text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             SL Tồn Lô
                         </th>
-                        <th className="px-5 py-4 text-right text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-right text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Giá trung bình
                         </th>
-                        <th className="px-5 py-4 text-right text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-right text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             Giá trị vốn đọng
                         </th>
                     </tr>

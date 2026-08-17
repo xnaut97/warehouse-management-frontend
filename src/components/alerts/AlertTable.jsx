@@ -9,29 +9,29 @@ import {
 
 function AlertTable({ alerts = [] }) {
     return (
-        <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
+        <div className="max-h-[32rem] overflow-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="w-full min-w-[1080px]">
-                <thead className="border-b border-pink-100">
+                <thead>
                     <tr>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             STT
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             MỨC ĐỘ
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             NHÓM CẢNH BÁO
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             MÃ - NVL/SẢN PHẨM
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             SỐ LÔ
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             HSD
                         </th>
-                        <th className="px-5 py-4 text-left text-sm font-semibold text-gray-600">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             TÌNH TRẠNG CHI TIẾT
                         </th>
                     </tr>

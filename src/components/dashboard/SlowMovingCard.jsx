@@ -10,11 +10,9 @@ function formatDate(value) {
 
 function SlowMovingCard({ items = [], title, description, valueKey = "currentQuantity" }) {
 
-    const visibleItems = items.slice(0, 6);
-
     return (
-        <Card className="p-6">
-            <div className="mb-5 flex items-center justify-between gap-3">
+        <Card className="flex max-h-[32rem] flex-col p-6">
+            <div className="mb-5 flex shrink-0 items-center justify-between gap-3">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                         {title}
@@ -28,13 +26,14 @@ function SlowMovingCard({ items = [], title, description, valueKey = "currentQua
                 </Badge>
             </div>
 
-            {visibleItems.length === 0 ? (
+            <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            {items.length === 0 ? (
                 <p className="py-8 text-center text-sm text-gray-500">
                     Chưa có dữ liệu cần cảnh báo.
                 </p>
             ) : (
                 <div className="space-y-4">
-                    {visibleItems.map((item) => (
+                    {items.map((item) => (
                         <div
                             key={`${item.code ?? item.materialCode}-${item.name ?? item.materialName}`}
                             className="rounded-xl border border-gray-100 p-4"
@@ -61,6 +60,7 @@ function SlowMovingCard({ items = [], title, description, valueKey = "currentQua
                     ))}
                 </div>
             )}
+            </div>
         </Card>
     );
 
