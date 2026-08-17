@@ -4,11 +4,9 @@ import { formatNumber } from "../../utils/dashboardUtils.js";
 
 function LowStockCard({ items = [] }) {
 
-    const visibleItems = items.slice(0, 6);
-
     return (
-        <Card className="p-6">
-            <div className="mb-5 flex items-center justify-between">
+        <Card className="flex max-h-[32rem] flex-col p-6">
+            <div className="mb-5 flex shrink-0 items-center justify-between">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                         Cảnh báo tồn tối thiểu
@@ -22,13 +20,14 @@ function LowStockCard({ items = [] }) {
                 </Badge>
             </div>
 
-            {visibleItems.length === 0 ? (
+            <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            {items.length === 0 ? (
                 <p className="py-8 text-center text-sm text-gray-500">
                     Không có nguyên vật liệu dưới mức tồn tối thiểu.
                 </p>
             ) : (
                 <div className="space-y-4">
-                    {visibleItems.map((item) => (
+                    {items.map((item) => (
                         <div
                             key={`${item.code}-${item.name}`}
                             className="rounded-xl border border-gray-100 p-4"
@@ -68,6 +67,7 @@ function LowStockCard({ items = [] }) {
                     ))}
                 </div>
             )}
+            </div>
         </Card>
     );
 
