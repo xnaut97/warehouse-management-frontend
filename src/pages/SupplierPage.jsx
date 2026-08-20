@@ -10,6 +10,7 @@ import Pagination from "../components/common/Pagination.jsx";
 import SupplierTable from "../components/suppliers/SupplierTable.jsx";
 import Modal from "../components/common/Modal.jsx";
 import SupplierForm from "../components/suppliers/SupplierForm.jsx";
+import { supplierGroupLabel } from "../components/suppliers/supplierConstants.js";
 
 function SupplierPage() {
 
@@ -47,9 +48,10 @@ function SupplierPage() {
     const filteredSuppliers = suppliers.filter((supplier) => {
         const keyword = search.toLowerCase();
         return (
-            supplier.name.toLowerCase().includes(keyword) ||
-            supplier.code.toLowerCase().includes(keyword) ||
-            supplier.contactPerson.toLowerCase().includes(keyword)
+            (supplier.name || "").toLowerCase().includes(keyword) ||
+            (supplier.code || "").toLowerCase().includes(keyword) ||
+            (supplier.contactPerson || "").toLowerCase().includes(keyword) ||
+            supplierGroupLabel(supplier.supplierGroup).toLowerCase().includes(keyword)
         );
     });
 

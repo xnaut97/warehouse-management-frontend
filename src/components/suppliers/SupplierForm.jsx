@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import supplierApi from "../../api/supplierApi.js";
 import { toast } from "react-hot-toast";
 
+import {
+    DEFAULT_SUPPLIER_GROUP,
+    SUPPLIER_GROUPS,
+    SUPPLIER_GROUP_LABELS
+} from "./supplierConstants.js";
+
 function SupplierForm({
 
                           supplier,
@@ -18,13 +24,17 @@ function SupplierForm({
 
         name: "",
 
+        address: "",
+
+        supplierGroup: DEFAULT_SUPPLIER_GROUP,
+
         contactPerson: "",
 
         phone: "",
 
         email: "",
 
-        address: ""
+        note: ""
 
     });
 
@@ -38,13 +48,17 @@ function SupplierForm({
 
                 name: supplier.name,
 
+                address: supplier.address || "",
+
+                supplierGroup: supplier.supplierGroup || DEFAULT_SUPPLIER_GROUP,
+
                 contactPerson: supplier.contactPerson || "",
 
                 phone: supplier.phone || "",
 
                 email: supplier.email || "",
 
-                address: supplier.address || ""
+                note: supplier.note || ""
 
             });
 
@@ -150,13 +164,61 @@ function SupplierForm({
 
             </div>
 
+            <div>
+
+                <label className="block mb-2 text-sm font-medium">
+
+                    Địa chỉ
+
+                </label>
+
+                <textarea
+                    rows="3"
+                    name="address"
+                    value={form.address}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-pink-400 focus:outline-none resize-none"
+                />
+
+            </div>
+
+            <div>
+
+                <label className="block mb-2 text-sm font-medium">
+
+                    Nhóm cung cấp
+
+                </label>
+
+                <select
+                    name="supplierGroup"
+                    value={form.supplierGroup}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-pink-400 focus:outline-none"
+                    required
+                >
+
+                    {SUPPLIER_GROUPS.map((group) => (
+
+                        <option key={group} value={group}>
+
+                            {SUPPLIER_GROUP_LABELS[group]}
+
+                        </option>
+
+                    ))}
+
+                </select>
+
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
 
                 <div>
 
                     <label className="block mb-2 text-sm font-medium">
 
-                        Người đại diện
+                        Người liên hệ
 
                     </label>
 
@@ -210,14 +272,14 @@ function SupplierForm({
 
                 <label className="block mb-2 text-sm font-medium">
 
-                    Địa chỉ
+                    Ghi chú
 
                 </label>
 
                 <textarea
                     rows="3"
-                    name="address"
-                    value={form.address}
+                    name="note"
+                    value={form.note}
                     onChange={handleChange}
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-pink-400 focus:outline-none resize-none"
                 />
