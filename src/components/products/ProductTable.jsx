@@ -42,7 +42,7 @@ function ProductTable({ products, onEdit, onRefresh, sortField, sortDir, onSort,
                             <td className="px-6 py-4">{product.unit}</td>
                             <td className="px-6 py-4">{product.category || "-"}</td>
                             <td className="px-6 py-4 text-center">
-                                {Number(product.averagePrice ?? product.sellingPrice ?? 0).toLocaleString("vi-VN")} ₫
+                                {Number(product.averagePrice ?? 0).toLocaleString("vi-VN")} ₫
                             </td>
                             <td className="px-6 py-4 text-center">{product.minimumStock ?? 0} {product.unit}</td>
                             <td className="px-6 py-4 text-center">{product.maximumStock ?? 0} {product.unit}</td>
