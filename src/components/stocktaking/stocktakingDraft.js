@@ -97,6 +97,83 @@ export const resolveItemStatus = (systemQuantity, physicalQuantity) => {
 
 };
 
+const savedQuantity = (record) =>
+    record.physicalQuantity === null ||
+    record.physicalQuantity === undefined
+        ? null
+        : Number(record.physicalQuantity);
+
+/*
+ * While the sheet is editable the counted numbers only live in the draft,
+ * so the quantity, variance, status and reason shown on screen must be
+ * derived from it. Once the count is confirmed the record itself is the
+ * source of truth. Both the tables and the Excel/print export read a row
+ * through these helpers so they can never disagree.
+ */
+export const resolveItemView = (item, draft, editable) => {
+
+    if (!editable) {
+
+        const physicalQuantity = savedQuantity(item);
+
+        return {
+            physicalQuantity,
+            variance:
+                physicalQuantity === null
+                    ? null
+                    : Number(item.varianceQuantity ?? 0),
+            status: item.itemStatus,
+            reason: item.reason ?? ""
+        };
+
+    }
+
+    const physicalQuantity = resolveItemQuantity(item, draft);
+
+    return {
+        physicalQuantity,
+        variance:
+            physicalQuantity === null
+                ? null
+                : physicalQuantity - Number(item.systemQuantity ?? 0),
+        status: resolveItemStatus(item.systemQuantity, physicalQuantity),
+        reason: draft.items[item.id]?.reason ?? ""
+    };
+
+};
+
+export const resolveBatchView = (batch, draft, editable) => {
+
+    if (!editable) {
+
+        const physicalQuantity = savedQuantity(batch);
+
+        return {
+            physicalQuantity,
+            variance:
+                physicalQuantity === null
+                    ? null
+                    : Number(batch.varianceQuantity ?? 0),
+            reason: batch.reason ?? ""
+        };
+
+    }
+
+    const physicalQuantity = parseQuantity(
+        draft.batches[batch.id]?.physicalQuantity
+    );
+
+    return {
+        physicalQuantity,
+        variance:
+            physicalQuantity === null
+                ? null
+                : physicalQuantity - Number(batch.systemQuantity ?? 0),
+        reason: draft.batches[batch.id]?.reason ?? ""
+    };
+
+};
+
 export const collectInvalidQuantities = (items = [], draft) => {
 
     const invalid = [];

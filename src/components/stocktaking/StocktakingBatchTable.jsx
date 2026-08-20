@@ -5,7 +5,7 @@ import {
     formatNumber
 } from "../reports/reportUtils.js";
 
-import { parseQuantity } from "./stocktakingDraft.js";
+import { resolveBatchView } from "./stocktakingDraft.js";
 
 function VarianceValue({ value }) {
 
@@ -47,40 +47,6 @@ function StocktakingBatchTable({
                                }) {
 
     const batches = item.batches ?? [];
-
-    const readQuantity = (batch) => {
-
-        if (!editable) {
-
-            return batch.physicalQuantity === null ||
-            batch.physicalQuantity === undefined
-                ? null
-                : Number(batch.physicalQuantity);
-
-        }
-
-        return parseQuantity(
-            draft.batches[batch.id]?.physicalQuantity
-        );
-
-    };
-
-    const readVariance = (batch, physicalQuantity) => {
-
-        if (!editable) {
-
-            return batch.physicalQuantity === null ||
-            batch.physicalQuantity === undefined
-                ? null
-                : Number(batch.varianceQuantity ?? 0);
-
-        }
-
-        return physicalQuantity === null
-            ? null
-            : physicalQuantity - Number(batch.systemQuantity ?? 0);
-
-    };
 
     return (
 
@@ -142,12 +108,8 @@ function StocktakingBatchTable({
 
                         {batches.map((batch) => {
 
-                            const physicalQuantity = readQuantity(batch);
-
-                            const variance = readVariance(
-                                batch,
-                                physicalQuantity
-                            );
+                            const { physicalQuantity, variance } =
+                                resolveBatchView(batch, draft, editable);
 
                             return (
 
