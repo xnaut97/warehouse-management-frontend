@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ClipboardCheck, Save } from "lucide-react";
+import {
+    ArrowLeft,
+    ClipboardCheck,
+    FileSpreadsheet,
+    Printer,
+    Save
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 import stocktakingApi from "../api/stocktakingApi.js";
@@ -25,6 +31,11 @@ import {
     buildDraft,
     collectInvalidQuantities
 } from "../components/stocktaking/stocktakingDraft.js";
+
+import {
+    exportStocktakingToExcel,
+    printStocktaking
+} from "../components/stocktaking/stocktakingExport.js";
 
 function StocktakingDetailPage() {
 
@@ -106,6 +117,44 @@ function StocktakingDetailPage() {
                 }
             }
         }));
+
+    };
+
+    const handleExportExcel = () => {
+
+        try {
+
+            exportStocktakingToExcel(
+                stocktaking,
+                draft,
+                isEditable(stocktaking.status)
+            );
+
+            toast.success("Đã xuất file Excel.");
+
+        } catch {
+
+            toast.error("Không thể xuất file Excel.");
+
+        }
+
+    };
+
+    const handlePrint = () => {
+
+        try {
+
+            printStocktaking(
+                stocktaking,
+                draft,
+                isEditable(stocktaking.status)
+            );
+
+        } catch {
+
+            toast.error("Không thể mở bản in.");
+
+        }
 
     };
 
@@ -244,6 +293,22 @@ function StocktakingDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-3">
+
+                        <Button
+                            variant="secondary"
+                            onClick={handleExportExcel}
+                        >
+                            <FileSpreadsheet size={18} />
+                            Xuất Excel
+                        </Button>
+
+                        <Button
+                            variant="secondary"
+                            onClick={handlePrint}
+                        >
+                            <Printer size={18} />
+                            In
+                        </Button>
 
                         {canConfirm(stocktaking.status) && (
 

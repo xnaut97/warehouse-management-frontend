@@ -10,10 +10,7 @@ import StocktakingItemStatusBadge from "./StocktakingItemStatusBadge.jsx";
 import { formatNumber } from "../reports/reportUtils.js";
 import { stockGroupLabel } from "./stocktakingLabels.js";
 
-import {
-    resolveItemQuantity,
-    resolveItemStatus
-} from "./stocktakingDraft.js";
+import { resolveItemView } from "./stocktakingDraft.js";
 
 function VarianceValue({ value }) {
 
@@ -66,43 +63,6 @@ function StocktakingItemTable({
         );
 
     };
-
-    const readQuantity = (item) => {
-
-        if (!editable) {
-
-            return item.physicalQuantity === null ||
-            item.physicalQuantity === undefined
-                ? null
-                : Number(item.physicalQuantity);
-
-        }
-
-        return resolveItemQuantity(item, draft);
-
-    };
-
-    const readVariance = (item, physicalQuantity) => {
-
-        if (!editable) {
-
-            return item.physicalQuantity === null ||
-            item.physicalQuantity === undefined
-                ? null
-                : Number(item.varianceQuantity ?? 0);
-
-        }
-
-        return physicalQuantity === null
-            ? null
-            : physicalQuantity - Number(item.systemQuantity ?? 0);
-
-    };
-
-    const readStatus = (item, physicalQuantity) =>
-        editable
-            ? resolveItemStatus(item.systemQuantity, physicalQuantity)
-            : item.itemStatus;
 
     return (
 
@@ -177,9 +137,11 @@ function StocktakingItemTable({
 
                         const expanded = expandedIds.includes(item.id);
 
-                        const physicalQuantity = readQuantity(item);
-
-                        const variance = readVariance(item, physicalQuantity);
+                        const {
+                            physicalQuantity,
+                            variance,
+                            status
+                        } = resolveItemView(item, draft, editable);
 
                         return (
 
@@ -298,7 +260,7 @@ function StocktakingItemTable({
                                     <td className="px-6 py-4 text-center">
 
                                         <StocktakingItemStatusBadge
-                                            status={readStatus(item, physicalQuantity)}
+                                            status={status}
                                         />
 
                                     </td>
