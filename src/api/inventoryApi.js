@@ -27,6 +27,17 @@ const inventoryApi = {
             "/inventories/low-stock"
         );
 
+    },
+
+    getProductLots(params) {
+
+        return api.get(
+            "/product-inventories/lots",
+            {
+                params
+            }
+        );
+
     }
 
 };

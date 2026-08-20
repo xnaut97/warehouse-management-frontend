@@ -322,6 +322,7 @@ function ProductIssueDetailPage() {
                     <ProductDocumentItemForm
                         transactionType="ISSUE"
                         documentId={Number(id)}
+                        warehouseId={issue.warehouseId}
                         item={selectedItem}
                         onSuccess={async () => {
                             setShowItemForm(false);
