@@ -78,38 +78,38 @@ function AppRouter() {
                     </ProtectedRoute>}
                 />
 
-                {/*<Route*/}
+                <Route
 
-                {/*    path="/users"*/}
+                    path="/users"
 
-                {/*    element={*/}
+                    element={
 
-                {/*        <ProtectedRoute>*/}
+                        <ProtectedRoute>
 
-                {/*            <AppLayout>*/}
+                            <AppLayout>
 
-                {/*                <UserPage/>*/}
+                                <UserPage/>
 
-                {/*            </AppLayout>*/}
+                            </AppLayout>
 
-                {/*        </ProtectedRoute>*/}
+                        </ProtectedRoute>
 
-                {/*    }*/}
+                    }
 
-                {/*/>*/}
+                />
 
-                {/*<Route*/}
-                {/*    path="/suppliers"*/}
-                {/*    element={<ProtectedRoute>*/}
+                <Route
+                    path="/suppliers"
+                    element={<ProtectedRoute>
 
-                {/*        <AppLayout>*/}
+                        <AppLayout>
 
-                {/*            <SupplierPage/>*/}
+                            <SupplierPage/>
 
-                {/*        </AppLayout>*/}
+                        </AppLayout>
 
-                {/*    </ProtectedRoute>}*/}
-                {/*/>*/}
+                    </ProtectedRoute>}
+                />
 
                 <Route
 

@@ -11,7 +11,7 @@ import {
     ClipboardCheck,
     TriangleAlert,
     CircleDollarSign,
-    FileChartColumn, ListChecks, ArrowDownUp, Gauge,
+    FileChartColumn, ListChecks, ArrowDownUp, Gauge, Truck,
 } from "lucide-react";
 
 export const sidebarItems = [
@@ -29,16 +29,16 @@ export const sidebarItems = [
     {
         title: "QUẢN LÝ",
         items: [
-            // {
-            //     icon: User,
-            //     label: "Người dùng",
-            //     path: "/users",
-            // },
-            // {
-            //     icon: Truck,
-            //     label: "Nhà cung cấp",
-            //     path: "/suppliers",
-            // },
+            {
+                icon: User,
+                label: "Người dùng",
+                path: "/users",
+            },
+            {
+                icon: Truck,
+                label: "Nhà cung cấp",
+                path: "/suppliers",
+            },
             {
                 icon: Box,
                 label: "Nguyên vật liệu",
