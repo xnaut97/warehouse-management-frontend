@@ -1,16 +1,10 @@
 import Badge from "../common/Badge.jsx";
 import UserActions from "./UserActions.jsx";
 import SortableHeader from "../common/SortableHeader.jsx";
+import { roleLabel } from "../../utils/roles.js";
 
 function UserTable({ users, onEdit, onToggleStatus, onResetPassword, sortField, sortDir, onSort }) {
     const sortProps = { sortField, sortDir, onSort };
-
-    const roleLabels = {
-        ADMIN: "Quản trị viên",
-        WAREHOUSE_MANAGER: "Quản lý kho",
-        WAREHOUSE_STAFF: "Nhân viên kho",
-        EXECUTIVE_BOARD: "Giám đốc",
-    };
 
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
@@ -39,7 +33,7 @@ function UserTable({ users, onEdit, onToggleStatus, onResetPassword, sortField, 
 
                         <td className="px-6 py-4">
                             <Badge color="pink">
-                                {roleLabels[user.role] || user.role}
+                                {roleLabel(user.role)}
                             </Badge>
                         </td>
 
