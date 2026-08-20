@@ -67,16 +67,6 @@ function ProductDetailCard({ product }) {
 
                 <div>
                     <p className="text-gray-500">
-                        Giá bán
-                    </p>
-
-                    <p className="font-medium">
-                        {formatCurrency(product.sellingPrice)} ₫
-                    </p>
-                </div>
-
-                <div>
-                    <p className="text-gray-500">
                         Giá trung bình
                     </p>
 

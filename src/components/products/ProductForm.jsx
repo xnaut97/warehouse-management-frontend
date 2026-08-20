@@ -4,9 +4,8 @@ import toast from "react-hot-toast";
 import productApi from "../../api/productApi.js";
 
 export const PRODUCT_CATEGORIES = [
-    "Keo dán gạch",
-    "Keo 2 thành phần",
-    "Sản phẩm khác",
+    "Keo C1",
+    "Keo 2",
 ];
 
 const emptyForm = {
@@ -15,8 +14,6 @@ const emptyForm = {
     specification: "",
     unit: "",
     category: PRODUCT_CATEGORIES[0],
-    sellingPrice: "",
-    averagePrice: "",
     minimumStock: "",
     maximumStock: "",
     enabled: true,
@@ -37,8 +34,6 @@ function ProductForm({ product, onSuccess, onCancel }) {
             specification: product.specification || "",
             unit: product.unit || "",
             category: product.category || PRODUCT_CATEGORIES[0],
-            sellingPrice: product.sellingPrice ?? "",
-            averagePrice: product.averagePrice ?? "",
             minimumStock: product.minimumStock ?? "",
             maximumStock: product.maximumStock ?? "",
             enabled: product.enabled ?? true,
@@ -59,8 +54,6 @@ function ProductForm({ product, onSuccess, onCancel }) {
 
         const minimumStock = Number(form.minimumStock);
         const maximumStock = Number(form.maximumStock);
-        const sellingPrice = Number(form.sellingPrice);
-        const averagePrice = Number(form.averagePrice);
 
         if (maximumStock < minimumStock) {
             toast.error("Tồn max phải lớn hơn hoặc bằng tồn min");
@@ -72,8 +65,6 @@ function ProductForm({ product, onSuccess, onCancel }) {
             specification: form.specification.trim(),
             unit: form.unit.trim(),
             category: form.category,
-            sellingPrice,
-            averagePrice,
             minimumStock,
             maximumStock,
         };
@@ -171,41 +162,6 @@ function ProductForm({ product, onSuccess, onCancel }) {
                         </option>
                     ))}
                 </select>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                    <label className="mb-2 block font-medium">
-                        Giá bán
-                    </label>
-
-                    <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        name="sellingPrice"
-                        value={form.sellingPrice}
-                        onChange={handleChange}
-                        required
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
-                    />
-                </div>
-
-                <div>
-                    <label className="mb-2 block font-medium">
-                        Giá trung bình
-                    </label>
-
-                    <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        name="averagePrice"
-                        value={form.averagePrice}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
-                    />
-                </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
