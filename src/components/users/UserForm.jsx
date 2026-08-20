@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import userApi from "../../api/userApi.js";
+import { ASSIGNABLE_ROLES, DEFAULT_ROLE, roleLabel } from "../../utils/roles.js";
 
 function UserForm({
                       user,
@@ -15,9 +16,16 @@ function UserForm({
         password:"",
         fullName:user?.fullName ?? "",
         email:user?.email ?? "",
-        role:user?.role ?? "WAREHOUSE_STAFF"
+        role:user?.role ?? DEFAULT_ROLE
 
     });
+
+
+
+    const roleOptions =
+        ASSIGNABLE_ROLES.includes(form.role)
+            ? ASSIGNABLE_ROLES
+            : [...ASSIGNABLE_ROLES, form.role];
 
 
 
@@ -198,21 +206,25 @@ function UserForm({
 
             >
 
-                <option value="ADMIN">
-                    Quản trị viên
-                </option>
+                {
 
-                <option value="WAREHOUSE_MANAGER">
-                    Quản lý kho
-                </option>
+                    roleOptions.map(role => (
 
-                <option value="WAREHOUSE_STAFF">
-                    Nhân viên kho
-                </option>
+                        <option
 
-                <option value="DIRECTOR">
-                    Giám đốc
-                </option>
+                            key={role}
+
+                            value={role}
+
+                        >
+
+                            {roleLabel(role)}
+
+                        </option>
+
+                    ))
+
+                }
 
 
             </select>

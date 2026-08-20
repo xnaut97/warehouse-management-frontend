@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 
 import warehouseApi from "../../api/warehouseApi.js";
 import userApi from "../../api/userApi.js";
+import { roleLabel } from "../../utils/roles.js";
 
 function WarehouseForm({
 
@@ -31,13 +32,6 @@ function WarehouseForm({
         enabled: true
 
     });
-
-    const roleLabels = {
-        ADMIN: "Quản trị viên",
-        WAREHOUSE_MANAGER: "Quản lý kho",
-        WAREHOUSE_STAFF: "Nhân viên kho",
-        DIRECTOR: "Giám đốc",
-    };
 
     useEffect(() => {
 
@@ -392,7 +386,7 @@ function WarehouseForm({
 
                             >
 
-                                {user.fullName} ({roleLabels[user.role] || user.role})
+                                {user.fullName} ({roleLabel(user.role)})
 
                             </option>
 
