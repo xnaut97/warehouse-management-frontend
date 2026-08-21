@@ -8,6 +8,7 @@ import productApi from "../../api/productApi.js";
 
 import Button from "../common/Button.jsx";
 import Loading from "../common/Loading.jsx";
+import { PRODUCT_CATEGORIES } from "../products/ProductForm.jsx";
 
 import { unwrapContent } from "../../utils/apiResponse.js";
 
@@ -30,6 +31,9 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
     const [loadingData, setLoadingData] = useState(true);
 
     const [loading, setLoading] = useState(false);
+
+    // Explicit category pick of the user, null while nothing has been picked yet.
+    const [categoryChoice, setCategoryChoice] = useState(null);
 
     const [form, setForm] = useState(() => ({
         code: bom?.code ?? "",
@@ -85,6 +89,21 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
 
     }, []);
 
+    const selectedProduct = products.find(
+        (product) => String(product.id) === String(form.productId)
+    );
+
+    // A new BOM starts on the first category. An existing BOM shows the
+    // category of the product it was saved with until the user picks another.
+    const category =
+        categoryChoice ??
+        selectedProduct?.category ??
+        PRODUCT_CATEGORIES[0];
+
+    const filteredProducts = products.filter(
+        (product) => product.category === category
+    );
+
     const handleChange = (event) => {
 
         const { name, value } = event.target;
@@ -93,6 +112,23 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
             ...previous,
             [name]: value,
         }));
+
+    };
+
+    const handleCategoryChange = (event) => {
+
+        const { value } = event.target;
+
+        setCategoryChoice(value);
+
+        if (selectedProduct && selectedProduct.category !== value) {
+
+            setForm((previous) => ({
+                ...previous,
+                productId: "",
+            }));
+
+        }
 
     };
 
@@ -216,6 +252,34 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
                 <div>
 
                     <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Phân loại
+                        <span className="text-red-500"> *</span>
+                    </label>
+
+                    <select
+                        name="category"
+                        value={category}
+                        onChange={handleCategoryChange}
+                        required
+                        disabled={loading}
+                        className={inputClass}
+                    >
+
+                        {PRODUCT_CATEGORIES.map((productCategory) => (
+
+                            <option key={productCategory} value={productCategory}>
+                                {productCategory}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                </div>
+
+                <div className="sm:col-span-2">
+
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
                         Sản phẩm
                         <span className="text-red-500"> *</span>
                     </label>
@@ -230,10 +294,12 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
                     >
 
                         <option value="">
-                            Chọn sản phẩm
+                            {filteredProducts.length === 0
+                                ? `Không có sản phẩm thuộc ${category}`
+                                : "Chọn sản phẩm"}
                         </option>
 
-                        {products.map((product) => (
+                        {filteredProducts.map((product) => (
 
                             <option key={product.id} value={product.id}>
                                 [{product.code}] {product.name}
