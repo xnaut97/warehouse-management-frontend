@@ -178,6 +178,7 @@ function IssueDetail() {
                     <IssueItemForm
                         issueId={Number(id)}
                         item={selectedItem}
+                        existingItems={issue.items ?? []}
                         onSuccess={async () => {
                             setShowItemForm(false);
                             setSelectedItem(null);
