@@ -23,6 +23,18 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             ? null
             : Number(form.unitPrice);
 
+    const unitPriceError =
+        form.unitPrice === ""
+            ? ""
+            : Number.isNaN(unitPrice) || unitPrice < 0
+                ? "Đơn giá không hợp lệ"
+                : "";
+
+    const blockSubmit =
+        loading ||
+        form.unitPrice === "" ||
+        Boolean(unitPriceError);
+
     useEffect(() => {
         materialApi.getAllMaterials({ size: 1000 })
             .then((response) => {
@@ -60,11 +72,12 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             toast.error("Số lượng phải lớn hơn 0");
             return;
         }
-        if (
-            form.unitPrice !== "" &&
-            Number(form.unitPrice) < 0
-        ) {
-            toast.error("Đơn giá không hợp lệ");
+        if (form.unitPrice === "") {
+            toast.error("Vui lòng nhập đơn giá nhập");
+            return;
+        }
+        if (unitPriceError) {
+            toast.error(unitPriceError);
             return;
         }
 
@@ -148,18 +161,30 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
             {/* Đơn giá */}
             <div>
                 <label className="mb-2 block font-medium">
-                    Đơn giá nhập (VNĐ)
+                    Đơn giá nhập (VNĐ) <span className="text-red-500">*</span>
                 </label>
                 <input
                     type="number"
                     name="unitPrice"
                     value={form.unitPrice}
                     onChange={handleChange}
+                    required
                     min="0"
                     step="any"
-                    placeholder="Có thể bỏ trống"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
+                    placeholder="Nhập đơn giá nhập"
+                    aria-invalid={Boolean(unitPriceError)}
+                    className={
+                        unitPriceError
+                            ? "w-full rounded-xl border border-red-400 px-4 py-3 outline-none focus:border-red-500"
+                            : "w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
+                    }
                 />
+
+                {unitPriceError && (
+                    <p className="mt-2 text-sm text-red-500">
+                        {unitPriceError}
+                    </p>
+                )}
             </div>
 
             {/* Live thành tiền preview */}
@@ -185,7 +210,7 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
                 </button>
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={blockSubmit}
                     className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
                     hover:bg-(--color-primary) disabled:opacity-50"
                 >

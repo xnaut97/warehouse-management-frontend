@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import materialIssueApi from "../../api/materialIssueApi.js";
 import materialApi from "../../api/materialApi";
 
-function IssueItemForm({ issueId, item, onSuccess, onCancel }) {
+function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel }) {
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -48,6 +48,31 @@ function IssueItemForm({ issueId, item, onSuccess, onCancel }) {
             quantity: item.quantity ?? "",
         });
     }, [item]);
+
+    const usedMaterialIds = useMemo(
+        () =>
+            new Set(
+                existingItems
+                    .filter((existing) => existing.id !== item?.id)
+                    .map((existing) => existing.materialId)
+            ),
+        [existingItems, item]
+    );
+
+    const availableMaterials = useMemo(
+        () =>
+            materials.filter(
+                (material) => !usedMaterialIds.has(material.id)
+            ),
+        [materials, usedMaterialIds]
+    );
+
+    const noMaterialAvailable =
+        !item &&
+        materials.length > 0 &&
+        availableMaterials.length === 0;
+
+    const blockSubmit = loading || noMaterialAvailable;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -116,14 +141,16 @@ function IssueItemForm({ issueId, item, onSuccess, onCancel }) {
                         value={form.materialId}
                         onChange={handleChange}
                         required
-                        disabled={loading}
+                        disabled={loading || noMaterialAvailable}
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
                     >
                         <option value="">
-                            Chọn nguyên vật liệu
+                            {noMaterialAvailable
+                                ? "Đã thêm hết nguyên vật liệu"
+                                : "Chọn nguyên vật liệu"}
                         </option>
 
-                        {materials.map((material) => (
+                        {availableMaterials.map((material) => (
                             <option
                                 key={material.id}
                                 value={material.id}
@@ -132,6 +159,12 @@ function IssueItemForm({ issueId, item, onSuccess, onCancel }) {
                             </option>
                         ))}
                     </select>
+
+                    {noMaterialAvailable && (
+                        <p className="mt-2 text-sm text-red-500">
+                            Tất cả nguyên vật liệu đã có trong phiếu xuất này.
+                        </p>
+                    )}
                 </div>
             ) : (
                 <div>
@@ -177,7 +210,7 @@ function IssueItemForm({ issueId, item, onSuccess, onCancel }) {
 
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={blockSubmit}
                     className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition hover:bg-(--color-primary) disabled:opacity-50"
                 >
                     {loading
