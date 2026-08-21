@@ -91,7 +91,9 @@ function CustomerPage() {
     const filteredCustomers = customers.filter((customer) => {
         const keyword = search.toLowerCase();
         return (
+            customer.code?.toLowerCase().includes(keyword) ||
             customer.name.toLowerCase().includes(keyword) ||
+            customer.receiverName?.toLowerCase().includes(keyword) ||
             customer.phone?.toLowerCase().includes(keyword)
         );
     });
