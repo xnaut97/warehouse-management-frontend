@@ -8,7 +8,6 @@ const emptyForm = {
     code: "",
     name: "",
     unit: "",
-    unitPrice: "",
     minimumStock: "",
     maximumStock: "",
     supplierId: "",
@@ -32,7 +31,6 @@ function MaterialForm({ material, onSuccess, onCancel }) {
             code: material.code || "",
             name: material.name || "",
             unit: material.unit || "",
-            unitPrice: material.unitPrice ?? "",
             minimumStock: material.minimumStock ?? "",
             maximumStock: material.maximumStock ?? "",
             supplierId: material.supplierId || "",
@@ -65,7 +63,6 @@ function MaterialForm({ material, onSuccess, onCancel }) {
 
         const payload = {
             ...form,
-            unitPrice: Number(form.unitPrice),
             minimumStock: Number(form.minimumStock),
             maximumStock: Number(form.maximumStock),
             supplierId: Number(form.supplierId),
@@ -115,17 +112,24 @@ function MaterialForm({ material, onSuccess, onCancel }) {
                 className="w-full rounded-xl border px-4 py-3"
             />
 
-            <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="unitPrice"
-                placeholder="Giá trung bình"
-                value={form.unitPrice}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border px-4 py-3"
-            />
+            <div>
+                <input
+                    type="text"
+                    readOnly
+                    disabled
+                    placeholder="Giá trung bình"
+                    value={
+                        material
+                            ? `${Number(material.unitPrice || 0).toLocaleString("vi-VN")} ₫`
+                            : ""
+                    }
+                    className="w-full rounded-xl border bg-gray-100 px-4 py-3 text-gray-500"
+                />
+
+                <p className="mt-1 text-xs text-gray-500">
+                    Giá trung bình được tính tự động từ các phiếu nhập đã xác nhận
+                </p>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
                 <input
