@@ -324,6 +324,7 @@ function ProductIssueDetailPage() {
                         documentId={Number(id)}
                         warehouseId={issue.warehouseId}
                         item={selectedItem}
+                        existingItems={issue.items ?? []}
                         onSuccess={async () => {
                             setShowItemForm(false);
                             setSelectedItem(null);

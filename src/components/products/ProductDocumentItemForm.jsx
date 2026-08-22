@@ -15,7 +15,12 @@ const NO_LOT_LABEL = "Không có lô";
 
 const lotKeyOf = (lot) => String(lot.inventoryId);
 
-const lotLabel = (lot) => {
+const normalizeLot = (lotNumber) =>
+    lotNumber === null || lotNumber === undefined || String(lotNumber).trim() === ""
+        ? null
+        : String(lotNumber).trim();
+
+const lotLabel = (lot, available) => {
 
     const name = lot.lotNumber || NO_LOT_LABEL;
 
@@ -23,7 +28,7 @@ const lotLabel = (lot) => {
         ? ` · HSD ${formatDate(lot.expirationDate)}`
         : "";
 
-    return `${name} · Tồn ${formatNumber(lot.quantity)}${expiration}`;
+    return `${name} · Khả dụng ${formatNumber(available)}${expiration}`;
 
 };
 
@@ -32,6 +37,7 @@ function ProductDocumentItemForm({
                                      documentId,
                                      warehouseId,
                                      item,
+                                     existingItems = [],
                                      onSuccess,
                                      onCancel,
                                  }) {
@@ -188,8 +194,40 @@ function ProductDocumentItemForm({
 
     }, [isReceipt, lots, lotChoice, item]);
 
+    // Stock the rest of this voucher already takes from a lot, so the same
+    // product can be issued again from what is genuinely left.
+    const issuedOnLot = useMemo(() => {
+
+        const totals = new Map();
+
+        existingItems
+            .filter((existing) => existing.id !== item?.id)
+            .forEach((existing) => {
+
+                const key = `${existing.productId}::${normalizeLot(existing.lotNumber)}`;
+
+                totals.set(
+                    key,
+                    (totals.get(key) ?? 0) + Number(existing.quantity ?? 0)
+                );
+
+            });
+
+        return totals;
+
+    }, [existingItems, item]);
+
+    const availableOf = (lot) =>
+        Math.max(
+            0,
+            Number(lot.quantity ?? 0) -
+            (issuedOnLot.get(
+                `${lot.productId}::${normalizeLot(lot.lotNumber)}`
+            ) ?? 0)
+        );
+
     const availableQuantity = selectedLot
-        ? Number(selectedLot.quantity ?? 0)
+        ? availableOf(selectedLot)
         : null;
 
     const issueExpirationDate = selectedLot?.expirationDate ?? "";
@@ -436,7 +474,7 @@ function ProductDocumentItemForm({
                         {lots.map((lot) => (
 
                             <option key={lotKeyOf(lot)} value={lotKeyOf(lot)}>
-                                {lotLabel(lot)}
+                                {lotLabel(lot, availableOf(lot))}
                             </option>
 
                         ))}

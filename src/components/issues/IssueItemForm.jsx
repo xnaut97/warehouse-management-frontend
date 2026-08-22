@@ -3,10 +3,19 @@ import toast from "react-hot-toast";
 
 import materialIssueApi from "../../api/materialIssueApi.js";
 import materialApi from "../../api/materialApi";
+import inventoryApi from "../../api/inventoryApi.js";
 
-function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel }) {
+import { unwrapContent } from "../../utils/apiResponse.js";
+import { formatNumber } from "../reports/reportUtils.js";
+
+function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSuccess, onCancel }) {
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [stock, setStock] = useState(null);
+
+    // Material the stock in state belongs to, so loading can be derived.
+    const [stockLoadedFor, setStockLoadedFor] = useState(null);
 
     const [form, setForm] = useState({
         materialId: "",
@@ -49,30 +58,114 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
         });
     }, [item]);
 
-    const usedMaterialIds = useMemo(
+    const selectedMaterialId = item
+        ? item.materialId
+        : form.materialId;
+
+    useEffect(() => {
+        if (!warehouseId || !selectedMaterialId) {
+            return;
+        }
+
+        let active = true;
+
+        inventoryApi
+            .getAll({
+                warehouseId,
+                materialId: selectedMaterialId,
+            })
+            .then((response) => {
+                if (!active) {
+                    return;
+                }
+
+                const row = unwrapContent(response).find(
+                    (inventory) =>
+                        String(inventory.materialId) ===
+                        String(selectedMaterialId)
+                );
+
+                setStock(row ? Number(row.quantity ?? 0) : 0);
+                setStockLoadedFor(selectedMaterialId);
+            })
+            .catch((error) => {
+                if (!active) {
+                    return;
+                }
+
+                setStock(null);
+                setStockLoadedFor(selectedMaterialId);
+
+                toast.error(
+                    error.response?.data?.message ||
+                    "Không thể tải tồn kho nguyên vật liệu"
+                );
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [warehouseId, selectedMaterialId]);
+
+    const loadingStock =
+        Boolean(warehouseId) &&
+        Boolean(selectedMaterialId) &&
+        String(stockLoadedFor) !== String(selectedMaterialId);
+
+    // Quantity the rest of this voucher already takes from the same material.
+    const alreadyIssued = useMemo(
         () =>
-            new Set(
-                existingItems
-                    .filter((existing) => existing.id !== item?.id)
-                    .map((existing) => existing.materialId)
-            ),
-        [existingItems, item]
+            existingItems
+                .filter((existing) => existing.id !== item?.id)
+                .filter(
+                    (existing) =>
+                        String(existing.materialId) ===
+                        String(selectedMaterialId)
+                )
+                .reduce(
+                    (total, existing) => total + Number(existing.quantity ?? 0),
+                    0
+                ),
+        [existingItems, item, selectedMaterialId]
     );
 
-    const availableMaterials = useMemo(
-        () =>
-            materials.filter(
-                (material) => !usedMaterialIds.has(material.id)
-            ),
-        [materials, usedMaterialIds]
-    );
+    const availableQuantity =
+        stock === null || loadingStock
+            ? null
+            : Math.max(0, stock - alreadyIssued);
 
-    const noMaterialAvailable =
-        !item &&
-        materials.length > 0 &&
-        availableMaterials.length === 0;
+    const quantityError = useMemo(() => {
+        if (form.quantity === "") {
+            return "";
+        }
 
-    const blockSubmit = loading || noMaterialAvailable;
+        const quantity = Number(form.quantity);
+
+        if (Number.isNaN(quantity) || quantity <= 0) {
+            return "Số lượng phải lớn hơn 0";
+        }
+
+        if (availableQuantity === null) {
+            return "";
+        }
+
+        if (quantity > availableQuantity) {
+            return `Số lượng vượt quá tồn kho khả dụng (${formatNumber(availableQuantity)}).`;
+        }
+
+        return "";
+    }, [form.quantity, availableQuantity]);
+
+    const noStockAvailable =
+        Boolean(warehouseId) &&
+        Boolean(selectedMaterialId) &&
+        !loadingStock &&
+        availableQuantity === 0;
+
+    const blockSubmit =
+        loading ||
+        Boolean(quantityError) ||
+        noStockAvailable;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -93,6 +186,11 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
 
         if (!form.quantity || Number(form.quantity) <= 0) {
             toast.error("Số lượng phải lớn hơn 0");
+            return;
+        }
+
+        if (quantityError) {
+            toast.error(quantityError);
             return;
         }
 
@@ -141,16 +239,14 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
                         value={form.materialId}
                         onChange={handleChange}
                         required
-                        disabled={loading || noMaterialAvailable}
+                        disabled={loading}
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
                     >
                         <option value="">
-                            {noMaterialAvailable
-                                ? "Đã thêm hết nguyên vật liệu"
-                                : "Chọn nguyên vật liệu"}
+                            Chọn nguyên vật liệu
                         </option>
 
-                        {availableMaterials.map((material) => (
+                        {materials.map((material) => (
                             <option
                                 key={material.id}
                                 value={material.id}
@@ -160,9 +256,9 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
                         ))}
                     </select>
 
-                    {noMaterialAvailable && (
+                    {noStockAvailable && (
                         <p className="mt-2 text-sm text-red-500">
-                            Tất cả nguyên vật liệu đã có trong phiếu xuất này.
+                            Nguyên vật liệu không còn tồn kho khả dụng trong kho của phiếu này.
                         </p>
                     )}
                 </div>
@@ -175,6 +271,12 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
                     <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-slate-600">
                         [{item.materialCode}] {item.materialName}
                     </div>
+
+                    {noStockAvailable && (
+                        <p className="mt-2 text-sm text-red-500">
+                            Nguyên vật liệu không còn tồn kho khả dụng trong kho của phiếu này.
+                        </p>
+                    )}
                 </div>
             )}
 
@@ -192,10 +294,33 @@ function IssueItemForm({ issueId, item, existingItems = [], onSuccess, onCancel 
                     required
                     min="0.01"
                     step="any"
+                    max={
+                        availableQuantity !== null
+                            ? availableQuantity
+                            : undefined
+                    }
                     placeholder="Nhập số lượng"
                     disabled={loading}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
+                    aria-invalid={Boolean(quantityError)}
+                    className={
+                        quantityError
+                            ? "w-full rounded-xl border border-red-400 px-4 py-3 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                            : "w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
+                    }
                 />
+
+                {quantityError ? (
+                    <p className="mt-2 text-sm text-red-500">
+                        {quantityError}
+                    </p>
+                ) : (
+                    availableQuantity !== null && (
+                        <p className="mt-2 text-sm text-slate-500">
+                            Tồn kho khả dụng: {formatNumber(availableQuantity)}
+                            {item?.unit ? ` ${item.unit}` : ""}
+                        </p>
+                    )
+                )}
             </div>
 
             <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">

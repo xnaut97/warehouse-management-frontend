@@ -177,6 +177,7 @@ function IssueDetail() {
                 >
                     <IssueItemForm
                         issueId={Number(id)}
+                        warehouseId={issue.warehouseId}
                         item={selectedItem}
                         existingItems={issue.items ?? []}
                         onSuccess={async () => {
