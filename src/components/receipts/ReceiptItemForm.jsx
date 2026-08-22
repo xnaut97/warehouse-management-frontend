@@ -9,6 +9,8 @@ import { unwrapContent } from "../../utils/apiResponse.js";
 function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
 
     const [materials, setMaterials] = useState([]);
+    const [materialsLoading, setMaterialsLoading] = useState(true);
+    const [materialsError, setMaterialsError] = useState("");
     const [loading, setLoading] = useState(false);
 
 
@@ -33,7 +35,8 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
     const blockSubmit =
         loading ||
         form.unitPrice === "" ||
-        Boolean(unitPriceError);
+        Boolean(unitPriceError) ||
+        (!item && (materialsLoading || Boolean(materialsError)));
 
     useEffect(() => {
         materialApi.getAllMaterials({ size: 1000 })
@@ -42,12 +45,25 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
                     unwrapContent(response)
                         .filter((material) => material.enabled !== false)
                 );
+
+                setMaterialsError("");
             })
             .catch((error) => {
-                toast.error(
+                console.error(error);
+
+                // Surface the real backend reason (e.g. missing permission)
+                // instead of leaving an empty dropdown behind.
+                const message =
                     error.response?.data?.message ||
-                    "Không thể tải danh sách nguyên vật liệu"
-                );
+                    "Không thể tải danh sách nguyên vật liệu";
+
+                setMaterials([]);
+                setMaterialsError(message);
+
+                toast.error(message);
+            })
+            .finally(() => {
+                setMaterialsLoading(false);
             });
     }, []);
 
@@ -121,15 +137,41 @@ function ReceiptItemForm({ receiptId, item, onSuccess, onCancel }) {
                         value={form.materialId}
                         onChange={handleChange}
                         required
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
+                        disabled={materialsLoading || Boolean(materialsError)}
+                        aria-invalid={Boolean(materialsError)}
+                        className={
+                            materialsError
+                                ? "w-full rounded-xl border border-red-400 px-4 py-3 outline-none focus:border-red-500"
+                                : "w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
+                        }
                     >
-                        <option value="">Chọn nguyên vật liệu</option>
+                        <option value="">
+                            {materialsLoading
+                                ? "Đang tải nguyên vật liệu..."
+                                : materialsError
+                                    ? "Không tải được nguyên vật liệu"
+                                    : "Chọn nguyên vật liệu"}
+                        </option>
                         {materials.map((material) => (
                             <option key={material.id} value={material.id}>
                                 [{material.code}] {material.name}
                             </option>
                         ))}
                     </select>
+
+                    {materialsError && (
+                        <p className="mt-2 text-sm text-red-500">
+                            {materialsError}
+                        </p>
+                    )}
+
+                    {!materialsLoading &&
+                        !materialsError &&
+                        materials.length === 0 && (
+                            <p className="mt-2 text-sm text-slate-500">
+                                Chưa có nguyên vật liệu nào khả dụng.
+                            </p>
+                        )}
                 </div>
             ) : (
                 <div>

@@ -10,6 +10,8 @@ import { formatNumber } from "../reports/reportUtils.js";
 
 function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSuccess, onCancel }) {
     const [materials, setMaterials] = useState([]);
+    const [materialsLoading, setMaterialsLoading] = useState(true);
+    const [materialsError, setMaterialsError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const [stock, setStock] = useState(null);
@@ -24,6 +26,8 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
 
     useEffect(() => {
         const loadMaterials = async () => {
+            setMaterialsLoading(true);
+
             try {
                 const response = await materialApi.getAllMaterials({
                     size: 1000,
@@ -38,9 +42,23 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                 setMaterials(
                     list.filter((material) => material.enabled !== false)
                 );
+
+                setMaterialsError("");
             } catch (error) {
                 console.error(error);
-                toast.error("Không thể tải danh sách nguyên vật liệu");
+
+                // Surface the real backend reason (e.g. missing permission)
+                // instead of leaving an empty dropdown behind.
+                const message =
+                    error.response?.data?.message ||
+                    "Không thể tải danh sách nguyên vật liệu";
+
+                setMaterials([]);
+                setMaterialsError(message);
+
+                toast.error(message);
+            } finally {
+                setMaterialsLoading(false);
             }
         };
 
@@ -165,7 +183,8 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
     const blockSubmit =
         loading ||
         Boolean(quantityError) ||
-        noStockAvailable;
+        noStockAvailable ||
+        (!item && (materialsLoading || Boolean(materialsError)));
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -239,11 +258,24 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                         value={form.materialId}
                         onChange={handleChange}
                         required
-                        disabled={loading}
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
+                        disabled={
+                            loading ||
+                            materialsLoading ||
+                            Boolean(materialsError)
+                        }
+                        aria-invalid={Boolean(materialsError)}
+                        className={
+                            materialsError
+                                ? "w-full rounded-xl border border-red-400 bg-white px-4 py-3 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                                : "w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
+                        }
                     >
                         <option value="">
-                            Chọn nguyên vật liệu
+                            {materialsLoading
+                                ? "Đang tải nguyên vật liệu..."
+                                : materialsError
+                                    ? "Không tải được nguyên vật liệu"
+                                    : "Chọn nguyên vật liệu"}
                         </option>
 
                         {materials.map((material) => (
@@ -255,6 +287,20 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                             </option>
                         ))}
                     </select>
+
+                    {materialsError && (
+                        <p className="mt-2 text-sm text-red-500">
+                            {materialsError}
+                        </p>
+                    )}
+
+                    {!materialsLoading &&
+                        !materialsError &&
+                        materials.length === 0 && (
+                            <p className="mt-2 text-sm text-slate-500">
+                                Chưa có nguyên vật liệu nào khả dụng.
+                            </p>
+                        )}
 
                     {noStockAvailable && (
                         <p className="mt-2 text-sm text-red-500">
