@@ -9,6 +9,8 @@ const axiosClient = axios.create({
 
     baseURL: import.meta.env.VITE_API_URL,
 
+    timeout: 120000,
+
     headers: {
         "Content-Type": "application/json"
     }
@@ -46,6 +48,17 @@ axiosClient.interceptors.response.use(
         const url = error.config?.url;
 
         const token = authStore.getState().token;
+
+        if (!error.response) {
+
+            toast.error(
+                "Không thể kết nối tới máy chủ. Vui lòng thử lại.",
+                { id: "network-error" }
+            );
+
+            return Promise.reject(error);
+
+        }
 
         if (
 
