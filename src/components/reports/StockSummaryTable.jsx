@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Badge from "../common/Badge.jsx";
 import EmptyState from "../common/EmptyState.jsx";
 
-import { formatNumber } from "./reportUtils.js";
+import { formatDate, formatNumber } from "./reportUtils.js";
 
 const DOCUMENT_META = {
     GOODS_RECEIPT: {
@@ -46,7 +46,7 @@ function DocumentTable({ documents, onOpen }) {
 
         <div className="overflow-x-auto rounded-xl border border-(--color-border) bg-white">
 
-            <table className="w-full min-w-125">
+            <table className="w-full min-w-200">
 
                 <thead className="border-b border-pink-100">
 
@@ -57,11 +57,23 @@ function DocumentTable({ documents, onOpen }) {
                     </th>
 
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Ngày giao dịch
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Nghiệp vụ
                     </th>
 
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Mã phiếu
+                    </th>
+
+                    <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Số lượng
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Đối tượng
                     </th>
 
                 </tr>
@@ -83,6 +95,10 @@ function DocumentTable({ documents, onOpen }) {
 
                             <td className="px-5 py-3 text-sm text-slate-700">
                                 {index + 1}
+                            </td>
+
+                            <td className="px-5 py-3 text-sm text-slate-700">
+                                {formatDate(document.documentDate) || "-"}
                             </td>
 
                             <td className="px-5 py-3 text-sm">
@@ -112,6 +128,22 @@ function DocumentTable({ documents, onOpen }) {
                                     </span>
 
                                 )}
+
+                            </td>
+
+                            <td className="px-5 py-3 text-right text-sm text-slate-700">
+                                {formatNumber(document.quantity)}
+                            </td>
+
+                            <td className="px-5 py-3 text-sm text-slate-700">
+
+                                {document.partnerName
+                                    ? `${document.partnerName}${
+                                        document.partnerCode
+                                            ? ` (${document.partnerCode})`
+                                            : ""
+                                    }`
+                                    : "-"}
 
                             </td>
 
