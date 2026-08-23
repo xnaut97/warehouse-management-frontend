@@ -11,7 +11,7 @@ import Button from "../common/Button.jsx";
 import { unwrapContent } from "../../utils/apiResponse.js";
 import { formatDate, formatNumber } from "../reports/reportUtils.js";
 
-const NO_LOT_LABEL = "Không có lô";
+const NO_LOT_LABEL = "Hàng chưa gán lô";
 
 const lotKeyOf = (lot) => String(lot.inventoryId);
 
@@ -20,15 +20,15 @@ const normalizeLot = (lotNumber) =>
         ? null
         : String(lotNumber).trim();
 
-const lotLabel = (lot, available) => {
+const lotLabel = (lot, available, unit) => {
 
     const name = lot.lotNumber || NO_LOT_LABEL;
 
     const expiration = lot.expirationDate
         ? ` · HSD ${formatDate(lot.expirationDate)}`
-        : "";
+        : " · Chưa có HSD";
 
-    return `${name} · Khả dụng ${formatNumber(available)}${expiration}`;
+    return `${name} · Khả dụng ${formatNumber(available)}${unit ? ` ${unit}` : ""}${expiration}`;
 
 };
 
@@ -166,6 +166,16 @@ function ProductDocumentItemForm({
         };
 
     }, [isReceipt, warehouseId]);
+
+    const selectedProductUnit = useMemo(
+        () =>
+            item?.unit ??
+            products.find(
+                (product) => String(product.id) === String(selectedProductId)
+            )?.unit ??
+            "",
+        [item, products, selectedProductId]
+    );
 
     // Lots of the picked product, taken from the warehouse stock already loaded.
     const lots = useMemo(
@@ -519,7 +529,7 @@ function ProductDocumentItemForm({
                         {lots.map((lot) => (
 
                             <option key={lotKeyOf(lot)} value={lotKeyOf(lot)}>
-                                {lotLabel(lot, availableOf(lot))}
+                                {lotLabel(lot, availableOf(lot), selectedProductUnit)}
                             </option>
 
                         ))}
@@ -587,7 +597,7 @@ function ProductDocumentItemForm({
 
                         <p className="mt-2 text-sm text-slate-500">
                             Tồn kho khả dụng: {formatNumber(availableQuantity)}
-                            {item?.unit ? ` ${item.unit}` : ""}
+                            {selectedProductUnit ? ` ${selectedProductUnit}` : ""}
                         </p>
 
                     )
@@ -652,7 +662,9 @@ function ProductDocumentItemForm({
                     </div>
 
                     <p className="mt-2 text-sm text-slate-500">
-                        HSD được lấy tự động từ lô đã chọn.
+                        {selectedLot && !issueExpirationDate
+                            ? "Lô đã chọn chưa khai báo HSD."
+                            : "HSD được lấy tự động từ lô đã chọn."}
                     </p>
 
                 </div>
