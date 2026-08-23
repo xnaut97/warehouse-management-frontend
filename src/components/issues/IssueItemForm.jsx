@@ -14,10 +14,13 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
     const [materialsError, setMaterialsError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const [stock, setStock] = useState(null);
-
-    // Material the stock in state belongs to, so loading can be derived.
-    const [stockLoadedFor, setStockLoadedFor] = useState(null);
+    // Inventory of the warehouse this voucher issues from. It is both the
+    // source of the selectable materials and the source of the stock shown,
+    // so the dropdown can never offer what the warehouse does not hold.
+    const [inventories, setInventories] = useState([]);
+    const [inventoriesLoading, setInventoriesLoading] = useState(
+        Boolean(warehouseId)
+    );
 
     const [form, setForm] = useState({
         materialId: "",
@@ -81,7 +84,7 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
         : form.materialId;
 
     useEffect(() => {
-        if (!warehouseId || !selectedMaterialId) {
+        if (!warehouseId) {
             return;
         }
 
@@ -90,45 +93,71 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
         inventoryApi
             .getAll({
                 warehouseId,
-                materialId: selectedMaterialId,
+                size: 1000,
             })
             .then((response) => {
                 if (!active) {
                     return;
                 }
 
-                const row = unwrapContent(response).find(
-                    (inventory) =>
-                        String(inventory.materialId) ===
-                        String(selectedMaterialId)
-                );
-
-                setStock(row ? Number(row.quantity ?? 0) : 0);
-                setStockLoadedFor(selectedMaterialId);
+                setInventories(unwrapContent(response));
             })
             .catch((error) => {
                 if (!active) {
                     return;
                 }
 
-                setStock(null);
-                setStockLoadedFor(selectedMaterialId);
+                setInventories([]);
 
                 toast.error(
                     error.response?.data?.message ||
                     "Không thể tải tồn kho nguyên vật liệu"
                 );
+            })
+            .finally(() => {
+                if (active) {
+                    setInventoriesLoading(false);
+                }
             });
 
         return () => {
             active = false;
         };
-    }, [warehouseId, selectedMaterialId]);
+    }, [warehouseId]);
+
+    // Stock of the issue warehouse keyed by the same material id the dropdown
+    // submits, so what is displayed and what the backend validates agree.
+    const stockByMaterialId = useMemo(() => {
+        const totals = new Map();
+
+        inventories.forEach((inventory) => {
+            totals.set(
+                String(inventory.materialId),
+                Number(inventory.quantity ?? 0)
+            );
+        });
+
+        return totals;
+    }, [inventories]);
+
+    // Only materials the issue warehouse actually holds can be issued from it.
+    const selectableMaterials = useMemo(
+        () =>
+            materials.filter((material) =>
+                stockByMaterialId.has(String(material.id))
+            ),
+        [materials, stockByMaterialId]
+    );
 
     const loadingStock =
         Boolean(warehouseId) &&
         Boolean(selectedMaterialId) &&
-        String(stockLoadedFor) !== String(selectedMaterialId);
+        inventoriesLoading;
+
+    const stock =
+        !selectedMaterialId || loadingStock
+            ? null
+            : stockByMaterialId.get(String(selectedMaterialId)) ?? 0;
 
     // Quantity the rest of this voucher already takes from the same material.
     const alreadyIssued = useMemo(
@@ -184,7 +213,10 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
         loading ||
         Boolean(quantityError) ||
         noStockAvailable ||
-        (!item && (materialsLoading || Boolean(materialsError)));
+        (!item &&
+            (materialsLoading ||
+                inventoriesLoading ||
+                Boolean(materialsError)));
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -261,6 +293,7 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                         disabled={
                             loading ||
                             materialsLoading ||
+                            inventoriesLoading ||
                             Boolean(materialsError)
                         }
                         aria-invalid={Boolean(materialsError)}
@@ -271,14 +304,14 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                         }
                     >
                         <option value="">
-                            {materialsLoading
+                            {materialsLoading || inventoriesLoading
                                 ? "Đang tải nguyên vật liệu..."
                                 : materialsError
                                     ? "Không tải được nguyên vật liệu"
                                     : "Chọn nguyên vật liệu"}
                         </option>
 
-                        {materials.map((material) => (
+                        {selectableMaterials.map((material) => (
                             <option
                                 key={material.id}
                                 value={material.id}
@@ -295,8 +328,9 @@ function IssueItemForm({ issueId, warehouseId, item, existingItems = [], onSucce
                     )}
 
                     {!materialsLoading &&
+                        !inventoriesLoading &&
                         !materialsError &&
-                        materials.length === 0 && (
+                        selectableMaterials.length === 0 && (
                             <p className="mt-2 text-sm text-slate-500">
                                 Chưa có nguyên vật liệu nào khả dụng.
                             </p>
