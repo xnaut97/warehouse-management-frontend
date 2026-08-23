@@ -50,10 +50,14 @@ function ProductDocumentItemForm({
 
     const [products, setProducts] = useState([]);
 
-    const [lots, setLots] = useState([]);
+    // Every lot still in stock in the warehouse this document belongs to. On an
+    // issue it is the source of both the selectable products and their lots, so
+    // the dropdown can never offer what the warehouse does not hold.
+    const [warehouseLots, setWarehouseLots] = useState([]);
 
-    // Product the lot list in state belongs to, so loading can be derived.
-    const [lotsLoadedFor, setLotsLoadedFor] = useState(null);
+    const [lotsLoading, setLotsLoading] = useState(
+        !isReceipt && Boolean(warehouseId)
+    );
 
     const [loading, setLoading] = useState(false);
 
@@ -114,7 +118,7 @@ function ProductDocumentItemForm({
 
     useEffect(() => {
 
-        if (isReceipt || !warehouseId || !selectedProductId) {
+        if (isReceipt || !warehouseId) {
             return;
         }
 
@@ -122,7 +126,6 @@ function ProductDocumentItemForm({
 
         inventoryApi.getProductLots({
             warehouseId,
-            productId: selectedProductId,
         })
 
             .then((response) => {
@@ -131,9 +134,7 @@ function ProductDocumentItemForm({
                     return;
                 }
 
-                setLots(unwrapContent(response));
-
-                setLotsLoadedFor(selectedProductId);
+                setWarehouseLots(unwrapContent(response));
 
             })
 
@@ -143,14 +144,20 @@ function ProductDocumentItemForm({
                     return;
                 }
 
-                setLots([]);
-
-                setLotsLoadedFor(selectedProductId);
+                setWarehouseLots([]);
 
                 toast.error(
                     error.response?.data?.message ||
                     "Không thể tải tồn kho theo lô"
                 );
+
+            })
+
+            .finally(() => {
+
+                if (active) {
+                    setLotsLoading(false);
+                }
 
             });
 
@@ -158,13 +165,42 @@ function ProductDocumentItemForm({
             active = false;
         };
 
-    }, [isReceipt, warehouseId, selectedProductId]);
+    }, [isReceipt, warehouseId]);
+
+    // Lots of the picked product, taken from the warehouse stock already loaded.
+    const lots = useMemo(
+        () =>
+            selectedProductId
+                ? warehouseLots.filter(
+                    (lot) =>
+                        String(lot.productId) === String(selectedProductId)
+                )
+                : [],
+        [warehouseLots, selectedProductId]
+    );
+
+    // A receipt brings stock in, so it may name any product. An issue can only
+    // take out what the warehouse actually holds.
+    const selectableProducts = useMemo(() => {
+
+        if (isReceipt) {
+            return products;
+        }
+
+        const inStock = new Set(
+            warehouseLots.map((lot) => String(lot.productId))
+        );
+
+        return products.filter(
+            (product) => inStock.has(String(product.id))
+        );
+
+    }, [isReceipt, products, warehouseLots]);
 
     const loadingLots =
         !isReceipt &&
         Boolean(warehouseId) &&
-        Boolean(selectedProductId) &&
-        String(lotsLoadedFor) !== String(selectedProductId);
+        lotsLoading;
 
     // A new line never starts with a lot picked. An existing line shows the
     // lot it was saved with until the user picks another one.
@@ -265,6 +301,7 @@ function ProductDocumentItemForm({
 
     const blockSubmit =
         loading ||
+        loadingLots ||
         Boolean(quantityError) ||
         noLotAvailable ||
         (!isReceipt && Boolean(selectedProductId) && !selectedLot);
@@ -283,10 +320,6 @@ function ProductDocumentItemForm({
     const handleProductChange = (event) => {
 
         const { value } = event.target;
-
-        setLots([]);
-
-        setLotsLoadedFor(null);
 
         setLotChoice(null);
 
@@ -403,15 +436,17 @@ function ProductDocumentItemForm({
                         value={form.productId}
                         onChange={handleProductChange}
                         required
-                        disabled={loading}
+                        disabled={loading || loadingLots}
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
                     >
 
                         <option value="">
-                            Chọn sản phẩm
+                            {loadingLots
+                                ? "Đang tải sản phẩm..."
+                                : "Chọn sản phẩm"}
                         </option>
 
-                        {products.map((product) => (
+                        {selectableProducts.map((product) => (
 
                             <option key={product.id} value={product.id}>
                                 [{product.code}] {product.name}
@@ -420,6 +455,16 @@ function ProductDocumentItemForm({
                         ))}
 
                     </select>
+
+                    {!isReceipt &&
+                        !loadingLots &&
+                        selectableProducts.length === 0 && (
+
+                            <p className="mt-2 text-sm text-slate-500">
+                                Kho của phiếu này chưa có sản phẩm nào còn tồn kho.
+                            </p>
+
+                        )}
 
                 </div>
 
