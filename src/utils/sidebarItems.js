@@ -11,7 +11,7 @@ import {
     ClipboardCheck,
     TriangleAlert,
     CircleDollarSign,
-    FileChartColumn, ListChecks, ArrowDownUp, Gauge, Truck,
+    FileChartColumn, ListChecks, ArrowDownUp, Gauge, Truck, User2, UserRound, UsersRound, Users,
 } from "lucide-react";
 
 export const sidebarItems = [
@@ -33,6 +33,11 @@ export const sidebarItems = [
                 icon: User,
                 label: "Người dùng",
                 path: "/users",
+            },
+            {
+                icon: Users,
+                label: "Khách hàng",
+                path: "/customers",
             },
             {
                 icon: Truck,
