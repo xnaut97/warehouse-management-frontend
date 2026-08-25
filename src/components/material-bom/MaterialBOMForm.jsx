@@ -176,7 +176,6 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
 
         const payload = {
             code: form.code.trim(),
-            productId: Number(form.productId),
             items: items.map((item) => ({
                 materialId: Number(item.materialId),
                 consumptionQuantity: Number(item.consumptionQuantity),
@@ -184,6 +183,10 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
                 maxWasteRatio: Number(item.maxWasteRatio),
             })),
         };
+
+        if (!bom) {
+            payload.productId = Number(form.productId);
+        }
 
         setLoading(true);
 
@@ -277,39 +280,43 @@ function MaterialBOMForm({ bom, onSuccess, onCancel }) {
 
                 </div>
 
-                <div className="sm:col-span-2">
+                {!bom && (
 
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                        Sản phẩm
-                        <span className="text-red-500"> *</span>
-                    </label>
+                    <div className="sm:col-span-2">
 
-                    <select
-                        name="productId"
-                        value={form.productId}
-                        onChange={handleChange}
-                        required
-                        disabled={loading}
-                        className={inputClass}
-                    >
+                        <label className="mb-2 block text-sm font-medium text-slate-700">
+                            Sản phẩm
+                            <span className="text-red-500"> *</span>
+                        </label>
 
-                        <option value="">
-                            {filteredProducts.length === 0
-                                ? `Không có sản phẩm thuộc ${category}`
-                                : "Chọn sản phẩm"}
-                        </option>
+                        <select
+                            name="productId"
+                            value={form.productId}
+                            onChange={handleChange}
+                            required
+                            disabled={loading}
+                            className={inputClass}
+                        >
 
-                        {filteredProducts.map((product) => (
-
-                            <option key={product.id} value={product.id}>
-                                [{product.code}] {product.name}
+                            <option value="">
+                                {filteredProducts.length === 0
+                                    ? `Không có sản phẩm thuộc ${category}`
+                                    : "Chọn sản phẩm"}
                             </option>
 
-                        ))}
+                            {filteredProducts.map((product) => (
 
-                    </select>
+                                <option key={product.id} value={product.id}>
+                                    [{product.code}] {product.name}
+                                </option>
 
-                </div>
+                            ))}
+
+                        </select>
+
+                    </div>
+
+                )}
 
             </div>
 
