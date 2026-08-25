@@ -37,7 +37,6 @@ function WarehouseTable({ warehouses, onEdit, onRefresh, sortField, sortDir, onS
                             <td className="px-6 py-4">
                                 <div>
                                     <p className="font-semibold">{warehouse.name}</p>
-                                    <p className="text-sm text-gray-500">{warehouse.description || "-"}</p>
                                 </div>
                             </td>
                             <td className="px-6 py-4">{warehouse.code}</td>

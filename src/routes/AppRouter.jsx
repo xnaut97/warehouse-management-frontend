@@ -131,25 +131,25 @@ function AppRouter() {
 
                 />
 
-                {/*<Route*/}
+                <Route
 
-                {/*    path="/warehouses"*/}
+                    path="/warehouses"
 
-                {/*    element={*/}
+                    element={
 
-                {/*        <ProtectedRoute>*/}
+                        <ProtectedRoute>
 
-                {/*            <AppLayout>*/}
+                            <AppLayout>
 
-                {/*                <WarehousePage/>*/}
+                                <WarehousePage/>
 
-                {/*            </AppLayout>*/}
+                            </AppLayout>
 
-                {/*        </ProtectedRoute>*/}
+                        </ProtectedRoute>
 
-                {/*    }*/}
+                    }
 
-                {/*/>*/}
+                />
 
                 <Route
                     path="/material-bom"
