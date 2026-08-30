@@ -29,14 +29,14 @@ function InventoryAnalysis({ analysis, trend }) {
             <div className="mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 <StatCard
                     title="Tồn kho nguyên vật liệu"
-                    value={formatNumber(analysis?.rawMaterialInventory)}
+                    value={formatNumber(analysis?.materialInventory)}
                     icon={<Boxes size={24} className="text-pink-600" />}
                     onClick={() => navigate("/materials")}
                 />
 
                 <StatCard
                     title="Tồn kho sản phẩm"
-                    value={formatNumber(analysis?.finishedProductInventory)}
+                    value={formatNumber(analysis?.productInventory)}
                     icon={<Package size={24} className="text-sky-600" />}
                     onClick={() => navigate("/products")}
                 />

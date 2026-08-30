@@ -18,13 +18,13 @@ function OverviewCards({ data }) {
     const cards = [
         {
             title: "Tổng nguyên vật liệu",
-            value: formatNumber(data?.totalRawMaterials),
+            value: formatNumber(data?.totalMaterials),
             icon: <Boxes size={24} className="text-pink-600" />,
             path: "/materials"
         },
         {
             title: "Tổng sản phẩm",
-            value: formatNumber(data?.totalFinishedProducts),
+            value: formatNumber(data?.totalProducts),
             icon: <Package size={24} className="text-sky-600" />,
             path: "/products",
         },
