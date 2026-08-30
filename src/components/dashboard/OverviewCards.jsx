@@ -35,19 +35,19 @@ function OverviewCards({ data }) {
             path: "/inventories",
         },
         {
-            title: "Tổng phiếu nhập",
+            title: "Tổng lượng nhập kho",
             value: formatNumber(data?.totalGoodsReceived),
             icon: <ArrowDownToLine size={24} className="text-emerald-600" />,
             path: "/receipts",
         },
         {
-            title: "Tổng phiếu xuất",
+            title: "Tổng lượng xuất kho",
             value: formatNumber(data?.totalGoodsIssued),
             icon: <ArrowUpFromLine size={24} className="text-orange-600" />,
             path: "/issues",
         },
         {
-            title: "Tồn kho sản phẩm",
+            title: "Tồn kho nguyên vật liệu",
             value: formatNumber(data?.currentInventoryQuantity),
             icon: <Factory size={24} className="text-indigo-600" />,
             path: "/inventories",
