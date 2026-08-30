@@ -38,13 +38,13 @@ function OverviewCards({ data }) {
             title: "Tổng lượng nhập kho",
             value: formatNumber(data?.totalGoodsReceived),
             icon: <ArrowDownToLine size={24} className="text-emerald-600" />,
-            path: "/receipts",
+            path: "/receipts-issues",
         },
         {
             title: "Tổng lượng xuất kho",
             value: formatNumber(data?.totalGoodsIssued),
             icon: <ArrowUpFromLine size={24} className="text-orange-600" />,
-            path: "/issues",
+            path: "/receipts-issues",
         },
         {
             title: "Tồn kho nguyên vật liệu",
