@@ -7,12 +7,15 @@ function InventoryMovementChart({ data = [] }) {
         ? data
         : [];
 
+    const stockBalanceOf = (item) =>
+        toNumber(item.stockIn) - toNumber(item.stockOut);
+
     const maxValue = Math.max(
         1,
         ...chartData.flatMap((item) => [
             toNumber(item.stockIn),
             toNumber(item.stockOut),
-            Math.abs(toNumber(item.stockBalance))
+            Math.abs(stockBalanceOf(item))
         ])
     );
 
@@ -25,7 +28,7 @@ function InventoryMovementChart({ data = [] }) {
     const linePoints = chartData
         .map((item, index) => {
             const x = gap * index + gap / 2;
-            const y = baseline - (toNumber(item.stockBalance) / maxValue) * 130;
+            const y = baseline - (stockBalanceOf(item) / maxValue) * 130;
 
             return `${x},${Math.max(34, Math.min(226, y))}`;
         })

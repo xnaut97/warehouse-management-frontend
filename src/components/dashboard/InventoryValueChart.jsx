@@ -3,8 +3,8 @@ import { formatCurrency, formatNumber, toNumber } from "../../utils/dashboardUti
 
 function InventoryValueChart({ data }) {
 
-    const rawMaterials = toNumber(data?.rawMaterialInventory);
-    const finishedProducts = toNumber(data?.finishedProductInventory);
+    const rawMaterials = toNumber(data?.materialInventory);
+    const finishedProducts = toNumber(data?.productInventory);
     const total = Math.max(rawMaterials + finishedProducts, 1);
 
     const rawPercent = (rawMaterials / total) * 100;
