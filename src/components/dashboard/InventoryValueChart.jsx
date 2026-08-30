@@ -1,10 +1,10 @@
 import Card from "../common/Card.jsx";
-import { formatCurrency, formatNumber, toNumber } from "../../utils/dashboardUtils.js";
+import { formatCurrency, toNumber } from "../../utils/dashboardUtils.js";
 
 function InventoryValueChart({ data }) {
 
-    const rawMaterials = toNumber(data?.materialInventory);
-    const finishedProducts = toNumber(data?.productInventory);
+    const rawMaterials = toNumber(data?.materialInventoryValue);
+    const finishedProducts = toNumber(data?.productInventoryValue);
     const total = Math.max(rawMaterials + finishedProducts, 1);
 
     const rawPercent = (rawMaterials / total) * 100;
@@ -37,7 +37,7 @@ function InventoryValueChart({ data }) {
                             Nguyên vật liệu
                         </span>
                         <span className="text-gray-500">
-                            {formatNumber(rawMaterials)}
+                            {formatCurrency(rawMaterials)}
                         </span>
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-gray-100">
@@ -54,7 +54,7 @@ function InventoryValueChart({ data }) {
                             Sản phẩm
                         </span>
                         <span className="text-gray-500">
-                            {formatNumber(finishedProducts)}
+                            {formatCurrency(finishedProducts)}
                         </span>
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-gray-100">
