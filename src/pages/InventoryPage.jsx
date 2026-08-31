@@ -17,7 +17,7 @@ function InventoryPage() {
     const [pageSize] = useState(8);
     const [totalPages, setTotalPages] = useState(0);
 
-    const { sortField, sortDir, onSort, sortParam } = useSort("materialName", "asc");
+    const { sortField, sortDir, onSort, sortParam } = useSort("name", "asc");
 
     const loadInventories = async () => {
         try {
@@ -43,9 +43,9 @@ function InventoryPage() {
     const filteredInventories = inventories.filter((inventory) => {
         const keyword = search.toLowerCase();
         return (
-            inventory.materialCode.toLowerCase().includes(keyword) ||
-            inventory.materialName.toLowerCase().includes(keyword) ||
-            inventory.warehouse.toLowerCase().includes(keyword)
+            (inventory.code || "").toLowerCase().includes(keyword) ||
+            (inventory.name || "").toLowerCase().includes(keyword) ||
+            (inventory.warehouse || "").toLowerCase().includes(keyword)
         );
     });
 
@@ -54,7 +54,7 @@ function InventoryPage() {
 
             <PageHeader
                 title="Tồn kho"
-                description="Theo dõi số lượng tồn kho của nguyên vật liệu tại các kho."
+                description="Theo dõi số lượng tồn kho của nguyên vật liệu và sản phẩm tại các kho."
             />
 
             <InventoryStats inventories={filteredInventories} />
