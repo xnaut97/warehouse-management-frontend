@@ -47,10 +47,10 @@ function OverviewCards({ data }) {
             path: "/receipts-issues",
         },
         {
-            title: "Tồn kho nguyên vật liệu",
+            title: "Tồn kho sản phẩm",
             value: formatNumber(data?.currentInventoryQuantity),
             icon: <Factory size={24} className="text-indigo-600" />,
-            path: "/inventories",
+            path: "/products",
         }
     ];
 
