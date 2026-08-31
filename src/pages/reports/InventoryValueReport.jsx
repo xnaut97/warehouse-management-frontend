@@ -122,7 +122,7 @@ function InventoryValueReport() {
                         />
 
                         <ReportKpiCard
-                            title="Tỷ trọng vốn lưu động"
+                            title="Tỷ trọng vốn tồn kho"
                             value={`${formatPercent(data.materialPercentage)} / ${formatPercent(data.productPercentage)}`}
                             description="Tỷ trọng giá trị tồn kho giữa kho nguyên vật liệu và kho sản phẩm."
                             icon={<PieChartIcon size={22} />}
