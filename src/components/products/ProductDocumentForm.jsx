@@ -10,6 +10,10 @@ import Button from "../common/Button.jsx";
 import Loading from "../common/Loading.jsx";
 
 import { unwrapContent, unwrapData } from "../../utils/apiResponse.js";
+import {
+    PRODUCT_WAREHOUSE_CODE,
+    filterWarehousesByCode
+} from "../../utils/warehouses.js";
 
 const today = () =>
     new Date().toISOString().split("T")[0];
@@ -58,8 +62,10 @@ function ProductDocumentForm({
             .then(([warehouseResponse, customerResponse]) => {
 
                 setWarehouses(
-                    unwrapContent(warehouseResponse)
-                        .filter((warehouse) => warehouse.enabled !== false)
+                    filterWarehousesByCode(
+                        unwrapContent(warehouseResponse),
+                        PRODUCT_WAREHOUSE_CODE
+                    )
                 );
 
                 if (customerResponse) {

@@ -5,6 +5,11 @@ import materialReceiptApi from "../../api/materialReceiptApi.js";
 import warehouseApi from "../../api/warehouseApi";
 import supplierApi from "../../api/supplierApi";
 
+import {
+    MATERIAL_WAREHOUSE_CODE,
+    filterWarehousesByCode
+} from "../../utils/warehouses.js";
+
 function ReceiptForm({ receipt, onSuccess, onCancel }) {
 
     const [warehouses, setWarehouses] =
@@ -69,9 +74,9 @@ function ReceiptForm({ receipt, onSuccess, onCancel }) {
 
 
                 setWarehouses(
-                    warehouseList.filter(
-                        (warehouse) =>
-                            warehouse.enabled
+                    filterWarehousesByCode(
+                        warehouseList,
+                        MATERIAL_WAREHOUSE_CODE
                     )
                 );
 

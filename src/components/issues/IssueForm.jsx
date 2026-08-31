@@ -4,6 +4,11 @@ import toast from "react-hot-toast";
 import materialIssueApi from "../../api/materialIssueApi.js";
 import warehouseApi from "../../api/warehouseApi";
 
+import {
+    MATERIAL_WAREHOUSE_CODE,
+    filterWarehousesByCode
+} from "../../utils/warehouses.js";
+
 function IssueForm({ issue, onSuccess, onCancel }) {
     const [warehouses, setWarehouses] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -27,7 +32,10 @@ function IssueForm({ issue, onSuccess, onCancel }) {
                     : data?.content ?? [];
 
                 setWarehouses(
-                    list.filter((warehouse) => warehouse.enabled)
+                    filterWarehousesByCode(
+                        list,
+                        MATERIAL_WAREHOUSE_CODE
+                    )
                 );
             } catch (error) {
                 console.error(error);
