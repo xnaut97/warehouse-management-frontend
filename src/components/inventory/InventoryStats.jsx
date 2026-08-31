@@ -1,5 +1,6 @@
 import {
     Boxes,
+    Package,
     Warehouse,
     TriangleAlert
 } from "lucide-react";
@@ -14,13 +15,23 @@ function InventoryStats({ inventories }) {
 
     ).size;
 
-    const materialCount = inventories.length;
+    const materialCount = inventories.filter(
+
+        item => item.itemGroup === "MATERIAL"
+
+    ).length;
+
+    const productCount = inventories.filter(
+
+        item => item.itemGroup === "PRODUCT"
+
+    ).length;
 
     const totalQuantity = inventories.reduce(
 
         (sum, item) =>
 
-            sum + Number(item.quantity),
+            sum + Number(item.quantity ?? 0),
 
         0
 
@@ -28,13 +39,13 @@ function InventoryStats({ inventories }) {
 
     const lowStockCount = inventories.filter(
 
-        item => Number(item.quantity) <= 0
+        item => Number(item.quantity ?? 0) <= 0
 
     ).length;
 
     return (
 
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
 
             <StatCard
                 title="Kho"
@@ -48,6 +59,13 @@ function InventoryStats({ inventories }) {
                 value={materialCount}
                 icon={<Boxes size={24}/>}
                 color="bg-green-100"
+            />
+
+            <StatCard
+                title="Sản phẩm"
+                value={productCount}
+                icon={<Package size={24}/>}
+                color="bg-pink-100"
             />
 
             <StatCard
