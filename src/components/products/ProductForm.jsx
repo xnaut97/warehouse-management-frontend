@@ -5,7 +5,7 @@ import productApi from "../../api/productApi.js";
 
 export const PRODUCT_CATEGORIES = [
     "Keo C1",
-    "Keo 2",
+    "Keo C2",
 ];
 
 const emptyForm = {
