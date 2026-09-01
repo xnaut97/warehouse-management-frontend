@@ -13,6 +13,17 @@ const inventoryApi = {
 
     },
 
+    getSummary(params) {
+
+        return api.get(
+            "/inventories/summary",
+            {
+                params
+            }
+        );
+
+    },
+
     getDetail(id) {
 
         return api.get(

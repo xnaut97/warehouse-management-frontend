@@ -1,45 +1,37 @@
 import {
     Boxes,
     Package,
-    Warehouse,
-    TriangleAlert
+    CircleDollarSign,
+    TriangleAlert,
+    Hourglass
 } from "lucide-react";
 
 import StatCard from "../common/StatCard.jsx";
 
-function InventoryStats({ inventories }) {
+import {
+    formatCompactCurrency,
+    toNumber
+} from "../reports/reportUtils.js";
 
-    const warehouseCount = new Set(
+function InventoryStats({ materials = [], products = [] }) {
 
-        inventories.map(item => item.warehouse)
+    const totalValue = [...materials, ...products].reduce(
 
-    ).size;
-
-    const materialCount = inventories.filter(
-
-        item => item.itemGroup === "MATERIAL"
-
-    ).length;
-
-    const productCount = inventories.filter(
-
-        item => item.itemGroup === "PRODUCT"
-
-    ).length;
-
-    const totalQuantity = inventories.reduce(
-
-        (sum, item) =>
-
-            sum + Number(item.quantity ?? 0),
+        (sum, item) => sum + toNumber(item.inventoryValue),
 
         0
 
     );
 
-    const lowStockCount = inventories.filter(
+    const thresholdAlertCount = materials.filter(
 
-        item => Number(item.quantity ?? 0) <= 0
+        item => item.thresholdStatus && item.thresholdStatus !== "NORMAL"
+
+    ).length;
+
+    const fefoCount = products.filter(
+
+        item => item.expiryStatus === "FEFO"
 
     ).length;
 
@@ -48,38 +40,38 @@ function InventoryStats({ inventories }) {
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
 
             <StatCard
-                title="Kho"
-                value={warehouseCount}
-                icon={<Warehouse size={24}/>}
-                color="bg-blue-100"
-            />
-
-            <StatCard
                 title="Nguyên vật liệu"
-                value={materialCount}
+                value={materials.length}
                 icon={<Boxes size={24}/>}
                 color="bg-green-100"
             />
 
             <StatCard
                 title="Sản phẩm"
-                value={productCount}
+                value={products.length}
                 icon={<Package size={24}/>}
                 color="bg-pink-100"
             />
 
             <StatCard
-                title="Tổng tồn kho"
-                value={totalQuantity}
-                icon={<Boxes size={24}/>}
+                title="Tổng vốn tồn"
+                value={formatCompactCurrency(totalValue)}
+                icon={<CircleDollarSign size={24}/>}
                 color="bg-purple-100"
             />
 
             <StatCard
-                title="Hết hàng"
-                value={lowStockCount}
+                title="Cảnh báo min/max"
+                value={thresholdAlertCount}
                 icon={<TriangleAlert size={24}/>}
                 color="bg-red-100"
+            />
+
+            <StatCard
+                title="Sản phẩm cần FEFO"
+                value={fefoCount}
+                icon={<Hourglass size={24}/>}
+                color="bg-yellow-100"
             />
 
         </div>
