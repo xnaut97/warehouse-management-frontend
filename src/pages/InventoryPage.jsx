@@ -16,7 +16,7 @@ import InventoryStats from "../components/inventory/InventoryStats.jsx";
 import MaterialInventoryTable from "../components/inventory/MaterialInventoryTable.jsx";
 import ProductInventoryTable from "../components/inventory/ProductInventoryTable.jsx";
 import {
-    firstDayOfMonth,
+    firstDayOfMonthsAgo,
     today
 } from "../components/reports/reportUtils.js";
 
@@ -84,7 +84,7 @@ function InventorySection({
 
 function InventoryPage() {
 
-    const [fromDate, setFromDate] = useState(firstDayOfMonth);
+    const [fromDate, setFromDate] = useState(() => firstDayOfMonthsAgo(11));
     const [toDate, setToDate] = useState(today);
     const [search, setSearch] = useState("");
     const [materialPage, setMaterialPage] = useState(0);
