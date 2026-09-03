@@ -356,16 +356,16 @@ function AppRouter() {
                     }
                 />
 
-                <Route
-                    path="/reports/operations"
-                    element={
-                        <ProtectedRoute>
-                            <AppLayout>
-                                <OperationsReport/>
-                            </AppLayout>
-                        </ProtectedRoute>
-                    }
-                />
+                {/*<Route*/}
+                {/*    path="/reports/operations"*/}
+                {/*    element={*/}
+                {/*        <ProtectedRoute>*/}
+                {/*            <AppLayout>*/}
+                {/*                <OperationsReport/>*/}
+                {/*            </AppLayout>*/}
+                {/*        </ProtectedRoute>*/}
+                {/*    }*/}
+                {/*/>*/}
 
                 <Route
                     path="/reports/operations-efficiency"

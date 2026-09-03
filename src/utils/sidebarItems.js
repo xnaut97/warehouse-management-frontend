@@ -90,16 +90,16 @@ export const sidebarItems = [
         ],
     },
 
-    {
-        title: "TÁC NGHIỆP",
-        items: [
-            {
-                icon: FileChartColumn,
-                label: "Báo cáo tác nghiệp",
-                path: "/reports/operations",
-            },
-        ],
-    },
+    // {
+    //     title: "TÁC NGHIỆP",
+    //     items: [
+    //         {
+    //             icon: FileChartColumn,
+    //             label: "Báo cáo tác nghiệp",
+    //             path: "/reports/operations",
+    //         },
+    //     ],
+    // },
 
     {
         title: "HỆ THỐNG",
