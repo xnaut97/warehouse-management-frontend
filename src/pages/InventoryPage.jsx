@@ -1,8 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
+import { FileSpreadsheet, Printer } from "lucide-react";
+import toast from "react-hot-toast";
 
 import inventoryApi from "../api/inventoryApi.js";
 import useReportData from "../hooks/useReportData.js";
 
+import Button from "../components/common/Button.jsx";
 import PageHeader from "../components/common/PageHeader";
 import Loading from "../components/common/Loading.jsx";
 import TableToolbar from "../components/common/TableToolbar";
@@ -15,6 +18,10 @@ import ReportErrorState from "../components/reports/ReportErrorState.jsx";
 import InventoryStats from "../components/inventory/InventoryStats.jsx";
 import MaterialInventoryTable from "../components/inventory/MaterialInventoryTable.jsx";
 import ProductInventoryTable from "../components/inventory/ProductInventoryTable.jsx";
+import {
+    exportInventoryToExcel,
+    printInventory
+} from "../components/inventory/inventoryExport.js";
 import {
     firstDayOfMonthsAgo,
     today
@@ -89,6 +96,7 @@ function InventoryPage() {
     const [search, setSearch] = useState("");
     const [materialPage, setMaterialPage] = useState(0);
     const [productPage, setProductPage] = useState(0);
+    const [exporting, setExporting] = useState(false);
 
     const materialRequest = useCallback(
         () => inventoryApi.getSummary({
@@ -152,6 +160,81 @@ function InventoryPage() {
         Math.max(productTotalPages - 1, 0)
     );
 
+    const exportContext = useMemo(
+        () => ({
+            fromDate,
+            toDate,
+            search,
+            materials: materialItems,
+            products: productItems,
+            materialWarehouseName: materials.data?.warehouseName,
+            productWarehouseName: products.data?.warehouseName
+        }),
+        [
+            fromDate,
+            toDate,
+            search,
+            materialItems,
+            productItems,
+            materials.data,
+            products.data
+        ]
+    );
+
+    const busy = materials.loading || products.loading || exporting;
+
+    const empty = materialItems.length === 0 && productItems.length === 0;
+
+    const handleExportExcel = () => {
+
+        if (busy) return;
+
+        if (empty) {
+            toast.error("Không có dữ liệu tồn kho để xuất.");
+            return;
+        }
+
+        setExporting(true);
+
+        try {
+
+            exportInventoryToExcel(exportContext);
+
+            toast.success("Đã xuất file Excel.");
+
+        } catch {
+
+            toast.error("Không thể xuất file Excel.");
+
+        } finally {
+
+            setExporting(false);
+
+        }
+
+    };
+
+    const handlePrint = () => {
+
+        if (busy) return;
+
+        if (empty) {
+            toast.error("Không có dữ liệu tồn kho để in.");
+            return;
+        }
+
+        try {
+
+            printInventory(exportContext);
+
+        } catch {
+
+            toast.error("Không thể mở bản in.");
+
+        }
+
+    };
+
     return (
 
         <div>
@@ -195,7 +278,27 @@ function InventoryPage() {
                     setMaterialPage(0);
                     setProductPage(0);
                 }}
-            />
+            >
+
+                <Button
+                    variant="secondary"
+                    onClick={handleExportExcel}
+                    disabled={busy}
+                >
+                    <FileSpreadsheet size={18} />
+                    Xuất Excel
+                </Button>
+
+                <Button
+                    variant="secondary"
+                    onClick={handlePrint}
+                    disabled={busy}
+                >
+                    <Printer size={18} />
+                    In
+                </Button>
+
+            </TableToolbar>
 
             <div className="space-y-10">
 
