@@ -6,6 +6,7 @@ import Loading from "../../components/common/Loading.jsx";
 import ReportFilters, { FilterField, FilterInput } from "../../components/reports/ReportFilters.jsx";
 import ReportErrorState from "../../components/reports/ReportErrorState.jsx";
 import ReportKpiCard from "../../components/reports/ReportKpiCard.jsx";
+import MaterialConsumptionTable from "../../components/reports/MaterialConsumptionTable.jsx";
 import ChartCard from "../../components/reports/charts/ChartCard.jsx";
 import ClusteredBarChart from "../../components/reports/charts/ClusteredBarChart.jsx";
 import WeekdayHeatmap from "../../components/reports/charts/WeekdayHeatmap.jsx";
@@ -88,7 +89,12 @@ function OperationsEfficiencyReport() {
         [data]
     );
 
-    const totalComparisons = data?.materialComparisons?.length ?? 0;
+    const comparisonRows = useMemo(
+        () => data?.materialComparisons ?? [],
+        [data]
+    );
+
+    const totalComparisons = comparisonRows.length;
 
     const monthlyDocuments = useMemo(
         () => (documentVolume?.monthly ?? []).map((item) => ({
@@ -121,7 +127,7 @@ function OperationsEfficiencyReport() {
         <div>
             <PageHeader
                 title="Báo cáo hiệu quả vận hành & định mức"
-                description="So sánh lượng nguyên vật liệu xuất kho thực tế với định mức BOM của sản phẩm đã nhập kho trong kỳ, kèm khối lượng chứng từ nhập xuất đã xử lý."
+                description="So sánh lượng nguyên vật liệu đã xuất kho cho sản xuất với định mức BOM của sản phẩm đã nhập kho trong kỳ, kèm khối lượng chứng từ nhập xuất đã xử lý."
             />
 
             <ReportFilters>
@@ -169,7 +175,7 @@ function OperationsEfficiencyReport() {
                             description={`(Thực tế - Định mức) / Định mức, tính trên ${formatNumber(wasteRate?.comparedMaterials)} nguyên vật liệu có định mức trong kỳ.`}
                             rows={[
                                 {
-                                    label: "Thực tế xuất kho",
+                                    label: "Thực tế xuất cho sản xuất",
                                     value: formatNumber(wasteRate?.totalActualQuantity)
                                 },
                                 {
@@ -203,7 +209,7 @@ function OperationsEfficiencyReport() {
 
                     <ChartCard
                         title="Nguyên vật liệu xuất thực tế so với định mức BOM tiêu chuẩn"
-                        description="Lượng xuất kho thực tế của từng nguyên vật liệu đặt cạnh lượng tiêu hao tiêu chuẩn theo định mức BOM."
+                        description="Lượng xuất kho thực tế cho sản xuất của từng nguyên vật liệu đặt cạnh lượng tiêu hao tiêu chuẩn theo định mức BOM."
                         legend={CONSUMPTION_SERIES}
                         isEmpty={!hasComparisonData}
                         emptyMessage="Chưa có dữ liệu xuất kho hoặc định mức BOM trong khoảng thời gian đã chọn."
@@ -216,6 +222,15 @@ function OperationsEfficiencyReport() {
                         <ClusteredBarChart
                             data={comparisons}
                             series={CONSUMPTION_SERIES}
+                        />
+                    </ChartCard>
+
+                    <ChartCard
+                        title="Chi tiết định mức BOM và lượng xuất kho thực tế cho sản xuất"
+                        description="Định mức BOM của sản phẩm đã nhập kho trong kỳ đặt cạnh lượng nguyên vật liệu đã xuất cho sản xuất theo phiếu xuất kho thực tế."
+                    >
+                        <MaterialConsumptionTable
+                            comparisons={comparisonRows}
                         />
                     </ChartCard>
 
