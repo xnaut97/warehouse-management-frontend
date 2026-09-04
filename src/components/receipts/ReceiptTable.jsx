@@ -1,9 +1,18 @@
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Printer, Trash2 } from "lucide-react";
 
 import ReceiptStatusBadge from "./ReceiptStatusBadge.jsx";
 import SortableHeader from "../common/SortableHeader.jsx";
 
-function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }) {
+function ReceiptTable({
+    receipts,
+    onView,
+    onDelete,
+    onPrint,
+    printingId,
+    sortField,
+    sortDir,
+    onSort
+}) {
 
     const sortProps = { sortField, sortDir, onSort };
 
@@ -85,6 +94,17 @@ function ReceiptTable({ receipts, onView, onDelete, sortField, sortDir, onSort }
                                     >
                                         <Eye size={18} />
                                     </button>
+
+                                    {onPrint && (
+                                        <button
+                                            onClick={() => onPrint(receipt.id)}
+                                            disabled={printingId === receipt.id}
+                                            className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-50"
+                                            title="In phiếu nhập"
+                                        >
+                                            <Printer size={18} />
+                                        </button>
+                                    )}
 
                                     {receipt.status === "DRAFT" && onDelete && (
                                         <button

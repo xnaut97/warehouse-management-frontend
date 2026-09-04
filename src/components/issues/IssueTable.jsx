@@ -1,10 +1,19 @@
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Printer, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import IssueStatusBadge from "./IssueStatusBadge.jsx";
 import SortableHeader from "../common/SortableHeader.jsx";
 
-function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
+function IssueTable({
+    issues,
+    onView,
+    onDelete,
+    onPrint,
+    printingId,
+    sortField,
+    sortDir,
+    onSort
+}) {
 
     const navigate = useNavigate();
 
@@ -83,6 +92,17 @@ function IssueTable({ issues, onView, onDelete, sortField, sortDir, onSort }) {
                                     >
                                         <Eye size={18} />
                                     </button>
+
+                                    {onPrint && (
+                                        <button
+                                            onClick={() => onPrint(issue.id)}
+                                            disabled={printingId === issue.id}
+                                            className="rounded-lg p-2 text-slate-600 transition hover:text-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-50"
+                                            title="In phiếu xuất"
+                                        >
+                                            <Printer size={18} />
+                                        </button>
+                                    )}
 
                                     {issue.status === "DRAFT" && onDelete && (
                                         <button

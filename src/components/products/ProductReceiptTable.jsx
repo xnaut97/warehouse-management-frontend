@@ -1,6 +1,8 @@
+import { Printer } from "lucide-react";
+
 import ReceiptStatusBadge from "../receipts/ReceiptStatusBadge.jsx";
 
-function ProductReceiptTable({ receipts, onView }) {
+function ProductReceiptTable({ receipts, onView, onPrint, printingId }) {
     return (
         <div className="overflow-x-auto rounded-2xl border border-(--color-border) bg-white shadow-sm">
             <table className="min-w-[1000px] w-full">
@@ -57,13 +59,27 @@ function ProductReceiptTable({ receipts, onView }) {
                             </td>
 
                             <td className="px-6 py-4 text-center">
-                                <button
-                                    type="button"
-                                    onClick={() => onView(receipt.id)}
-                                    className="rounded-xl px-4 py-2 text-sm font-medium text-(--color-primary) transition hover:bg-pink-50"
-                                >
-                                    Chi tiết
-                                </button>
+                                <div className="flex items-center justify-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => onView(receipt.id)}
+                                        className="rounded-xl px-4 py-2 text-sm font-medium text-(--color-primary) transition hover:bg-pink-50"
+                                    >
+                                        Chi tiết
+                                    </button>
+
+                                    {onPrint && (
+                                        <button
+                                            type="button"
+                                            onClick={() => onPrint(receipt.id)}
+                                            disabled={printingId === receipt.id}
+                                            className="flex items-center gap-1 rounded-xl px-4 py-2 text-sm font-medium text-(--color-primary) transition hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            <Printer size={16} />
+                                            In
+                                        </button>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))
