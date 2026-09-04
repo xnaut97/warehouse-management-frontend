@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {ArrowLeft, Check, Plus} from "lucide-react";
+import {ArrowLeft, Check, Plus, Printer} from "lucide-react";
 import toast from "react-hot-toast";
 
 import materialReceiptApi from "../../api/materialReceiptApi.js";
@@ -10,6 +10,8 @@ import ReceiptItemTable from "./ReceiptItemTable.jsx";
 import ReceiptItemForm from "./ReceiptItemForm.jsx";
 import ConfirmDialog from "../common/ConfirmDialog.jsx";
 import Modal from "../common/Modal.jsx";
+
+import { printTransactionDocument } from "../transactions/documentPrint.js";
 
 function ReceiptDetail() {
 
@@ -150,8 +152,24 @@ function ReceiptDetail() {
                         </p>
                     </div>
 
-                    {receipt.status === "DRAFT" && (
-                        <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+
+                        <button
+                            onClick={() =>
+                                printTransactionDocument(
+                                    "MATERIAL_RECEIPT",
+                                    receipt
+                                )
+                            }
+                            className="flex items-center justify-center gap-2 rounded-lg border border-(--color-border) px-5 py-3 font-medium
+                                 text-slate-700 transition hover:bg-pink-100 hover:text-(--color-primary-hover)"
+                        >
+                            <Printer size={18}/>
+                            In phiếu
+                        </button>
+
+                        {receipt.status === "DRAFT" && (
+                            <>
 
                             <button
                                 onClick={handleOpenAddItem}
@@ -171,8 +189,10 @@ function ReceiptDetail() {
                                 Xác nhận phiếu
                             </button>
 
-                        </div>
-                    )}
+                            </>
+                        )}
+
+                    </div>
 
                 </div>
 

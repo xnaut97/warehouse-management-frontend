@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, Plus, Trash2, Edit } from "lucide-react";
+import { ArrowLeft, Check, Plus, Printer, Trash2, Edit } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -14,6 +14,7 @@ import ProductDocumentItemForm from "../components/products/ProductDocumentItemF
 
 import { unwrapData } from "../utils/apiResponse.js";
 import { formatDate, formatNumber } from "../components/reports/reportUtils.js";
+import { printTransactionDocument } from "../components/transactions/documentPrint.js";
 
 function ProductReceiptDetailPage() {
     const { id } = useParams();
@@ -125,8 +126,23 @@ function ProductReceiptDetailPage() {
                     </p>
                 </div>
 
-                {isDraft && (
-                    <div className="flex gap-3">
+                <div className="flex gap-3">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            printTransactionDocument(
+                                "PRODUCT_RECEIPT",
+                                receipt
+                            )
+                        }
+                        className="flex items-center gap-2 rounded-xl border border-(--color-border) px-5 py-3 font-medium text-slate-700 transition hover:bg-pink-50"
+                    >
+                        <Printer size={18} />
+                        In phiếu
+                    </button>
+
+                    {isDraft && (
+                        <>
                         <button
                             type="button"
                             onClick={() => {
@@ -148,8 +164,9 @@ function ProductReceiptDetailPage() {
                             <Check size={18} />
                             Xác nhận
                         </button>
-                    </div>
-                )}
+                        </>
+                    )}
+                </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">

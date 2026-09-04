@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, Plus } from "lucide-react";
+import { ArrowLeft, Check, Plus, Printer } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -11,6 +11,8 @@ import IssueItemForm from "./IssueItemForm.jsx";
 import ConfirmDialog from "../common/ConfirmDialog.jsx";
 import Modal from "../common/Modal.jsx";
 import IssueStatusBadge from "./IssueStatusBadge.jsx";
+
+import { printTransactionDocument } from "../transactions/documentPrint.js";
 
 function IssueDetail() {
     const { id } = useParams();
@@ -120,8 +122,23 @@ function IssueDetail() {
                         </p>
                     </div>
 
-                    {editable && (
-                        <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                printTransactionDocument(
+                                    "MATERIAL_ISSUE",
+                                    issue
+                                )
+                            }
+                            className="flex items-center justify-center gap-2 rounded-lg border border-(--color-border) px-5 py-3 font-medium text-slate-700 transition hover:bg-pink-100 hover:text-(--color-primary-hover)"
+                        >
+                            <Printer size={18} />
+                            In phiếu
+                        </button>
+
+                        {editable && (
+                            <>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -143,8 +160,9 @@ function IssueDetail() {
                                 <Check size={18} />
                                 Xác nhận phiếu
                             </button>
-                        </div>
-                    )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 

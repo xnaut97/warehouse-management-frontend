@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
@@ -22,7 +23,12 @@ import productIssueApi from "../api/productIssueApi.js";
 import ProductReceiptTable from "../components/products/ProductReceiptTable.jsx";
 import ProductIssueTable from "../components/products/ProductIssueTable.jsx";
 
-import { unwrapContent, unwrapTotalPages } from "../utils/apiResponse.js";
+import { unwrapContent, unwrapData, unwrapTotalPages } from "../utils/apiResponse.js";
+
+import {
+    documentKindOf,
+    printTransactionDocument
+} from "../components/transactions/documentPrint.js";
 
 function ReceiptsIssuesPage() {
 
@@ -54,6 +60,9 @@ function ReceiptsIssuesPage() {
 
     const [showCreateModal, setShowCreateModal] =
         useState(false);
+
+    const [printingId, setPrintingId] =
+        useState(null);
 
 
     /*
@@ -211,6 +220,61 @@ function ReceiptsIssuesPage() {
     };
 
 
+    const detailApi = () => {
+
+        if (goodsType === "PRODUCT") {
+            return transactionType === "RECEIPT"
+                ? productReceiptApi
+                : productIssueApi;
+        }
+
+        return transactionType === "RECEIPT"
+            ? materialReceiptApi
+            : materialIssueApi;
+
+    };
+
+
+    const handlePrint = async (id) => {
+
+        if (printingId !== null) {
+            return;
+        }
+
+        setPrintingId(id);
+
+        try {
+
+            const response = await detailApi().getDetail(id);
+
+            const doc = unwrapData(response);
+
+            if (!doc) {
+                toast.error("Không tìm thấy phiếu để in");
+                return;
+            }
+
+            printTransactionDocument(
+                documentKindOf(goodsType, transactionType),
+                doc
+            );
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                "Không thể tải phiếu để in"
+            );
+
+        } finally {
+
+            setPrintingId(null);
+
+        }
+
+    };
+
+
     const renderTable = () => {
 
 
@@ -238,6 +302,8 @@ function ReceiptsIssuesPage() {
             return (
                 <ProductReceiptTable
                     receipts={filteredTransactions}
+                    onPrint={handlePrint}
+                    printingId={printingId}
                     onView={(id) =>
                         navigate(`/product-receipts/${id}`)
                     }
@@ -252,6 +318,8 @@ function ReceiptsIssuesPage() {
             return (
                 <ProductIssueTable
                     issues={filteredTransactions}
+                    onPrint={handlePrint}
+                    printingId={printingId}
                     onView={(id) =>
                         navigate(`/product-issues/${id}`)
                     }
@@ -265,6 +333,8 @@ function ReceiptsIssuesPage() {
             return (
                 <ReceiptTable
                     receipts={filteredTransactions}
+                    onPrint={handlePrint}
+                    printingId={printingId}
                     onView={(id) =>
                         navigate(`/receipts/${id}`)
                     }
@@ -277,6 +347,8 @@ function ReceiptsIssuesPage() {
         return (
             <IssueTable
                 issues={filteredTransactions}
+                onPrint={handlePrint}
+                printingId={printingId}
                 onView={(id) =>
                     navigate(`/issues/${id}`)
                 }
