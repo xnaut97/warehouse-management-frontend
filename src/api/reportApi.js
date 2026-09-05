@@ -45,7 +45,7 @@ const reportApi = {
         api.get("/reports/operations/stock-summary", { params }),
 
     getStocktakingAccuracy: (params) =>
-        api.get("/reports/stocktaking/accuracy", { params }),
+            api.get("/reports/stocktaking/accuracy", { params }),
 
     getAuditLogs: (params) =>
         api.get("/audit-logs", { params })

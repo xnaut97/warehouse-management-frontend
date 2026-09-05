@@ -42,7 +42,7 @@ function InventoryValueChart({ data }) {
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-gray-100">
                         <div
-                            className="h-full rounded-full bg-pink-400"
+                            className="h-full rounded-full bg-(--color-primary)"
                             style={{ width: `${rawPercent}%` }}
                         />
                     </div>
@@ -59,7 +59,7 @@ function InventoryValueChart({ data }) {
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-gray-100">
                         <div
-                            className="h-full rounded-full bg-sky-400"
+                            className="h-full rounded-full bg-sky-500"
                             style={{ width: `${finishedPercent}%` }}
                         />
                     </div>

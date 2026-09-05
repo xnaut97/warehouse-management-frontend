@@ -28,8 +28,7 @@ function QuickActions() {
         {
             label: "Khởi Tạo Kiểm Kê",
             icon: <ClipboardCheck size={20} />,
-            // TODO: Update path when stocktaking page is implemented
-            path: null,
+            path: "/stocktaking",
             color: "text-pink-600",
             bg: "bg-pink-50 hover:bg-pink-100",
         },
