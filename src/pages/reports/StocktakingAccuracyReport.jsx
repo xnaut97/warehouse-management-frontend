@@ -177,7 +177,7 @@ function StocktakingAccuracyReport() {
                                 ACCURACY_MESSAGES[accuracy?.unavailableReason] ??
                                 "Chưa đủ dữ liệu kiểm kê để tính tỷ lệ chính xác."
                             }
-                            description="SL Thực tế / SL Sổ sách × 100%."
+                            description="(Tổng dòng - Dòng lệch) / Tổng dòng * 100%"
                             rows={[
                                 {
                                     label: "SL thực tế",

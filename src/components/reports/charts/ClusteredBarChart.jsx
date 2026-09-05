@@ -22,13 +22,14 @@ function ClusteredBarChart({
     );
 
     const groupWidth = Math.max(
-        72,
-        series.length * (BAR_WIDTH + 4) + 32
+        160,
+        series.length * (BAR_WIDTH + 4) + 48
     );
+
 
     const plotWidth = Math.max(420, data.length * groupWidth);
     const width = plotWidth + PADDING_LEFT + PADDING_RIGHT;
-    const height = PLOT_TOP + PLOT_HEIGHT + 52;
+    const height = PLOT_TOP + PLOT_HEIGHT + 72;
     const baseline = PLOT_TOP + PLOT_HEIGHT;
     const step = plotWidth / Math.max(data.length, 1);
 
@@ -69,6 +70,7 @@ function ClusteredBarChart({
                     const groupCenter = PADDING_LEFT + step * index + step / 2;
                     const totalWidth = series.length * (BAR_WIDTH + 4) - 4;
                     const startX = groupCenter - totalWidth / 2;
+                    const labelLines = splitLabel(item.label);
 
                     return (
                         <g key={item.label ?? index}>
@@ -97,18 +99,26 @@ function ClusteredBarChart({
 
                             <text
                                 x={groupCenter}
-                                y={baseline + 22}
+                                y={baseline + 18}
                                 textAnchor="middle"
                                 fill={LABEL_COLOR}
-                                fontSize="11"
+                                fontSize="12"
                             >
-                                {item.label}
+                                {labelLines.map((line, lineIndex) => (
+                                    <tspan
+                                        key={lineIndex}
+                                        x={groupCenter}
+                                        dy={lineIndex === 0 ? 0 : 16}
+                                    >
+                                        {line}
+                                    </tspan>
+                                ))}
                             </text>
 
                             {item.subLabel && (
                                 <text
                                     x={groupCenter}
-                                    y={baseline + 38}
+                                    y={baseline + 54}
                                     textAnchor="middle"
                                     fill="#9ca3af"
                                     fontSize="10"
@@ -122,6 +132,37 @@ function ClusteredBarChart({
             </svg>
         </div>
     );
+
+    function splitLabel(label, maxLength = 20) {
+        if (label.length <= maxLength) {
+            return [label];
+        }
+
+        const words = label.split(" ");
+        const lines = [];
+        let currentLine = "";
+
+        words.forEach((word) => {
+            const nextLine = currentLine
+                ? `${currentLine} ${word}`
+                : word;
+
+            if (nextLine.length <= maxLength) {
+                currentLine = nextLine;
+            } else {
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                currentLine = word;
+            }
+        });
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        return lines.slice(0, 2);
+    }
 }
 
 export default ClusteredBarChart;

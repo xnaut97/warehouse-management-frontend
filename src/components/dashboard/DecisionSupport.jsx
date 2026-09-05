@@ -23,7 +23,7 @@ function DecisionSupport({ data }) {
                 <ReorderSuggestionCard items={data?.replenishmentRecommendations ?? []} />
             </div>
 
-            <div className="mb-6 grid gap-6 xl:grid-cols-2">
+            <div className="mb-2 grid gap-6 xl:grid-cols-2">
                 <SlowMovingCard
                     title="Sản phẩm bán chậm"
                     description="Mặt hàng không phát sinh xuất kho trong 90 ngày"
@@ -38,7 +38,7 @@ function DecisionSupport({ data }) {
                 />
             </div>
 
-            <TrendChart data={trend} />
+            {/*<TrendChart data={trend} />*/}
         </section>
     );
 

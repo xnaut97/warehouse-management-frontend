@@ -20,6 +20,8 @@ const normalizeLot = (lotNumber) =>
         ? null
         : String(lotNumber).trim();
 
+
+
 const lotLabel = (lot, available, unit) => {
 
     const name = lot.lotNumber || NO_LOT_LABEL;
@@ -102,6 +104,7 @@ function ProductDocumentItemForm({
             return;
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setForm({
             productId: item.productId ?? "",
             quantity: item.quantity ?? "",
@@ -175,6 +178,10 @@ function ProductDocumentItemForm({
             )?.unit ??
             "",
         [item, products, selectedProductId]
+    );
+
+    const isIntegerUnit = ["Vỏ", "Bao"].includes(
+        selectedProductUnit?.trim()
     );
 
     // Lots of the picked product, taken from the warehouse stock already loaded.
@@ -279,7 +286,6 @@ function ProductDocumentItemForm({
     const issueExpirationDate = selectedLot?.expirationDate ?? "";
 
     const quantityError = useMemo(() => {
-
         if (form.quantity === "") {
             return "";
         }
@@ -288,6 +294,10 @@ function ProductDocumentItemForm({
 
         if (Number.isNaN(quantity) || quantity <= 0) {
             return "Số lượng phải lớn hơn 0";
+        }
+
+        if (isIntegerUnit && !Number.isInteger(quantity)) {
+            return `ĐVT ${selectedProductUnit} yêu cầu số lượng là số nguyên`;
         }
 
         if (isReceipt || availableQuantity === null) {
@@ -299,8 +309,13 @@ function ProductDocumentItemForm({
         }
 
         return "";
-
-    }, [form.quantity, isReceipt, availableQuantity]);
+    }, [
+        form.quantity,
+        isReceipt,
+        availableQuantity,
+        isIntegerUnit,
+        selectedProductUnit
+    ]);
 
     const noLotAvailable =
         !isReceipt &&
@@ -568,7 +583,7 @@ function ProductDocumentItemForm({
                     name="quantity"
                     value={form.quantity}
                     onChange={handleChange}
-                    step="any"
+                    step={isIntegerUnit ? "1" : "any"}
                     min="0"
                     max={
                         !isReceipt && availableQuantity !== null

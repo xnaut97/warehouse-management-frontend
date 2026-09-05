@@ -56,10 +56,11 @@ function InventoryAnalysis({ analysis, trend }) {
                 />
             </div>
 
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.8fr)]">
-                <InventoryMovementChart data={trend} />
-                <InventoryValueChart data={analysis} />
-            </div>
+            {/*<div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.8fr)]">*/}
+            {/*    <InventoryMovementChart data={trend} />*/}
+            {/*</div>*/}
+
+            <InventoryValueChart data={analysis} />
         </section>
     );
 

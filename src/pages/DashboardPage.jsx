@@ -88,11 +88,11 @@ function DashboardPage() {
 
 
                 <div className="border-t border-(--color-border) pt-8">
-                    <div className="mb-6">
-                        <h2 className="text-xl font-bold uppercase tracking-wide text-gray-400">
-                            Báo cáo tác nghiệp
-                        </h2>
-                    </div>
+                    {/*<div className="mb-6">*/}
+                    {/*    <h2 className="text-xl font-bold uppercase tracking-wide text-gray-400">*/}
+                    {/*        Báo cáo tác nghiệp*/}
+                    {/*    </h2>*/}
+                    {/*</div>*/}
 
                     <InventoryAnalysis
                         analysis={inventoryAnalysis}
@@ -102,11 +102,11 @@ function DashboardPage() {
 
 
                 <div className="border-t border-(--color-border) pt-8">
-                    <div className="mb-6">
-                        <h2 className="text-xl font-bold uppercase tracking-wide text-gray-400">
-                            Báo cáo trực quan
-                        </h2>
-                    </div>
+                    {/*<div className="mb-6">*/}
+                    {/*    <h2 className="text-xl font-bold uppercase tracking-wide text-gray-400">*/}
+                    {/*        Báo cáo trực quan*/}
+                    {/*    </h2>*/}
+                    {/*</div>*/}
 
                     <div className="grid gap-10">
                         <VarianceAnalysis
