@@ -16,10 +16,10 @@ function AlertTable({ alerts = [] }) {
                         <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             STT
                         </th>
-                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
+                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-center text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             MỨC ĐỘ
                         </th>
-                        <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
+                        <th className="whitespace-nowrap sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
                             NHÓM CẢNH BÁO
                         </th>
                         <th className="sticky top-0 z-10 bg-white px-5 py-4 text-left text-sm font-semibold text-gray-600 shadow-[inset_0_-1px_0_var(--color-pink-100)]">
@@ -52,7 +52,7 @@ function AlertTable({ alerts = [] }) {
                             </td>
 
                             <td className="px-5 py-4">
-                                <div className="text-sm font-medium text-gray-700">
+                                <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
                                     {RISK_GROUP_LABELS[alert.riskGroup] ?? alert.riskGroup}
                                 </div>
                                 <div className="mt-1 text-xs text-gray-400">
@@ -62,7 +62,7 @@ function AlertTable({ alerts = [] }) {
 
                             <td className="px-5 py-4">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-semibold text-gray-700">
+                                    <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">
                                         {alert.itemCode}
                                     </span>
                                     <Badge

@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import {Fragment, useState} from "react";
+import {ChevronDown, ChevronRight} from "lucide-react";
 
 import EmptyState from "../common/EmptyState.jsx";
 
@@ -7,12 +7,12 @@ import EditableCell from "./EditableCell.jsx";
 import StocktakingBatchTable from "./StocktakingBatchTable.jsx";
 import StocktakingItemStatusBadge from "./StocktakingItemStatusBadge.jsx";
 
-import { formatNumber } from "../reports/reportUtils.js";
-import { stockGroupLabel } from "./stocktakingLabels.js";
+import {formatNumber} from "../reports/reportUtils.js";
+import {stockGroupLabel} from "./stocktakingLabels.js";
 
-import { resolveItemView } from "./stocktakingDraft.js";
+import {resolveItemView} from "./stocktakingDraft.js";
 
-function VarianceValue({ value }) {
+function VarianceValue({value}) {
 
     if (value === null || value === undefined) {
 
@@ -167,16 +167,16 @@ function StocktakingItemTable({
                                                 >
 
                                                     {expanded ? (
-                                                        <ChevronDown size={18} />
+                                                        <ChevronDown size={18}/>
                                                     ) : (
-                                                        <ChevronRight size={18} />
+                                                        <ChevronRight size={18}/>
                                                     )}
 
                                                 </button>
 
                                             ) : (
 
-                                                <span className="inline-block w-7" />
+                                                <span className="inline-block w-7"/>
 
                                             )}
 
@@ -199,7 +199,11 @@ function StocktakingItemTable({
                                     </td>
 
                                     <td className="px-6 py-4 text-right text-sm text-slate-700">
-                                        {formatNumber(item.systemQuantity)}
+                                        {formatNumber(
+                                            ["vỏ", "bao"].includes(String(item.unit).trim().toLowerCase())
+                                                ? Math.trunc(Number(item.systemQuantity))
+                                                : item.systemQuantity
+                                        )}
                                     </td>
 
                                     <td className="px-6 py-4 text-right">
@@ -235,7 +239,11 @@ function StocktakingItemTable({
                                                     {
                                                         physicalQuantity === null
                                                             ? "-"
-                                                            : formatNumber(physicalQuantity)
+                                                            : formatNumber(
+                                                                ["vỏ", "bao"].includes(String(item.unit).trim().toLowerCase())
+                                                                    ? Math.trunc(Number(physicalQuantity))
+                                                                    : physicalQuantity
+                                                            )
                                                     }
                                                 </span>
 
@@ -254,7 +262,7 @@ function StocktakingItemTable({
                                     </td>
 
                                     <td className="px-6 py-4 text-right text-sm">
-                                        <VarianceValue value={variance} />
+                                        <VarianceValue value={variance}/>
                                     </td>
 
                                     <td className="px-6 py-4 text-center">
