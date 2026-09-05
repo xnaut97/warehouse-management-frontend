@@ -32,7 +32,9 @@ function ProductIssueDetailPage() {
     const loadIssue = () =>
         productIssueApi.getDetail(id)
             .then((response) => {
-                setIssue(unwrapData(response));
+                const data = unwrapData(response);
+                setIssue(data);
+                return data;
             })
             .catch((error) => {
                 toast.error(
@@ -40,10 +42,27 @@ function ProductIssueDetailPage() {
                     "Không thể tải phiếu xuất"
                 );
                 setIssue(null);
+                return null;
             })
             .finally(() => {
                 setLoading(false);
             });
+
+    // Re-fetches the document right before the item form opens so the lot
+    // availability it shows is computed from the same items the backend will
+    // validate against, not a snapshot from whenever this tab last loaded the
+    // page (stale if the draft was edited elsewhere since).
+    const openItemForm = async (item) => {
+        const fresh = await loadIssue();
+
+        setSelectedItem(
+            item
+                ? fresh?.items?.find((existing) => existing.id === item.id) ?? item
+                : null
+        );
+
+        setShowItemForm(true);
+    };
 
     useEffect(() => {
         loadIssue();
@@ -145,10 +164,7 @@ function ProductIssueDetailPage() {
                         <>
                         <button
                             type="button"
-                            onClick={() => {
-                                setSelectedItem(null);
-                                setShowItemForm(true);
-                            }}
+                            onClick={() => openItemForm(null)}
                             className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-5 py-3 font-medium text-white transition hover:bg-(--color-primary)"
                         >
                             <Plus size={18} />
@@ -288,10 +304,7 @@ function ProductIssueDetailPage() {
                                         <div className="flex justify-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => {
-                                                    setSelectedItem(item);
-                                                    setShowItemForm(true);
-                                                }}
+                                                onClick={() => openItemForm(item)}
                                                 className="rounded-lg p-2 text-slate-500 transition hover:text-(--color-primary-hover)"
                                                 title="Chỉnh sửa"
                                             >
