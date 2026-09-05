@@ -26,35 +26,35 @@ function InventoryAnalysis({ analysis, trend }) {
                 </p>
             </div>
 
-            <div className="mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-                <StatCard
-                    title="Tồn kho nguyên vật liệu"
-                    value={formatNumber(analysis?.materialInventory)}
-                    icon={<Boxes size={24} className="text-pink-600" />}
-                    onClick={() => navigate("/materials")}
-                />
+            {/*<div className="mb-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4">*/}
+            {/*    <StatCard*/}
+            {/*        title="Tồn kho nguyên vật liệu"*/}
+            {/*        value={formatNumber(analysis?.materialInventory)}*/}
+            {/*        icon={<Boxes size={24} className="text-pink-600" />}*/}
+            {/*        onClick={() => navigate("/materials")}*/}
+            {/*    />*/}
 
-                <StatCard
-                    title="Tồn kho sản phẩm"
-                    value={formatNumber(analysis?.productInventory)}
-                    icon={<Package size={24} className="text-sky-600" />}
-                    onClick={() => navigate("/products")}
-                />
+            {/*    <StatCard*/}
+            {/*        title="Tồn kho sản phẩm"*/}
+            {/*        value={formatNumber(analysis?.productInventory)}*/}
+            {/*        icon={<Package size={24} className="text-sky-600" />}*/}
+            {/*        onClick={() => navigate("/products")}*/}
+            {/*    />*/}
 
-                <StatCard
-                    title="Nhập kho"
-                    value={formatNumber(analysis?.stockIn)}
-                    icon={<ArrowDownToLine size={24} className="text-emerald-600" />}
-                    onClick={() => navigate("/receipts")}
-                />
+            {/*    <StatCard*/}
+            {/*        title="Nhập kho"*/}
+            {/*        value={formatNumber(analysis?.stockIn)}*/}
+            {/*        icon={<ArrowDownToLine size={24} className="text-emerald-600" />}*/}
+            {/*        onClick={() => navigate("/receipts")}*/}
+            {/*    />*/}
 
-                <StatCard
-                    title="Xuất kho"
-                    value={formatNumber(analysis?.stockOut)}
-                    icon={<ArrowUpFromLine size={24} className="text-orange-600" />}
-                    onClick={() => navigate("/issues")}
-                />
-            </div>
+            {/*    <StatCard*/}
+            {/*        title="Xuất kho"*/}
+            {/*        value={formatNumber(analysis?.stockOut)}*/}
+            {/*        icon={<ArrowUpFromLine size={24} className="text-orange-600" />}*/}
+            {/*        onClick={() => navigate("/issues")}*/}
+            {/*    />*/}
+            {/*</div>*/}
 
             {/*<div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.8fr)]">*/}
             {/*    <InventoryMovementChart data={trend} />*/}
