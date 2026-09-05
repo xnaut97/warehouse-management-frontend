@@ -7,8 +7,7 @@ function Badge({
     return (
         <span
             className={clsx(
-                "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
-
+                "inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium",
                 {
                     "bg-green-100 text-green-700": color === "green",
                     "bg-red-100 text-red-700": color === "red",
@@ -18,8 +17,8 @@ function Badge({
                 }
             )}
         >
-            {children}
-        </span>
+    {children}
+</span>
     );
 }
 
