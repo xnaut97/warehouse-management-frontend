@@ -28,7 +28,7 @@ const PRODUCT_COLUMNS = [
     "SL NHẬP",
     "SL XUẤT",
     "TỒN CUỐI",
-    "GIÁ XUẤT TRUNG BÌNH",
+    "GIÁ VỐN TRUNG BÌNH",
     "TỔNG VỐN TỒN",
     "TRẠNG THÁI"
 ];

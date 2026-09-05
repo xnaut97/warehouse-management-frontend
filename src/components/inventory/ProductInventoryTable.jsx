@@ -59,7 +59,7 @@ function ProductInventoryTable({ items = [] }) {
                     </th>
 
                     <th className="px-6 py-4 text-right font-semibold text-slate-700">
-                        GIÁ XUẤT TRUNG BÌNH
+                        GIÁ VỐN TRUNG BÌNH
                     </th>
 
                     <th className="px-6 py-4 text-right font-semibold text-slate-700">
