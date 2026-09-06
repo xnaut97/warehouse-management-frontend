@@ -14,14 +14,14 @@ function QuickActions() {
         {
             label: "Lập Phiếu Nhập Kho",
             icon: <ArrowDownToLine size={20} />,
-            path: "/receipts",
+            path: "/receipts-issues?type=RECEIPT",
             color: "text-emerald-600",
             bg: "bg-emerald-50 hover:bg-emerald-100",
         },
         {
             label: "Lập Phiếu Xuất Kho",
             icon: <ArrowUpFromLine size={20} />,
-            path: "/issues",
+            path: "/receipts-issues?type=ISSUE",
             color: "text-orange-600",
             bg: "bg-orange-50 hover:bg-orange-100",
         },

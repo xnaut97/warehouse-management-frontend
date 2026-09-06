@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import PageHeader from "../components/common/PageHeader.jsx";
@@ -33,9 +33,27 @@ import {
 function ReceiptsIssuesPage() {
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
+    const paramType = searchParams.get("type")?.toUpperCase();
     const [transactionType, setTransactionType] =
-        useState("RECEIPT");
+        useState(paramType === "ISSUE" ? "ISSUE" : "RECEIPT");
+
+    useEffect(() => {
+        const typeFromUrl = searchParams.get("type")?.toUpperCase();
+        if (typeFromUrl === "RECEIPT" || typeFromUrl === "ISSUE") {
+            setTransactionType(typeFromUrl);
+        }
+    }, [searchParams]);
+
+    const handleTransactionTypeChange = (type) => {
+        setTransactionType(type);
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("type", type);
+            return next;
+        });
+    };
 
     const [goodsType, setGoodsType] =
         useState("MATERIAL");
@@ -390,7 +408,7 @@ function ReceiptsIssuesPage() {
 
                 <TransactionTypeTabs
                     value={transactionType}
-                    onChange={setTransactionType}
+                    onChange={handleTransactionTypeChange}
                 />
 
 
