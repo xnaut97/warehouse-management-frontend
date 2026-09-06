@@ -21,7 +21,6 @@ const normalizeLot = (lotNumber) =>
         : String(lotNumber).trim();
 
 
-
 const lotLabel = (lot, available, unit) => {
 
     const name = lot.lotNumber || NO_LOT_LABEL;
@@ -71,7 +70,6 @@ function ProductDocumentItemForm({
         quantity: "",
         lotNumber: "",
         expirationDate: "",
-        unitPrice: "",
     });
 
     useEffect(() => {
@@ -110,7 +108,6 @@ function ProductDocumentItemForm({
             quantity: item.quantity ?? "",
             lotNumber: item.lotNumber ?? "",
             expirationDate: item.expirationDate ?? "",
-            unitPrice: item.unitPrice ?? "",
         });
 
     }, [item]);
@@ -397,13 +394,6 @@ function ProductDocumentItemForm({
                 : selectedLot?.expirationDate || null,
         };
 
-        if (!isReceipt) {
-
-            payload.unitPrice = form.unitPrice === ""
-                ? null
-                : Number(form.unitPrice);
-
-        }
 
         setLoading(true);
 
@@ -686,29 +676,6 @@ function ProductDocumentItemForm({
 
             )}
 
-            {!isReceipt && (
-
-                <div>
-
-                    <label className="mb-2 block font-medium text-slate-700">
-                        Đơn giá xuất
-                    </label>
-
-                    <input
-                        type="number"
-                        name="unitPrice"
-                        value={form.unitPrice}
-                        onChange={handleChange}
-                        step="any"
-                        min="0"
-                        placeholder="Nhập đơn giá xuất"
-                        disabled={loading}
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-pink-100"
-                    />
-
-                </div>
-
-            )}
 
             <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
 
