@@ -66,7 +66,7 @@ const rowsOf = (kind, doc) =>
         unit: item.unit || "-",
         quantity: toNumber(item.quantity),
         lotNumber: item.lotNumber || "",
-        nsp: item.nsp || (item.manufactureDate ? formatDate(item.manufactureDate) : "") || (item.expirationDate ? formatDate(item.expirationDate) : "") || ""
+        hsd: item.hsd || (item.expirationDate ? formatDate(item.expirationDate) : "") || (item.manufactureDate ? formatDate(item.manufactureDate) : "") || ""
     }));
 
 const printStyles = () => `
@@ -236,7 +236,7 @@ export const buildDocumentPrintHtml = (kind, doc) => {
                 `<td class="center">${escapeXml(row.unit)}</td>` +
                 `<td class="num">${escapeXml(formatNumber(row.quantity))}</td>` +
                 `<td class="center">${escapeXml(row.lotNumber || "-")}</td>` +
-                `<td class="center">${escapeXml(row.nsp || "-")}</td>` +
+                `<td class="center">${escapeXml(row.hsd || "-")}</td>` +
                 "</tr>"
         ).join("")
         : `<tr><td class="center" colspan="6">Phiếu chưa có mặt hàng nào.</td></tr>`;
@@ -289,7 +289,7 @@ export const buildDocumentPrintHtml = (kind, doc) => {
         '<th class="center">ĐVT</th>' +
         '<th class="center">Số lượng</th>' +
         '<th class="center">Lô</th>' +
-        '<th class="center">NSP</th>' +
+        '<th class="center">HSD</th>' +
         '</tr></thead>' +
         `<tbody>${bodyHtml}</tbody>` +
         footHtml +
