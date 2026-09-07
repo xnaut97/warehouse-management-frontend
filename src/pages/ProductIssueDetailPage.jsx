@@ -235,10 +235,6 @@ function ProductIssueDetailPage() {
                             HSD
                         </th>
 
-                        <th className="px-6 py-4 text-right font-semibold text-slate-700">
-                            THÀNH TIỀN
-                        </th>
-
                         {isDraft && (
                             <th className="px-6 py-4 text-center font-semibold text-slate-700">
                                 THAO TÁC
@@ -250,7 +246,7 @@ function ProductIssueDetailPage() {
                     <tbody>
                     {!issue.items?.length ? (
                         <tr>
-                            <td colSpan={isDraft ? 8 : 7}>
+                            <td colSpan={isDraft ? 7 : 6}>
                                 <EmptyState
                                     title="Phiếu chưa có sản phẩm"
                                     description="Thêm sản phẩm để hoàn tất phiếu xuất."
@@ -285,10 +281,6 @@ function ProductIssueDetailPage() {
 
                                 <td className="px-6 py-4 text-sm text-slate-700">
                                     {formatDate(item.expirationDate) || "—"}
-                                </td>
-
-                                <td className="px-6 py-4 text-right text-sm text-slate-800">
-                                    {formatMoney(item.amount)}
                                 </td>
 
                                 {isDraft && (
