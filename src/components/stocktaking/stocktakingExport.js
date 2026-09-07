@@ -84,7 +84,9 @@ export const buildStocktakingRows = (stocktaking, draft, editable) =>
             return [itemRow];
         }
 
-        const lotRows = (item.batches ?? []).map((batch) => {
+        const lotRows = (item.batches ?? [])
+            .filter((batch) => Number(batch.systemQuantity ?? 0) !== 0)
+            .map((batch) => {
 
             const batchView = resolveBatchView(batch, draft, editable);
 

@@ -23,9 +23,6 @@ function ProductIssueTable({ issues, onView, onPrint, printingId }) {
                     <th className="px-6 py-4 text-center font-semibold text-slate-700">
                         TRẠNG THÁI
                     </th>
-                    <th className="px-6 py-4 text-right font-semibold text-slate-700">
-                        TỔNG TIỀN
-                    </th>
                     <th className="px-6 py-4 text-center font-semibold text-slate-700">
                         THAO TÁC
                     </th>
@@ -36,7 +33,7 @@ function ProductIssueTable({ issues, onView, onPrint, printingId }) {
                 {issues.length === 0 ? (
                     <tr>
                         <td
-                            colSpan={7}
+                            colSpan={6}
                             className="py-12 text-center italic text-gray-500"
                         >
                             Không tìm thấy phiếu xuất sản phẩm.
@@ -66,13 +63,6 @@ function ProductIssueTable({ issues, onView, onPrint, printingId }) {
 
                             <td className="px-6 py-4 text-center">
                                 <IssueStatusBadge status={issue.status} />
-                            </td>
-
-                            <td className="px-6 py-4 text-right font-semibold text-slate-800">
-                                {issue.totalAmount === null ||
-                                issue.totalAmount === undefined
-                                    ? "—"
-                                    : `${Number(issue.totalAmount).toLocaleString("vi-VN")} ₫`}
                             </td>
 
                             <td className="px-6 py-4 text-center">

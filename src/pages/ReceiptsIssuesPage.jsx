@@ -64,7 +64,7 @@ function ReceiptsIssuesPage() {
     const [search, setSearch] =
         useState("");
 
-    const [page, setPage] =
+    const [page, setPage] = 
         useState(0);
 
     const [pageSize] =

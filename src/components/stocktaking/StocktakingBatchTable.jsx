@@ -46,7 +46,9 @@ function StocktakingBatchTable({
                                    onChangeBatch
                                }) {
 
-    const batches = item.batches ?? [];
+    const batches = (item.batches ?? []).filter(
+        (batch) => Number(batch.systemQuantity ?? 0) !== 0
+    );
 
     return (
 

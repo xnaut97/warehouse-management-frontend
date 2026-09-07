@@ -59,7 +59,9 @@ export const resolveItemQuantity = (item, draft) => {
 
     }
 
-    const batches = item.batches ?? [];
+    const batches = (item.batches ?? []).filter(
+        (batch) => Number(batch.systemQuantity ?? 0) !== 0
+    );
 
     if (batches.length === 0) {
         return null;
@@ -182,7 +184,11 @@ export const collectInvalidQuantities = (items = [], draft) => {
 
         if (item.batchManaged) {
 
-            (item.batches ?? []).forEach((batch) => {
+            const activeBatches = (item.batches ?? []).filter(
+                (batch) => Number(batch.systemQuantity ?? 0) !== 0
+            );
+
+            activeBatches.forEach((batch) => {
 
                 const raw = draft.batches[batch.id]?.physicalQuantity;
 
@@ -192,7 +198,7 @@ export const collectInvalidQuantities = (items = [], draft) => {
 
             });
 
-            if ((item.batches ?? []).length === 0) {
+            if (activeBatches.length === 0) {
                 invalid.push(item.code);
             }
 
@@ -223,13 +229,15 @@ export const buildCountPayload = (items = [], draft) => ({
     })),
 
     batches: items.flatMap((item) =>
-        (item.batches ?? []).map((batch) => ({
-            id: batch.id,
-            physicalQuantity: parseQuantity(
-                draft.batches[batch.id]?.physicalQuantity
-            ),
-            reason: draft.batches[batch.id]?.reason?.trim() || null
-        }))
+        (item.batches ?? [])
+            .filter((batch) => Number(batch.systemQuantity ?? 0) !== 0)
+            .map((batch) => ({
+                id: batch.id,
+                physicalQuantity: parseQuantity(
+                    draft.batches[batch.id]?.physicalQuantity
+                ),
+                reason: draft.batches[batch.id]?.reason?.trim() || null
+            }))
     )
 
 });
