@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Printer } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import PageHeader from "../components/common/PageHeader.jsx";
 import TableToolbar from "../components/common/TableToolbar.jsx";
 import Pagination from "../components/common/Pagination.jsx";
+import Button from "../components/common/Button.jsx";
 
 import TransactionTypeTabs from "../components/transactions/TransactionTypeTabs.jsx";
 import GoodsTypeTabs from "../components/transactions/GoodsTypeTabs.jsx";
 import CreateTransactionModal from "../components/transactions/CreateTransactionModal.jsx";
+import PrintTransactionSummaryModal from "../components/transactions/PrintTransactionSummaryModal.jsx";
 
 import ReceiptTable from "../components/receipts/ReceiptTable.jsx";
 import IssueTable from "../components/issues/IssueTable.jsx";
@@ -27,7 +29,8 @@ import { unwrapContent, unwrapData, unwrapTotalPages } from "../utils/apiRespons
 
 import {
     documentKindOf,
-    printTransactionDocument
+    printTransactionDocument,
+    printTransactionSummary
 } from "../components/transactions/documentPrint.js";
 
 function ReceiptsIssuesPage() {
@@ -77,6 +80,9 @@ function ReceiptsIssuesPage() {
         useState(false);
 
     const [showCreateModal, setShowCreateModal] =
+        useState(false);
+
+    const [showSummaryPrintModal, setShowSummaryPrintModal] =
         useState(false);
 
     const [printingId, setPrintingId] =
@@ -293,6 +299,68 @@ function ReceiptsIssuesPage() {
     };
 
 
+    const handleSummaryPrintSubmit = async ({
+        fromDate,
+        toDate,
+        includeMaterial,
+        includeProduct
+    }) => {
+        try {
+            const fetchPromises = [];
+
+            if (transactionType === "RECEIPT") {
+                if (includeMaterial) {
+                    fetchPromises.push(materialReceiptApi.getAll({ page: 0, size: 1000 }));
+                }
+                if (includeProduct) {
+                    fetchPromises.push(productReceiptApi.getAll({ page: 0, size: 1000 }));
+                }
+            } else {
+                if (includeMaterial) {
+                    fetchPromises.push(materialIssueApi.getAll({ page: 0, size: 1000 }));
+                }
+                if (includeProduct) {
+                    fetchPromises.push(productIssueApi.getAll({ page: 0, size: 1000 }));
+                }
+            }
+
+            const responses = await Promise.all(fetchPromises);
+            const allRecords = responses.flatMap((res) => unwrapContent(res));
+
+            const filteredRecords = allRecords.filter((item) => {
+                const dateStr = (transactionType === "RECEIPT" ? item.receiptDate : item.issueDate) || item.createdAt;
+                if (!dateStr) return false;
+                const itemDate = String(dateStr).split("T")[0];
+                return itemDate >= fromDate && itemDate <= toDate;
+            });
+
+            if (filteredRecords.length === 0) {
+                toast.error("Không tìm thấy phiếu nào trong khoảng thời gian đã chọn");
+                return;
+            }
+
+            filteredRecords.sort((a, b) => {
+                const dateA = (transactionType === "RECEIPT" ? a.receiptDate : a.issueDate) || a.createdAt || "";
+                const dateB = (transactionType === "RECEIPT" ? b.receiptDate : b.issueDate) || b.createdAt || "";
+                return dateA.localeCompare(dateB);
+            });
+
+            printTransactionSummary({
+                transactionType,
+                fromDate,
+                toDate,
+                records: filteredRecords
+            });
+
+            toast.success(`Đã tạo phiếu in ${transactionType === "RECEIPT" ? "Nhập kho" : "Xuất kho"}`);
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu in phiếu:", error);
+            toast.error("Không thể tải danh sách phiếu để in");
+            throw error;
+        }
+    };
+
+
     const renderTable = () => {
 
 
@@ -394,12 +462,27 @@ function ReceiptsIssuesPage() {
                         Quản lý phiếu nhập kho và phiếu xuất kho
                         theo từng loại hàng hóa.
                     "
-                    actionLabel="Thêm phiếu"
-                    actionIcon={
-                        <Plus size={18} />
-                    }
-                    onAction={() =>
-                        setShowCreateModal(true)
+                    actions={
+                        <>
+                            <Button
+                                variant="outline"
+                                onClick={() => setShowSummaryPrintModal(true)}
+                                className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-white px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                            >
+                                <Printer size={18} />
+                                {transactionType === "RECEIPT"
+                                    ? "In phiếu Nhập kho"
+                                    : "In phiếu Xuất kho"}
+                            </Button>
+
+                            <Button
+                                onClick={() => setShowCreateModal(true)}
+                                className="flex items-center gap-2 rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition hover:bg-(--color-primary) disabled:opacity-50"
+                            >
+                                <Plus size={18} />
+                                Thêm phiếu
+                            </Button>
+                        </>
                     }
                 />
 
@@ -463,6 +546,13 @@ function ReceiptsIssuesPage() {
                 onNavigate={
                     handleCreateNavigate
                 }
+            />
+
+            <PrintTransactionSummaryModal
+                open={showSummaryPrintModal}
+                onClose={() => setShowSummaryPrintModal(false)}
+                transactionType={transactionType}
+                onSubmit={handleSummaryPrintSubmit}
             />
 
         </div>

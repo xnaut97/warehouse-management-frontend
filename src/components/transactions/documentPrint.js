@@ -332,3 +332,176 @@ export const printTransactionDocument = (kind, doc) => {
     printHtmlDocument(buildDocumentPrintHtml(kind, doc));
 };
 
+export const buildTransactionSummaryPrintHtml = ({
+    transactionType,
+    fromDate,
+    toDate,
+    records = []
+}) => {
+    const isReceipt = transactionType === "RECEIPT";
+    const documentTitle = isReceipt
+        ? "BẢNG KÊ CHỨNG TỪ PHIẾU NHẬP"
+        : "BẢNG KÊ CHỨNG TỪ PHIẾU XUẤT";
+
+    const formatShortDate = (dStr) => {
+        if (!dStr) return "";
+        const parts = String(dStr).split("T")[0].split("-");
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return dStr;
+    };
+
+    const formattedFromDate = formatShortDate(fromDate);
+    const formattedToDate = formatShortDate(toDate);
+
+    let totalAmountSum = 0;
+
+    const tableRowsHtml = records.length
+        ? records.map((item) => {
+            const docNo = (isReceipt ? item.receiptNo : item.issueNo) || "-";
+            const warehouse = item.warehouse || "—";
+            const dateVal = formatShortDate((isReceipt ? item.receiptDate : item.issueDate) || item.createdAt);
+            const party = (isReceipt ? item.supplier : item.customer) || "—";
+            const amount = item.totalAmount !== null && item.totalAmount !== undefined ? Number(item.totalAmount) : null;
+            if (amount !== null && !isNaN(amount)) {
+                totalAmountSum += amount;
+            }
+
+            if (isReceipt) {
+                return (
+                    "<tr>" +
+                    `<td class="center">${escapeXml(docNo)}</td>` +
+                    `<td class="left">${escapeXml(warehouse)}</td>` +
+                    `<td class="center">${escapeXml(dateVal)}</td>` +
+                    `<td class="left">${escapeXml(party)}</td>` +
+                    `<td class="right">${amount !== null ? escapeXml(amount.toLocaleString("vi-VN") + " ₫") : "—"}</td>` +
+                    "</tr>"
+                );
+            } else {
+                return (
+                    "<tr>" +
+                    `<td class="center">${escapeXml(docNo)}</td>` +
+                    `<td class="left">${escapeXml(warehouse)}</td>` +
+                    `<td class="center">${escapeXml(dateVal)}</td>` +
+                    `<td class="left">${escapeXml(party)}</td>` +
+                    "</tr>"
+                );
+            }
+        }).join("")
+        : `<tr><td colSpan="${isReceipt ? 5 : 4}" class="center">Không có dữ liệu phiếu nào trong khoảng thời gian này.</td></tr>`;
+
+    const tableHeaderHtml = isReceipt ? (
+        "<thead><tr>" +
+        '<th class="center">MÃ PHIẾU</th>' +
+        '<th class="center">KHO</th>' +
+        '<th class="center">NGÀY NHẬP</th>' +
+        '<th class="center">NHÀ CUNG CẤP</th>' +
+        '<th class="center">TỔNG TIỀN</th>' +
+        "</tr></thead>"
+    ) : (
+        "<thead><tr>" +
+        '<th class="center">MÃ PHIẾU</th>' +
+        '<th class="center">KHO</th>' +
+        '<th class="center">NGÀY XUẤT</th>' +
+        '<th class="center">KHÁCH HÀNG</th>' +
+        "</tr></thead>"
+    );
+
+    const tableFootHtml = isReceipt ? (
+        "<tfoot><tr>" +
+        '<td colSpan="4" class="center font-bold">Tổng cộng</td>' +
+        `<td class="right font-bold">${escapeXml(totalAmountSum.toLocaleString("vi-VN") + " ₫")}</td>` +
+        "</tr></tfoot>"
+    ) : (
+        "<tfoot><tr>" +
+        '<td colSpan="3" class="center font-bold">Tổng cộng</td>' +
+        `<td class="center font-bold">${records.length} phiếu</td>` +
+        "</tr></tfoot>"
+    );
+
+    return (
+        '<!doctype html><html lang="vi"><head><meta charset="utf-8">' +
+        `<title>${escapeXml(documentTitle)}</title>` +
+        `<style>
+            @page { size: A4 portrait; margin: 12mm; }
+            * { box-sizing: border-box; }
+            body {
+                margin: 0;
+                padding: 24px;
+                background: #ffffff;
+                color: #000000;
+                font-family: "Times New Roman", Times, serif, Arial, sans-serif;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            .header { margin-bottom: 20px; }
+            .company-info { font-size: 13px; line-height: 1.4; }
+            .company-name { font-weight: bold; text-transform: uppercase; font-size: 14px; }
+            .company-address { font-size: 13px; }
+            .title-section { text-align: center; margin-top: 15px; margin-bottom: 24px; }
+            .title-section h1 { margin: 0 0 6px 0; font-size: 22px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+            .date-line { font-style: italic; font-size: 13px; }
+            table { width: 100%; margin-top: 16px; margin-bottom: 24px; border-collapse: collapse; table-layout: fixed; }
+            th, td { padding: 8px 10px; border: 1px solid #000000; vertical-align: middle; word-break: break-word; font-size: 13px; }
+            thead th { font-weight: bold; text-align: center; }
+            th.center, td.center { text-align: center; }
+            th.right, td.right { text-align: right; }
+            th.left, td.left { text-align: left; }
+            tfoot td { font-weight: bold; }
+            .font-bold { font-weight: bold; }
+            .signatures-wrapper { margin-top: 30px; page-break-inside: avoid; }
+            .location-date { text-align: right; font-style: italic; font-size: 13px; margin-bottom: 12px; padding-right: 24px; }
+            .signatures { display: flex; justify-content: space-between; text-align: center; }
+            .sig-col { flex: 1; padding: 0 10px; }
+            .sig-title { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+            .sig-sub { font-style: italic; font-size: 12px; }
+            .sig-space { height: 75px; }
+            .sig-name { font-weight: bold; font-size: 13px; }
+            @media print {
+                body { padding: 0; }
+                thead { display: table-header-group; }
+                tr { page-break-inside: avoid; }
+            }
+        </style></head><body>` +
+        '<div class="header">' +
+        '<div class="company-info">' +
+        '<div class="company-name">CÔNG TY CỔ PHẦN CÔNG NGHỆ VÀ SẢN XUẤT MINH HÀ</div>' +
+        '<div class="company-address">Số 1 Ngõ 120 đường Trường Chinh, Phường Phương Mai, Quận Đống Đa, Thành phố Hà Nội, Việt Nam</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="title-section">' +
+        `<h1>${escapeXml(documentTitle)}</h1>` +
+        `<div class="date-line">Từ ngày: ${escapeXml(formattedFromDate)}   Đến ngày: ${escapeXml(formattedToDate)}</div>` +
+        '</div>' +
+        '<table>' +
+        tableHeaderHtml +
+        `<tbody>${tableRowsHtml}</tbody>` +
+        tableFootHtml +
+        '</table>' +
+        '<div class="signatures-wrapper">' +
+        '<div class="location-date">Hà Nội, ngày ..... tháng ..... năm .....</div>' +
+        '<div class="signatures">' +
+        '<div class="sig-col">' +
+        '<div class="sig-title">Giám đốc</div>' +
+        '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
+        '<div class="sig-space"></div>' +
+        '<div class="sig-name">Nguyễn Thuỳ Linh</div>' +
+        '</div>' +
+        '<div class="sig-col">' +
+        '<div class="sig-title">Người lập báo cáo</div>' +
+        '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
+        '<div class="sig-space"></div>' +
+        '<div class="sig-name">Vũ Thị Xuân Hương</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</body></html>'
+    );
+};
+
+export const printTransactionSummary = (params) => {
+    printHtmlDocument(buildTransactionSummaryPrintHtml(params));
+};
+
+

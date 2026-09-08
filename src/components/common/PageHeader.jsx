@@ -1,12 +1,13 @@
 import Button from "./Button.jsx";
 
 function PageHeader({
-                        title,
-                        description,
-                        actionLabel,
-                        actionIcon,
-                        onAction,
-                    }) {
+    title,
+    description,
+    actionLabel,
+    actionIcon,
+    onAction,
+    actions
+}) {
     return (
         <div className="mb-6 flex flex-col items-stretch justify-between gap-4 sm:mb-8 sm:flex-row sm:items-start">
             <div className="min-w-0">
@@ -21,7 +22,11 @@ function PageHeader({
                 )}
             </div>
 
-            {actionLabel && (
+            {actions ? (
+                <div className="flex flex-wrap items-center gap-3">
+                    {actions}
+                </div>
+            ) : actionLabel ? (
                 <Button
                     onClick={onAction}
                     className="rounded-xl bg-(--color-primary-hover) px-6 py-3 font-medium text-white transition
@@ -30,7 +35,7 @@ function PageHeader({
                     {actionIcon}
                     {actionLabel}
                 </Button>
-            )}
+            ) : null}
         </div>
     );
 }
