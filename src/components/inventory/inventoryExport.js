@@ -256,114 +256,157 @@ export const exportInventoryToExcel = (context) => {
 };
 
 const PRINT_STYLES = `
+    @page { size: A4 landscape; margin: 12mm; }
     * { box-sizing: border-box; }
 
     body {
         margin: 0;
         padding: 24px;
         background: #ffffff;
-        color: #374151;
-        font-family: "Segoe UI", Roboto, Arial, sans-serif;
-        font-size: 11px;
+        color: #000000;
+        font-family: "Times New Roman", Times, serif, Arial, sans-serif;
+        font-size: 12px;
+        line-height: 1.4;
     }
 
-    h1 {
-        margin: 0;
-        color: #374151;
-        font-size: 20px;
+    .header {
+        margin-bottom: 18px;
     }
 
-    h2 {
-        margin: 0;
-        color: #374151;
-        font-size: 15px;
+    .company-info {
+        font-size: 13px;
+        line-height: 1.4;
     }
 
-    .subtitle {
-        margin-top: 4px;
-        color: #6b7280;
-        font-size: 11px;
+    .company-name {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 14px;
     }
 
-    .meta {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px 24px;
-        margin-top: 18px;
-        padding: 14px 16px;
-        border: 1px solid #f4d6e0;
-        border-radius: 10px;
+    .company-address {
+        font-size: 13px;
     }
 
-    .meta dt {
-        color: #6b7280;
-        font-size: 10px;
+    .title-section {
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 22px;
     }
 
-    .meta dd {
-        margin: 2px 0 0;
-        font-weight: 600;
+    .title-section h1 {
+        margin: 0 0 6px 0;
+        font-size: 22px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    section { margin-top: 22px; }
+    .date-line {
+        font-style: italic;
+        font-size: 13px;
+    }
 
-    section + section { break-before: page; }
+    .section-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }
 
     table {
         width: 100%;
-        margin-top: 10px;
+        margin-top: 6px;
+        margin-bottom: 20px;
         border-collapse: collapse;
+        table-layout: auto;
     }
 
     th, td {
         padding: 6px 8px;
-        border-bottom: 1px solid #f4d6e0;
-        text-align: left;
-        vertical-align: top;
+        border: 1px solid #000000;
+        vertical-align: middle;
+        word-break: break-word;
+        font-size: 12px;
     }
 
     thead th {
-        border-bottom: 1.5px solid #ec7fa9;
-        font-size: 10px;
-        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+        background-color: #ffffff;
     }
 
-    tbody tr.item td.label { font-weight: 600; }
-
-    tbody tr.lot td {
-        color: #6b7280;
-        font-size: 10px;
-    }
-
-    tbody tr.lot td.label { padding-left: 24px; }
+    th.center, td.center { text-align: center; }
+    th.num, td.num, td.right { text-align: right; }
+    td.left { text-align: left; }
 
     tfoot td {
-        border-top: 1.5px solid #ec7fa9;
-        font-weight: 700;
+        font-weight: bold;
     }
 
-    .num { text-align: right; }
-    .center { text-align: center; }
+    .font-bold { font-weight: bold; }
 
-    .printed-at {
-        margin-top: 24px;
-        color: #9ca3af;
-        font-size: 10px;
+    tbody tr.lot td {
+        font-style: italic;
+        color: #444444;
     }
 
-    @page { size: A4 landscape; margin: 10mm; }
+    .signatures-wrapper {
+        margin-top: 30px;
+        page-break-inside: avoid;
+    }
+
+    .location-date {
+        text-align: right;
+        font-style: italic;
+        font-size: 13px;
+        margin-bottom: 12px;
+        padding-right: 20px;
+    }
+
+    .signatures {
+        display: flex;
+        justify-content: space-between;
+        text-align: center;
+    }
+
+    .sig-col {
+        flex: 1;
+        padding: 0 10px;
+    }
+
+    .sig-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .sig-sub {
+        font-style: italic;
+        font-size: 12px;
+    }
+
+    .sig-space {
+        height: 70px;
+    }
+
+    .sig-name {
+        font-weight: bold;
+        font-size: 13px;
+    }
 
     @media print {
         body { padding: 0; }
         thead { display: table-header-group; }
-        tr { break-inside: avoid; }
+        tr { page-break-inside: avoid; }
     }
 `;
 
 const itemRowHtml = (row) =>
-    '<tr class="item">' +
-    `<td class="label">${escapeXml(row.label)}</td>` +
-    `<td>${escapeXml(row.unit)}</td>` +
+    '<tr>' +
+    `<td class="left font-bold">${escapeXml(row.label)}</td>` +
+    `<td class="center">${escapeXml(row.unit)}</td>` +
     `<td class="num">${escapeXml(formatNumber(row.openingQuantity))}</td>` +
     `<td class="num">${escapeXml(formatNumber(row.receiptQuantity))}</td>` +
     `<td class="num">${escapeXml(formatNumber(row.issueQuantity))}</td>` +
@@ -375,17 +418,16 @@ const itemRowHtml = (row) =>
 
 const lotRowHtml = (lot) =>
     '<tr class="lot">' +
-    `<td class="label">${escapeXml(
+    `<td class="left" style="padding-left: 20px;">${escapeXml(
         `↳ Lô ${lot.index}: ${lot.lotNumber}`
     )}</td>` +
-    `<td colspan="4">${escapeXml(`HSD ${lot.expirationDate}`)}</td>` +
+    `<td colspan="4" class="center">${escapeXml(`HSD ${lot.expirationDate}`)}</td>` +
     `<td class="num">${escapeXml(formatNumber(lot.quantity))}</td>` +
     '<td colspan="2"></td>' +
     `<td class="center">${escapeXml(lot.status)}</td>` +
     "</tr>";
 
-const sectionHtml = (title, description, columns, rows, withLots) => {
-
+const sectionHtml = (title, columns, rows, withLots) => {
     const totals = totalsOf(rows);
 
     const body = rows.length
@@ -401,23 +443,23 @@ const sectionHtml = (title, description, columns, rows, withLots) => {
 
     const foot = rows.length
         ? "<tfoot><tr>" +
-          `<td colspan="2">${escapeXml(
+          `<td colspan="2" class="center font-bold">${escapeXml(
               `TỔNG CỘNG (${rows.length} dòng)`
           )}</td>` +
-          `<td class="num">${escapeXml(
+          `<td class="num font-bold">${escapeXml(
               formatNumber(totals.openingQuantity)
           )}</td>` +
-          `<td class="num">${escapeXml(
+          `<td class="num font-bold">${escapeXml(
               formatNumber(totals.receiptQuantity)
           )}</td>` +
-          `<td class="num">${escapeXml(
+          `<td class="num font-bold">${escapeXml(
               formatNumber(totals.issueQuantity)
           )}</td>` +
-          `<td class="num">${escapeXml(
+          `<td class="num font-bold">${escapeXml(
               formatNumber(totals.closingQuantity)
           )}</td>` +
           "<td></td>" +
-          `<td class="num">${escapeXml(
+          `<td class="num font-bold">${escapeXml(
               formatCurrency(totals.inventoryValue)
           )}</td>` +
           "<td></td></tr></tfoot>"
@@ -425,18 +467,24 @@ const sectionHtml = (title, description, columns, rows, withLots) => {
 
     return (
         "<section>" +
-        `<h2>${escapeXml(title)}</h2>` +
-        `<p class="subtitle">${escapeXml(description)}</p>` +
+        `<div class="section-title">${escapeXml(title)}</div>` +
         "<table><thead><tr>" +
-        columns.map((label) => `<th>${escapeXml(label)}</th>`).join("") +
+        columns.map((label) => `<th class="center">${escapeXml(label)}</th>`).join("") +
         `</tr></thead><tbody>${body}</tbody>${foot}</table>` +
         "</section>"
     );
+};
 
+const formatShortDate = (dVal) => {
+    if (!dVal) return "";
+    const parts = String(dVal).split("T")[0].split("-");
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return formatDate(dVal);
 };
 
 export const buildInventoryPrintHtml = (context) => {
-
     const materialRows = buildItemRows(
         context.materials ?? [],
         materialStatusOf
@@ -447,47 +495,57 @@ export const buildInventoryPrintHtml = (context) => {
         productStatusOf
     );
 
-    const meta = metaEntries(context)
-        .map(
-            ([label, value]) =>
-                `<div><dt>${escapeXml(label)}</dt>` +
-                `<dd>${escapeXml(value)}</dd></div>`
-        )
-        .join("");
-
-    const period = periodText(context);
+    const formattedFromDate = formatShortDate(context.fromDate);
+    const formattedToDate = formatShortDate(context.toDate);
 
     return (
         '<!doctype html><html lang="vi"><head><meta charset="utf-8">' +
-        `<title>${escapeXml(`Bao cao ton kho ${period}`)}</title>` +
+        `<title>${escapeXml(`BÁO CÁO TỔNG HỢP NHẬP - XUẤT - TỒN (${formattedFromDate} - ${formattedToDate})`)}</title>` +
         `<style>${PRINT_STYLES}</style></head><body>` +
-        "<h1>BÁO CÁO TỒN KHO</h1>" +
-        `<p class="subtitle">${escapeXml(`Kỳ ${period}`)}</p>` +
-        `<dl class="meta">${meta}</dl>` +
+        '<div class="header">' +
+        '<div class="company-info">' +
+        '<div class="company-name">CÔNG TY CỔ PHẦN CÔNG NGHỆ VÀ SẢN XUẤT MINH HÀ</div>' +
+        '<div class="company-address">Số 1 Ngõ 120 đường Trường Chinh, Phường Phương Mai, Quận Đống Đa, Thành phố Hà Nội, Việt Nam</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="title-section">' +
+        '<h1>BÁO CÁO TỔNG HỢP NHẬP - XUẤT - TỒN</h1>' +
+        `<div class="date-line">Từ ngày: ${escapeXml(formattedFromDate)}   Đến ngày: ${escapeXml(formattedToDate)}</div>` +
+        '</div>' +
         sectionHtml(
-            "KHO NVL",
-            "Tồn kho nguyên vật liệu trong kỳ.",
+            "1. KHO NGUYÊN VẬT LIỆU",
             MATERIAL_COLUMNS,
             materialRows,
             false
         ) +
         sectionHtml(
-            "KHO SẢN PHẨM",
-            "Tồn kho thành phẩm trong kỳ, kèm các lô còn tồn theo thứ tự hạn dùng.",
+            "2. KHO SẢN PHẨM",
             PRODUCT_COLUMNS,
             productRows,
             true
         ) +
-        `<p class="printed-at">In ngày ${escapeXml(
-            formatDate(new Date())
-        )}</p>` +
+        '<div class="signatures-wrapper">' +
+        '<div class="location-date">Hà Nội, ngày ..... tháng ..... năm .....</div>' +
+        '<div class="signatures">' +
+        '<div class="sig-col">' +
+        '<div class="sig-title">Giám đốc</div>' +
+        '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
+        '<div class="sig-space"></div>' +
+        '<div class="sig-name">Nguyễn Thuỳ Linh</div>' +
+        '</div>' +
+        '<div class="sig-col">' +
+        '<div class="sig-title">Người lập báo cáo</div>' +
+        '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
+        '<div class="sig-space"></div>' +
+        '<div class="sig-name">Vũ Thị Xuân Hương</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
         "</body></html>"
     );
-
 };
 
 export const printInventory = (context) => {
-
     printHtmlDocument(buildInventoryPrintHtml(context));
-
 };
+
