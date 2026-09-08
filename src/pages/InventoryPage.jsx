@@ -18,13 +18,15 @@ import ReportErrorState from "../components/reports/ReportErrorState.jsx";
 import InventoryStats from "../components/inventory/InventoryStats.jsx";
 import MaterialInventoryTable from "../components/inventory/MaterialInventoryTable.jsx";
 import ProductInventoryTable from "../components/inventory/ProductInventoryTable.jsx";
+import PrintInventoryModal from "../components/inventory/PrintInventoryModal.jsx";
 import {
     exportInventoryToExcel,
     printInventory
 } from "../components/inventory/inventoryExport.js";
 import {
     firstDayOfMonthsAgo,
-    today
+    today,
+    unwrap
 } from "../components/reports/reportUtils.js";
 
 const PAGE_SIZE = 8;
@@ -97,6 +99,7 @@ function InventoryPage() {
     const [materialPage, setMaterialPage] = useState(0);
     const [productPage, setProductPage] = useState(0);
     const [exporting, setExporting] = useState(false);
+    const [showPrintModal, setShowPrintModal] = useState(false);
 
     const materialRequest = useCallback(
         () => inventoryApi.getSummary({
@@ -214,25 +217,48 @@ function InventoryPage() {
 
     };
 
-    const handlePrint = () => {
-
-        if (busy) return;
-
-        if (empty) {
-            toast.error("Không có dữ liệu tồn kho để in.");
-            return;
-        }
-
+    const handlePrintSubmit = async ({ fromDate: printFromDate, toDate: printToDate }) => {
         try {
+            const [matRes, prodRes] = await Promise.all([
+                inventoryApi.getSummary({
+                    stockGroup: "MATERIAL",
+                    fromDate: printFromDate,
+                    toDate: printToDate
+                }),
+                inventoryApi.getSummary({
+                    stockGroup: "PRODUCT",
+                    fromDate: printFromDate,
+                    toDate: printToDate
+                })
+            ]);
 
-            printInventory(exportContext);
+            const matData = unwrap(matRes, null);
+            const prodData = unwrap(prodRes, null);
 
-        } catch {
+            const matItems = filter(matData?.items ?? []);
+            const prodItems = filter(prodData?.items ?? []);
 
+            if (matItems.length === 0 && prodItems.length === 0) {
+                toast.error("Không có dữ liệu tồn kho trong khoảng thời gian đã chọn.");
+                return;
+            }
+
+            printInventory({
+                fromDate: printFromDate,
+                toDate: printToDate,
+                search,
+                materials: matItems,
+                products: prodItems,
+                materialWarehouseName: matData?.warehouseName,
+                productWarehouseName: prodData?.warehouseName
+            });
+
+            toast.success("Đã tạo báo cáo in tổng hợp Nhập - Xuất - Tồn");
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu báo cáo in:", error);
             toast.error("Không thể mở bản in.");
-
+            throw error;
         }
-
     };
 
     return (
@@ -291,7 +317,7 @@ function InventoryPage() {
 
                 <Button
                     variant="secondary"
-                    onClick={handlePrint}
+                    onClick={() => setShowPrintModal(true)}
                     disabled={busy}
                 >
                     <Printer size={18} />
@@ -369,6 +395,12 @@ function InventoryPage() {
                 </InventorySection>
 
             </div>
+
+            <PrintInventoryModal
+                open={showPrintModal}
+                onClose={() => setShowPrintModal(false)}
+                onSubmit={handlePrintSubmit}
+            />
 
         </div>
 

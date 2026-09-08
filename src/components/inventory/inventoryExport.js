@@ -153,7 +153,7 @@ const sectionSheetRows = (title, columns, rows, context) => {
         rows.length
             ? {
                 cells: [
-                    `TỔNG CỘNG (${rows.length} dòng)`,
+                    `TỔNG CỘNG`,
                     "",
                     totals.openingQuantity,
                     totals.receiptQuantity,
@@ -439,30 +439,30 @@ const sectionHtml = (title, columns, rows, withLots) => {
             )
             .join("")
         : `<tr><td class="center" colspan="${columns.length}">` +
-          "Không có dữ liệu tồn kho trong kỳ đã chọn.</td></tr>";
+        "Không có dữ liệu tồn kho trong kỳ đã chọn.</td></tr>";
 
     const foot = rows.length
         ? "<tfoot><tr>" +
-          `<td colspan="2" class="center font-bold">${escapeXml(
-              `TỔNG CỘNG (${rows.length} dòng)`
-          )}</td>` +
-          `<td class="num font-bold">${escapeXml(
-              formatNumber(totals.openingQuantity)
-          )}</td>` +
-          `<td class="num font-bold">${escapeXml(
-              formatNumber(totals.receiptQuantity)
-          )}</td>` +
-          `<td class="num font-bold">${escapeXml(
-              formatNumber(totals.issueQuantity)
-          )}</td>` +
-          `<td class="num font-bold">${escapeXml(
-              formatNumber(totals.closingQuantity)
-          )}</td>` +
-          "<td></td>" +
-          `<td class="num font-bold">${escapeXml(
-              formatCurrency(totals.inventoryValue)
-          )}</td>` +
-          "<td></td></tr></tfoot>"
+        `<td colspan="2" class="center font-bold">${escapeXml(
+            `TỔNG CỘNG`
+        )}</td>` +
+        `<td class="num font-bold">${escapeXml(
+            formatNumber(totals.openingQuantity)
+        )}</td>` +
+        `<td class="num font-bold">${escapeXml(
+            formatNumber(totals.receiptQuantity)
+        )}</td>` +
+        `<td class="num font-bold">${escapeXml(
+            formatNumber(totals.issueQuantity)
+        )}</td>` +
+        `<td class="num font-bold">${escapeXml(
+            formatNumber(totals.closingQuantity)
+        )}</td>` +
+        "<td></td>" +
+        `<td class="num font-bold">${escapeXml(
+            formatCurrency(totals.inventoryValue)
+        )}</td>` +
+        "<td></td></tr></tfoot>"
         : "";
 
     return (
