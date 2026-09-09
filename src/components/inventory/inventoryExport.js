@@ -504,8 +504,9 @@ export const buildInventoryPrintHtml = (context) => {
         `<style>${PRINT_STYLES}</style></head><body>` +
         '<div class="header">' +
         '<div class="company-info">' +
-        '<div class="company-name">CÔNG TY CỔ PHẦN CÔNG NGHỆ VÀ SẢN XUẤT MINH HÀ</div>' +
-        '<div class="company-address">Số 1 Ngõ 120 đường Trường Chinh, Phường Phương Mai, Quận Đống Đa, Thành phố Hà Nội, Việt Nam</div>' +
+        '<div class="company-name">CÔNG TY CỔ PHẦN TM&DV TUẤN DUY</div>' +
+        '<div>Địa chỉ: TDP Thượng Tùng - Tân An - Bắc Giang</div>' +
+        '<div>Điện thoại liên hệ: 0964 234 686</div>' +
         '</div>' +
         '</div>' +
         '<div class="title-section">' +
@@ -531,13 +532,13 @@ export const buildInventoryPrintHtml = (context) => {
         '<div class="sig-title">Giám đốc</div>' +
         '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
         '<div class="sig-space"></div>' +
-        '<div class="sig-name">Nguyễn Thuỳ Linh</div>' +
+        '<div class="sig-name">Hoàng Duy</div>' +
         '</div>' +
         '<div class="sig-col">' +
         '<div class="sig-title">Người lập báo cáo</div>' +
         '<div class="sig-sub">(Ký, ghi rõ họ tên)</div>' +
         '<div class="sig-space"></div>' +
-        '<div class="sig-name">Vũ Thị Xuân Hương</div>' +
+        '<div class="sig-name">Trần Thuỳ Trang</div>' +
         '</div>' +
         '</div>' +
         '</div>' +
